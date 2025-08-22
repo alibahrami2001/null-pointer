@@ -7,7 +7,7 @@ import requests
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
-TIMEZONE = "Asia/Tehran"  # Fixed timezone name
+TIMEZONE = "Asia/Tehran"
 SITE_TITLE = "The Null Pointer"
 SITE_DESC = "Automated feed of technology and cybersecurity news — updated daily"
 SITE_URL = ""
@@ -94,9 +94,12 @@ def fetch_feed_with_retry(url, max_retries=3):
                 feed = feedparser.parse(response.content)
                 print(f"    → Status: {response.status_code}, Entries: {len(feed.entries) if hasattr(feed, 'entries') else 0}")
                 return feed
-            except Exception:
+            except Exception as e:
+                print(f"    → Requests failed: {e}")
                 # Fallback to direct feedparser
-                return feedparser.parse(url)
+                feed = feedparser.parse(url)
+                print(f"    → Feedparser fallback, Entries: {len(feed.entries) if hasattr(feed, 'entries') else 0}")
+                return feed
                 
         except Exception as e:
             print(f"[warn] attempt {attempt + 1} failed for {url}: {e}", file=sys.stderr)
@@ -123,38 +126,38 @@ def collect_items():
         
         fp = fetch_feed_with_retry(url)
         if not fp or not hasattr(fp, 'entries'):
+            print(f"  → Failed to fetch or no entries found")
             continue
 
         feed_items = 0
-            print(f"  → Failed to fetch or no entries found")
-        for entry in fp.entries:
-            try:
-                link = getattr(entry, "link", "") or ""
         total_entries = len(fp.entries)
         print(f"  → Processing {total_entries} entries from feed")
         
+        for entry in fp.entries:
+            try:
+                link = getattr(entry, "link", "") or ""
                 title = getattr(entry, "title", "") or ""
                 
                 if not link or not title:
+                    print(f"    → Skipping entry: missing link or title")
                     continue
 
                 summary = getattr(entry, "summary", "") or getattr(entry, "description", "") or ""
-                    print(f"    → Skipping entry: missing link or title")
                 published = getattr(entry, "published", None) or getattr(entry, "updated", None)
                 published_parsed = getattr(entry, "published_parsed", None) or getattr(entry, "updated_parsed", None)
 
                 # Try to get publication date
                 dt = normalize_dt(published) or normalize_dt(published_parsed)
                 if not dt:
+                    print(f"    → No date found for: {title[:50]}..., using current time")
                     dt = now_local  # Use current time if no date available
 
                 # Skip old items
                 if dt < cutoff:
-                    print(f"    → No date found for: {title[:50]}..., using current time")
+                    print(f"    → Skipping old item: {title[:50]}... (published: {dt})")
                     continue
 
                 # Clean summary
-                    print(f"    → Skipping old item: {title[:50]}... (published: {dt})")
                 clean_summary = re.sub(r"<.*?>", "", summary)
                 clean_summary = re.sub(r"\s+", " ", clean_summary).strip()
                 if len(clean_summary) > 300:
@@ -169,10 +172,9 @@ def collect_items():
                     "published": dt,
                 })
                 feed_items += 1
+                print(f"    → Added: {title[:50]}... (published: {dt})")
 
             except Exception as e:
-                print(f"    → Requests failed: {e}")
-                print(f"    → Added: {title[:50]}... (published: {dt})")
                 print(f"[warn] error processing entry: {e}", file=sys.stderr)
                 continue
 
@@ -195,8 +197,6 @@ def collect_items():
     # Limit items
     items = items[:MAX_ITEMS_PER_DAY]
     print(f"Final item count: {len(items)}")
-                feed = feedparser.parse(url)
-                print(f"    → Feedparser fallback, Entries: {len(feed.entries) if hasattr(feed, 'entries') else 0}")
     
     # Print first few items for debugging
     if items:
@@ -208,7 +208,8 @@ def collect_items():
         print("  - All feeds are failing to load")
         print("  - All items are older than the cutoff time")
         print("  - Network connectivity issues")
-                return feed
+        print(f"Looking for items newer than {RECENT_HOURS} hours")
+    
     return items
 
 
@@ -230,7 +231,6 @@ def build_site(items):
 
     print(f"Building page for {day_slug}")
 
-    print(f"Looking for items newer than {RECENT_HOURS} hours")
     # Build daily page
     day_template = env.get_template("day.html")
     day_html = day_template.render(
