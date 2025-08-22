@@ -33,7 +33,7 @@ FEEDS = [
 ]
 
 MAX_ITEMS_PER_DAY = 80
-RECENT_HOURS = 48
+RECENT_HOURS = 24
 DOCS_DIR = "docs"
 
 
@@ -79,18 +79,21 @@ def hash_link(link):
 
 def fetch_feed_with_retry(url, max_retries=3):
     """Fetch RSS feed with retry logic"""
+    print(f"  Fetching: {url}")
     for attempt in range(max_retries):
         try:
             # Set user agent to avoid blocking
             headers = {
-                'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0; +https://github.com)'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             }
             
             # Try with requests first for better error handling
             try:
                 response = requests.get(url, headers=headers, timeout=30)
                 response.raise_for_status()
-                return feedparser.parse(response.content)
+                feed = feedparser.parse(response.content)
+                print(f"    → Status: {response.status_code}, Entries: {len(feed.entries) if hasattr(feed, 'entries') else 0}")
+                return feed
             except Exception:
                 # Fallback to direct feedparser
                 return feedparser.parse(url)
@@ -123,15 +126,20 @@ def collect_items():
             continue
 
         feed_items = 0
+            print(f"  → Failed to fetch or no entries found")
         for entry in fp.entries:
             try:
                 link = getattr(entry, "link", "") or ""
+        total_entries = len(fp.entries)
+        print(f"  → Processing {total_entries} entries from feed")
+        
                 title = getattr(entry, "title", "") or ""
                 
                 if not link or not title:
                     continue
 
                 summary = getattr(entry, "summary", "") or getattr(entry, "description", "") or ""
+                    print(f"    → Skipping entry: missing link or title")
                 published = getattr(entry, "published", None) or getattr(entry, "updated", None)
                 published_parsed = getattr(entry, "published_parsed", None) or getattr(entry, "updated_parsed", None)
 
@@ -142,9 +150,11 @@ def collect_items():
 
                 # Skip old items
                 if dt < cutoff:
+                    print(f"    → No date found for: {title[:50]}..., using current time")
                     continue
 
                 # Clean summary
+                    print(f"    → Skipping old item: {title[:50]}... (published: {dt})")
                 clean_summary = re.sub(r"<.*?>", "", summary)
                 clean_summary = re.sub(r"\s+", " ", clean_summary).strip()
                 if len(clean_summary) > 300:
@@ -161,6 +171,8 @@ def collect_items():
                 feed_items += 1
 
             except Exception as e:
+                print(f"    → Requests failed: {e}")
+                print(f"    → Added: {title[:50]}... (published: {dt})")
                 print(f"[warn] error processing entry: {e}", file=sys.stderr)
                 continue
 
@@ -183,7 +195,20 @@ def collect_items():
     # Limit items
     items = items[:MAX_ITEMS_PER_DAY]
     print(f"Final item count: {len(items)}")
-
+                feed = feedparser.parse(url)
+                print(f"    → Feedparser fallback, Entries: {len(feed.entries) if hasattr(feed, 'entries') else 0}")
+    
+    # Print first few items for debugging
+    if items:
+        print(f"\nFirst few items:")
+        for i, item in enumerate(items[:3]):
+            print(f"  {i+1}. {item['title'][:60]}... ({item['source']}) - {item['published']}")
+    else:
+        print("\n⚠️  No items found! This might indicate:")
+        print("  - All feeds are failing to load")
+        print("  - All items are older than the cutoff time")
+        print("  - Network connectivity issues")
+                return feed
     return items
 
 
@@ -205,6 +230,7 @@ def build_site(items):
 
     print(f"Building page for {day_slug}")
 
+    print(f"Looking for items newer than {RECENT_HOURS} hours")
     # Build daily page
     day_template = env.get_template("day.html")
     day_html = day_template.render(
