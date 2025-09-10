@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for September 10, 2025</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/uncanny-valley-live-show-san-francisco/" target="_blank" rel="noopener noreferrer">
+        Watch WIRED’s ‘Uncanny Valley’ Live
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Missed Uncanny Valley’s first live show? We spoke with special guest Jack Conte, CEO of Patreon, in San Francisco.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 07:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/netflix/wayward-review" target="_blank" rel="noopener noreferrer">
+        Wayward is the new traumatic Netflix series you won’t be able to switch off, and I’ve lived to tell the tale
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Mae Martin&#39;s new Netflix series Wayward brings the troubled teen cult lore we&#39;ve always wanted, and transforms it into unmissable TV.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 06:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/these-older-apple-watch-models-will-be-compatible-with-the-new-sleep-score-feature/" target="_blank" rel="noopener noreferrer">
+        These older Apple Watch models will be compatible with the new Sleep Score feature
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you watched Apple’s “Awe Dropping” event, you probably came away thinking that the new Sleep Score feature would be exclusive to the new Apple Watch Series 11 and Ultra 3. Fortunately, that’s not the case. Here’s the full compatibility list. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 06:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/apples-new-magsafe-battery-doesnt-just-work-with-iphone-air/" target="_blank" rel="noopener noreferrer">
+        Apple’s new MagSafe Battery doesn’t just work with iPhone Air
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As rumored, Apple brought back its MagSafe Battery, but the only iPhone it works with is the new iPhone Air. However, Apple says it does have another feature that could come in handy. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 05:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/heres-apple-vision-pros-new-jupiter-environment/" target="_blank" rel="noopener noreferrer">
+        Here’s Apple Vision Pro’s new Jupiter Environment
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple revealed a new Environment for Apple Vision Pro, Jupiter, during WWDC25. With today’s release of the visionOS 26 Release Candidate, we finally have our first look at it. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 05:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/09/sources-ai-training-startup-mercor-eyes-10b-valuation-on-450-million-run-rate/" target="_blank" rel="noopener noreferrer">
+        Sources: AI training startup Mercor eyes $10B+ valuation on $450 million run rate
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The two-year-old startup has been in discussions with investors for a Series C round.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 05:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/engadget-podcast-making-sense-of-apples-iphone-17-event-012707428.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Engadget Podcast: Making sense of Apple&#39;s iPhone 17 event
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;ve survived Apple&#39;s iPhone 17 event and we&#39;re here to dive into all of the news. In this bonus episode, Devindra and Deputy Editor Nathan Ingraham recap all of Apple&#39;s new hardware and try to determine if the iPhone Air has any substance behind all that style. It’s certainly more attractive than ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:57</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://thehackernews.com/2025/09/adobe-commerce-flaw-cve-2025-54236-lets.html" target="_blank" rel="noopener noreferrer">
+        Adobe Commerce Flaw CVE-2025-54236 Lets Hackers Take Over Customer Accounts
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Adobe has warned of a critical security flaw in its Commerce and Magento Open Source platforms that, if successfully exploited, could allow attackers to take control of customer accounts. The vulnerability, tracked as CVE-2025-54236 (aka SessionReaper), carries a CVSS score of 9.1 out of a maximum o...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Hacker News</span>
+      
+      
+      
+      <span class="time">🕒 04:38</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://thehackernews.com/2025/09/sap-patches-critical-netweaver-cvss-up.html" target="_blank" rel="noopener noreferrer">
+        SAP Patches Critical NetWeaver (CVSS Up to 10.0) and Previously Exploited S/4HANA Flaws
+      </a>
+    </h3>
+    
+    
+    <p class="summary">SAP on Tuesday released security updates to address multiple security flaws, including three critical vulnerabilities in SAP Netweaver that could result in code execution and the upload arbitrary files. The vulnerabilities are listed below - CVE-2025-42944 (CVSS score: 10.0) - A deserialization vuln...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Hacker News</span>
+      
+      
+      
+      <span class="time">🕒 04:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/wearables/apple-watch-series-11-hands-on-feels-and-looks-the-same-but-real-changes-are-deeper-200438367.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Apple Watch Series 11 hands-on: Feels and looks the same, but real changes are deeper
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Though the Apple Watch announcements may have paled in comparison to the iPhone news at Apple&#39;s event today, there were still some noteworthy updates to the smartwatch lineup to talk about. This year, we&#39;re getting the Watch Series 11, Watch SE 3 and Watch Ultra 3, and each of them have some interes...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/iphone-air-vs-iphone-17-pro-which-one-is-right-for-you-001538431.html?src=rss" target="_blank" rel="noopener noreferrer">
+        iPhone Air vs. iPhone 17 Pro: Which one is right for you?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iPhone Air is much thinner compared to the iPhone 17 Pro. (Apple) Now that we&#39;ve seen the actual iPhone Air and iPhone 17 Pro models — they were revealed at the Apple iPhone event today — it&#39;s time to decide if you&#39;re ready to upgrade to one of the newer devices. If you watched Apple&#39;s keynote or po...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/775234/iphone-17-air-a19-memory-integrity-enforcement-mte-security" target="_blank" rel="noopener noreferrer">
+        Apple says the iPhone 17 comes with a massive security upgrade
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It’s less noticeable than a thinner profile or trick camera lenses, but Apple is pointing out another upgrade in the iPhone 17 family of phones that it says is part of “the most significant upgrade to memory safety in the history of consumer operating systems.” Explicitly targeting the spyware indus...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 03:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/apple-call-screening-ios-26-has-been-on-pixel-for-years/" target="_blank" rel="noopener noreferrer">
+        Apple’s Best New iOS 26 Feature Has Been on Pixel Phones for Years
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The iPhone’s new software screens your calls using machine intelligence. Neat, but Google had the feature first—just like so many other features that rely on AI to work.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 03:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/775309/apple-iphone-14-15-satellite-connectivity-free" target="_blank" rel="noopener noreferrer">
+        Apple is giving iPhone 14 and 15 users another free year of satellite features
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iPhone 14 and iPhone 15 users are getting another year of free access to satellite connectivity features, according to a footnote on Apple’s newsroom posts for the iPhone 17 and iPhone 17 Pro. “The free trial will be extended for iPhone 14 and iPhone 15 users who have activated their device in a cou...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 03:08</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/airpods-pro-3-get-foam-infused-ear-tips-in-five-different-sizes/" target="_blank" rel="noopener noreferrer">
+        AirPods Pro 3 get foam-infused ear tips in five different sizes
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Two of the best AirPods Pro 3 announcements from earlier today weren’t exactly about performance improvements or new sensors, but comfort and further customization. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 03:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gadgets/2025/09/apples-n1-chip-extends-its-custom-silicon-into-wi-fi-bluetooth-and-thread/" target="_blank" rel="noopener noreferrer">
+        New iPhones use Apple N1 wireless chip—and we’ll probably start seeing it everywhere
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Not Apple&#39;s first custom Wi-Fi and Bluetooth chip, but the first in an iPhone.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 02:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/09/from-mixers-to-pitch-offs-your-brand-event-belongs-at-techcrunch-disrupt-2025/" target="_blank" rel="noopener noreferrer">
+        From mixers to pitch-offs — your brand event belongs at TechCrunch Disrupt 2025
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Each Side Event can unlock new opportunities for the hosts: investor deal flow, talent connections, and brand exposure with the startup community.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 02:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gadgets/2025/09/reddit-bug-caused-lesbian-subreddit-to-be-labeled-as-a-place-for-straight-women/" target="_blank" rel="noopener noreferrer">
+        Reddit bug caused lesbian subreddit to be labeled as a place for “straight” women
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Users feared Reddit used generative AI to rewrite user-created content.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 02:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/all-of-the-new-iphones-start-with-256gb-of-storage-finally-222415353.html?src=rss" target="_blank" rel="noopener noreferrer">
+        All of the new iPhones start with 256GB of storage. Finally.
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There&#39;s a lot to like about the new iPhone lineup: new selfie cameras, a new unibody frame and a even a super-thin iPhone, if that&#39;s your thing. All of the new phones share one important upgrade you might have missed during Apple&#39;s 72-minute livestream, though: they all start at 256GB of storage. Fo...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:54</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/download-the-new-iphone-air-and-iphone-17-pro-wallpapers/" target="_blank" rel="noopener noreferrer">
+        Download the new iPhone Air and iPhone 17 Pro wallpapers
+      </a>
+    </h3>
+    
+    
+    <p class="summary">You know the drill: new iPhones, new wallpapers. And if you liked what you saw during the “Awe Dropping” event, we’ve got you covered. Download the new wallpapers below. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/09/help-i-have-been-charmed-by-the-iphone-air/" target="_blank" rel="noopener noreferrer">
+        Help, I have been charmed by the iPhone Air
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple&#39;s sleek iPhone Air has a powerful processor and large display, but its battery life and camera might be a problem.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/wearables/apple-acquiesced-to-my-apple-watch-se-3-demands-mostly-220726287.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Apple acquiesced to my Apple Watch SE 3 demands (mostly)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Earlier this year, I typed up an open letter to Apple, giving the company my unsolicited (but completely free of charge!) suggestions on what it could do to improve its entry-level smartwatch, the Apple Watch SE. Now that the iPhone event has concluded I wanted to see if anyone over in Cupertino too...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/turok-origins-preview-gamescom-2025" target="_blank" rel="noopener noreferrer">
+        Turok: Origins nails the series’ prehistoric sci-fi setting, but you’ll definitely want a couple of friends to get the most out of it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Turok: Origins has a strong understanding of the series’ aesthetic, but I have concerns over the co-op game’s longevity.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/earbuds-airpods/forget-the-new-features-the-airpods-pro-3s-most-boring-upgrades-are-their-killer-selling-points" target="_blank" rel="noopener noreferrer">
+        Forget the new features, the AirPods Pro 3&#39;s most boring upgrades are their killer selling points
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Something special in the specs</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gadgets/2025/09/hands-on-with-the-iphone-17-lineup-including-the-wispy-air-and-the-lumpy-pro/" target="_blank" rel="noopener noreferrer">
+        Hands-on with Apple’s new iPhones: Beauty and the beast and the regular-looking one
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A new form-vs.-function spectrum emerges as Apple&#39;s phone designs diverge.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/apple-publishes-dear-apple-segment-from-todays-event/" target="_blank" rel="noopener noreferrer">
+        Apple publishes ‘Dear Apple’ segment from today’s event
+      </a>
+    </h3>
+    
+    
+    <p class="summary">For the past few years, Apple has featured real cases of users whose lives were saved or profoundly changed by the Apple Watch. Today, it was no different. Watch the heartfelt segment below. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:27</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/moderna-ceo-responds-to-rfk-jrs-crusade-against-the-covid-19-vaccine/" target="_blank" rel="noopener noreferrer">
+        Moderna CEO Responds to RFK Jr.’s Crusade Against the Covid-19 Vaccine
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Speaking at a WIRED event Tuesday, Moderna CEO Stéphane Bancel said he was “encouraged” by the company’s dialog with the FDA—but acknowledged recent setbacks.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/775230/anthropic-piracy-class-action-lawsuit-settlement-rejected" target="_blank" rel="noopener noreferrer">
+        Judge puts Anthropic&amp;amp;#8217;s $1.5 billion book piracy settlement on hold
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Anthropic’s $1.5 billion book piracy settlement has been put on pause after the federal judge overseeing the class action case raised concerns about the terms of the agreement. During a hearing this week, Judge William Alsup rejected the settlement over concerns that class action lawyers will create...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 01:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/09/why-spacex-made-a-17b-bet-on-the-direct-to-cell-market/" target="_blank" rel="noopener noreferrer">
+        Why SpaceX made a $17B bet on the direct-to-cell market
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The deal is the most aggressive signal yet that SpaceX wants to rule the satellite-to-phone market.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/775200/apple-watch-series-9-hypertension-sleep-score-wrist-flick" target="_blank" rel="noopener noreferrer">
+        Apple&amp;amp;#8217;s newest health-tracking features are coming to older watches
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple just announced a bunch of new health-tracking features alongside its new smartwatch lineup — but you might not need to upgrade your device to get access to them. With the launch of watchOS 26 next week, Apple will bring hypertension notifications, live translation, and the new wrist-flick gest...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 01:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/iphone/ill-say-it-the-iphone-17-was-the-winner-at-apples-awe-dropping-event-and-its-all-thanks-to-these-3-upgrades" target="_blank" rel="noopener noreferrer">
+        I’ll say it – the iPhone 17 was the winner at Apple’s &#39;Awe Dropping&#39; event, and it’s all thanks to these 3 upgrades
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This year&#39;s standard iPhone has closed the gap with its Pro siblings, and caught up with its Android rivals in one key area.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/heres-everything-apple-didnt-announce-during-its-awe-dropping-event/" target="_blank" rel="noopener noreferrer">
+        Here’s everything Apple didn’t announce during its ‘Awe Dropping’ event
+      </a>
+    </h3>
+    
+    
+    <p class="summary">For an event that lasted less than 1 hour and 20 minutes, Apple managed to pack quite a lot of new devices and features into its lineup. Still, some had been expecting a little bit more. Here’s what Apple decided not to include in today’s event, some of which may still come by the end of the year. m...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/09/i-want-to-love-apples-new-iphone-air-but-the-iphone-17-is-a-better-deal/" target="_blank" rel="noopener noreferrer">
+        I want to love Apple’s new iPhone Air, but the iPhone 17 is a better deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I was within a heartbeat of preordering the new iPhone Air. But a closer looks at the specs changed my mind.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://krebsonsecurity.com/2025/09/microsoft-patch-tuesday-september-2025-edition/" target="_blank" rel="noopener noreferrer">
+        Microsoft Patch Tuesday, September 2025 Edition
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft Corp. today issued security updates to fix more than 80 vulnerabilities in its Windows operating systems and software. There are no known &#34;zero-day&#34; or actively exploited vulnerabilities in this month&#39;s bundle from Redmond, which nevertheless includes patches for 13 flaws that earned Micro...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Krebs on Security</span>
+      
+      
+      
+      <span class="time">🕒 00:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/iphone-17-pro-max-is-apples-first-2000-modelif-you-get-2tb/" target="_blank" rel="noopener noreferrer">
+        iPhone 17 Pro Max is Apple’s first $2,000 model…if you get 2TB
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple’s flagship iPhone 17 Pro and Pro Max are here, and the Pro Max includes a 2TB storage option for the first time ever. Before you start celebrating though, be sure to check the price tag. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/774831/iphone-air-apple-reactions-thin-camera" target="_blank" rel="noopener noreferrer">
+        Verge staffers react to the iPhone Air: what we love and don’t love
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Determined to give us something new to talk about, Apple has introduced its ultra-thin iPhone Air. It&#39;s just 5.6mm thick with a 6.5-inch ProMotion display, a 48-megapixel dual camera, a selfie camera that supports Center Stage, and an add-on MagSafe battery. Among other things. We asked the staff of...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/quordle-today-answers-clues-10-september-2025" target="_blank" rel="noopener noreferrer">
+        Quordle hints and answers for Wednesday, September 10 (game #1325)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for Quordle clues? We can help. Plus get the answers to Quordle today and past solutions.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/nyt-connections-today-answers-hints-10-september-2025" target="_blank" rel="noopener noreferrer">
+        NYT Connections hints and answers for Wednesday, September 10 (game #822)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Connections answers and hints? Here&#39;s all you need to know to solve today&#39;s game, plus my commentary on the puzzles.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/nyt-strands-today-answers-hints-10-september-2025" target="_blank" rel="noopener noreferrer">
+        NYT Strands hints and answers for Wednesday, September 10 (game #556)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Strands answers and hints? Here&#39;s all you need to know to solve today&#39;s game, including the spangram.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/apple/775186/apple-iphone-17-pro-cosmic-orange-color-good" target="_blank" rel="noopener noreferrer">
+        The iPhone 17 Pro’s orange is good — and well timed
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple just announced arguably its boldest Pro iPhone color ever: the new &#34;cosmic orange&#34; for the iPhone 17 Pro. And to my surprise, I think it looks really good. In choosing a bold hue as its hero shade for the iPhone 17 Pro, Apple also seems to have nailed one of the season&#39;s hottest colors. [&amp;amp;#823...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/health/2025/09/pfizer-reports-positive-covid-shot-results-despite-government-fueled-chaos/" target="_blank" rel="noopener noreferrer">
+        Pfizer says this season’s COVID shot boosts immune responses fourfold
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Positive results come as Americans face confusing access rules that vary by state.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:38</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/iphone-17-pro-vs-iphone-16-pro-heres-everything-new/" target="_blank" rel="noopener noreferrer">
+        iPhone 17 Pro vs iPhone 16 Pro: Here’s everything new
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple unveiled its flagship iPhone 17 Pro and Pro Max earlier today at the ‘Awe dropping’ event alongside new AirPods Pro 3, Apple Watch Ultra 3, and more. Here’s how the new iPhone 17 Pro compares to last year’s 16 Pro models. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/773089/apple-watch-se-3-series-11-ultra-3-preorder-buy-price-release-date" target="_blank" rel="noopener noreferrer">
+        How to preorder the Apple Watch SE 3, Apple Watch Series 11, and Apple Watch Ultra 3
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The iPhone Air and the iPhone 17 fleet of phones took the spotlight during Apple’s “Awe dropping” event. If you weren’t tempted by the new phones, the fact that the entire Apple Watch lineup got refreshed might have been even bigger news to you. Soon, the Apple Watch SE 3, Apple Watch Series 11, and...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/earbuds-airpods/sony-linkbuds-open-review" target="_blank" rel="noopener noreferrer">
+        I tested Sony’s latest open earbuds and they had plenty of bass – but still didn’t hit all the right notes
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I tested Sony’s latest open earbuds and I was impressed by their feature-set and bass output, but they weren&#39;t quite a slam dunk.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/eff-cindy-cohn-stepping-down/" target="_blank" rel="noopener noreferrer">
+        Cindy Cohn Is Leaving the EFF, but Not the Fight for Digital Rights
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After 25 years at the Electronic Frontier Foundation, Cindy Cohn is stepping down as executive director. In a WIRED interview, she reflects on encryption, AI, and why she’s not ready to quit the battle.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/spigens-all-new-iphone-17-cases-show-you-dont-have-to-sacrifice-style-for-protection/" target="_blank" rel="noopener noreferrer">
+        Spigen’s all-new iPhone 17 cases show you don’t have to sacrifice style for protection
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It’s September, and that means the new iPhones are now out! Whether you’re opting for the iPhone Air, iPhone 17, iPhone 17 Pro, or iPhone 17 Pro Max, Spigen is ready with all-new cases that make the new models—and their refreshed iPhone design—look even better. If all you want to do is protect your ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/iphone/iphone-17-prices-all-the-changes-explained-and-how-every-model-compares-to-google-and-samsung" target="_blank" rel="noopener noreferrer">
+        iPhone 17 prices –all the changes explained and how every model compares to Google and Samsung
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple&#39;s four iPhone 17 models come in a range of prices– here&#39;s how they all break down compared to last year&#39;s models and their Google and Samsung rivals.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/information-technology/2025/09/anthropics-new-claude-feature-can-leak-data-users-told-to-monitor-chats-closely/" target="_blank" rel="noopener noreferrer">
+        Claude’s new AI file creation feature ships with deep security risks built in
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Expert calls security advice &#34;unfairly outsourcing the problem to Anthropic&#39;s users.&#34;</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/apples-big-iphone-17-reveal-means-huge-savings-on-older-devices-airpods-apple-watch-and-iphone-deals-from-usd117" target="_blank" rel="noopener noreferrer">
+        Apple&#39;s big iPhone 17 reveal means huge savings on older devices – AirPods, Apple Watch, and iPhone deals from $117
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Thanks to today&#39;s Apple event, there&#39;s a massive sale on older devices, and I&#39;m rounding up the best deals on AirPods, Apple Watch, and iPads starting at $117.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/macos-tahoe-26-introduces-repair-assistant-for-mac/" target="_blank" rel="noopener noreferrer">
+        macOS Tahoe 26 introduces Repair Assistant for Mac
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Last year Apple introduced Repair Assistant for iPhone and iPad, bringing first-party calibration software to the repair process for devices. Starting with macOS Tahoe 26, Apple will introduce Repair Assistant for the Mac as well. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:19</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/772748/iphone-17-pro-air-preorder-price-how-to-buy-release-date" target="_blank" rel="noopener noreferrer">
+        Here&amp;amp;#8217;s everything you need to know about preordering the 2025 iPhone lineup
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple announced its new iPhone 17 lineup during its “Awe dropping” event on Tuesday. As expected, the company introduced the iPhone 17, the flagship iPhone 17 Pro, and a bigger iPhone 17 Pro Max. There’s also a new addition to the lineup this year: the slimmed-down iPhone Air, which features a 6.5-i...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/apple-event/775048/iphone-air-magsafe-battery-pack-hands-on-photos" target="_blank" rel="noopener noreferrer">
+        The iPhone Air’s battery pack is slim, but not as slim as the iPhone Air
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple&#39;s chunky old MagSafe Battery Pack was beloved by a subset of iPhone owners, and now the company is bringing it back and slimming it down for the iPhone Air. I took a first look at the battery pack this afternoon, and it has a significantly slimmer design than the old version. This version of [...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/space/2025/09/after-early-struggles-nasas-ambitious-mission-to-titan-is-on-track-for-launch/" target="_blank" rel="noopener noreferrer">
+        After early struggles, NASA’s ambitious mission to Titan is “on track” for launch
+      </a>
+    </h3>
+    
+    
+    <p class="summary">&#34;Probably the best part of my day is watching that team hit their milestones.&#34;</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/earbuds-airpods/apples-live-translation-isnt-exclusive-to-airpods-pro-3-its-coming-to-some-older-earbuds-too" target="_blank" rel="noopener noreferrer">
+        Apple&#39;s Live Translation isn&#39;t exclusive to AirPods Pro 3 – it&#39;s coming to some older earbuds too
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AirPods Pro 2 and AirPods 4 with ANC will get the Live Translation feature.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:57</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/us-sanctions-cyber-scammers-who-stole-billions-from-americans/" target="_blank" rel="noopener noreferrer">
+        U.S. sanctions cyber scammers who stole billions from Americans
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The U.S. Department of the Treasury has sanctioned several large networks of cyber scam operations in Southeast Asia, which stole over $10 billion from Americans last year. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 23:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/apple-gives-iphone-14-and-15-owners-an-extra-free-year-of-satellite-connectivity-202434416.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Apple gives iPhone 14 and 15 owners an extra free year of satellite connectivity
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tucked away in Apple&#39;s iPhone 17 press releases was a bonus for off-grid owners of older models. The company gave iPhone 14 and 15 owners free access to satellite features for another year. This is Apple&#39;s third extension since Emergency SOS via satellite launched with the iPhone 14. &amp;amp;quot;The free ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:54</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/health-fitness/smartwatches/apple-tried-to-hide-a-very-important-apple-watch-series-11-and-ultra-3-detail-but-i-noticed" target="_blank" rel="noopener noreferrer">
+        Apple tried to hide a very important Apple Watch Series 11 and Ultra 3 detail – but I noticed
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple hid an important chipset detail in its Apple Watch SE 3 presentation.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:54</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ai/microsoft-reportedly-plans-to-start-using-anthropic-models-to-power-some-of-office-365s-copilot-features-202017205.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Microsoft reportedly plans to start using Anthropic models to power some of Office 365&#39;s Copilot features
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft reportedly plans to begin using Anthropic&#39;s latest Claude models to power some of the Copilot features in its Office 365 apps. In a report published Tuesday, The Information said the tech giant would announce the change &amp;amp;quot;in the coming weeks.&amp;amp;quot; Microsoft currently relies on OpenAI&#39;...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/09/apples-creator-centric-iphone-17-pro-will-make-the-vlogging-camera-obsolete/" target="_blank" rel="noopener noreferrer">
+        Apple’s creator-centric iPhone 17 Pro will make the vlogging camera obsolete
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The iPhone camera has long checked all the boxes for anything that a casual user might need, making a digital camera obsolete for most consumers.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/the-iphone-airs-top-wireless-charging-speed-is-20w-201804255.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The iPhone Air&#39;s top wireless charging speed is 20W
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The announcement of the iPhone Air surprised exactly nobody during today&#39;s Apple &#34;Awe dropping&#34; event. As we finally get officiall details about this lightweight smartphone model, one of the biggest questions is about the battery. Thin devices mean thinner batteries, so we&#39;ve been curious to see how...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/apple-watch-ultra-3-gains-best-display-feature-from-series-10-and-series-11/" target="_blank" rel="noopener noreferrer">
+        Apple Watch Ultra 3 gains best display feature from Series 10 and Series 11
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The biggest Apple Watch Ultra 3 display news is that it has the biggest Ultra display yet. However, there’s a smaller Ultra 3 display change that is a welcome arrival too. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/09/the-iphone-air-is-a-hint-at-the-iphones-future-which-could-include-foldables/" target="_blank" rel="noopener noreferrer">
+        The iPhone Air is a hint at the iPhone’s future, which could include foldables
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Over time, Air could perhaps become Apple&#39;s base model, while the Pro remains the upgraded version for power users and professionals. That would make room for new devices, like a foldable or whatever else comes next.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/the-iphone-air-is-a-great-advertisement-for-the-iphone-17-201318112.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The iPhone Air is a great advertisement for the iPhone 17
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There’s a marketing practice called Anchoring, where a mediocre product is offered at a similar price to the one the manufacturer actually wants to sell. Sure, you can buy the base model but the next model up, for just $50 more, offers so much more that buying the cheaper one feels like a bad deal. ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/tech-events/apple-iphone-17-event-everything-apple-announced-and-9-things-we-learned" target="_blank" rel="noopener noreferrer">
+        Apple iPhone 17 event –everything Apple announced and 9 things we learned
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Missed Apple&#39;s big &#39;Awe Dropping&#39; event? Here&#39;s everything it announced – including the iPhone 17, Apple Watch 11 and more.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/09/microsoft-to-lessen-reliance-on-openai-by-buying-ai-from-rival-anthropic/" target="_blank" rel="noopener noreferrer">
+        Microsoft to lessen reliance on OpenAI by buying AI from rival Anthropic
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The move to diversify its AI partnerships by tapping the shoulder of OpenAI’s top rival comes as the AI company also pursues independence from Microsoft with its own AI infrastructure and a potential LinkedIn competitor.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:41</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/apple-unveils-final-cut-camera-2-0-with-support-for-new-iphone-17-lineup-camera-features/" target="_blank" rel="noopener noreferrer">
+        Apple unveils Final Cut Camera 2.0 with support for new iPhone 17 lineup camera features
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Right after the “Awe Dropping” event, in which Apple unveiled multiple camera features across the entire iPhone 17 lineup, it also introduced Final Cut Camera 2.0, with full support for everything that had just been announced. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:38</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/watchos-26-adds-four-brand-new-watch-faces-including-an-ultra-exclusive/" target="_blank" rel="noopener noreferrer">
+        watchOS 26 adds four brand new watch faces, including an Ultra exclusive
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Today Apple unveiled brand new Apple Watch Series 11 and Apple Watch Ultra 3 models, showing off some new watch faces in the process. But as revealed in the watchOS 26 RC notes, these faces are coming to older models too. Here are the four new watch faces in watchOS 26. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/iphone-17-pro-mmwave-glass-cutout-new-location/" target="_blank" rel="noopener noreferrer">
+        iPhone 17 Pro reintroduces a glass cutout for 5G mmWave antenna on U.S. models
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple introduced its iPhone 17 lineup today, and the new iPhone 17 Pro models include an interesting new design quirk that the company just got rid of with the iPhone 16 lineup: a glass cutout for 5G mmWave passthrough. This time though, it’s on the top of the phone. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/everything-apple-announced-iphone-air-iphone-17-apple-watches-airpods-pro-3/" target="_blank" rel="noopener noreferrer">
+        Everything Apple Announced: iPhone Air, iPhone 17, Apple Watches, AirPods Pro 3
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The iPhone 17 is here, along with a very thin iPhone Air. There are three new Apple watches to tell you how you&#39;re feeling, and a pair of AirPods Pro 3 that can translate between languages.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/football/bolivia-vs-brazil-live-world-cup-2026-qualifier" target="_blank" rel="noopener noreferrer">
+        Bolivia vs Brazil live stream: how to watch FIFA World Cup 2026 qualifier anywhere online for free
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Watch as Bolivia take on Brazil in a key World Cup qualifier for the home team – here are the Bolivia vs Brazil TV channels, broadcasters and free streams.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/new-salt-typhoon-domains-discovered-dating-back-5-years-businesses-urged-to-check-dns-logs" target="_blank" rel="noopener noreferrer">
+        New Salt Typhoon domains discovered dating back 5 years - businesses urged to check DNS logs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Dozens of domains used by Salt Typhoon and others, as part of C2 infrastructure were discovered.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/hands-on/772556/iphone-17-hands-on-first-look-apple-event-photos-features-price" target="_blank" rel="noopener noreferrer">
+        Here’s a first look at the iPhone 17
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple&#39;s big fall event just wrapped up, and we rushed out of the Steve Jobs Theater to get our hands on the latest iPhones. Here&#39;s a look at the new iPhone 17, Apple&#39;s base model this year, which is joined by the thinner iPhone Air and beefier iPhone 17 Pro and Pro Max - there&#39;s [&amp;amp;#8230;]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/09/apple-unveils-apple-watch-series-11-watch-ultra-3-and-watch-se-3/" target="_blank" rel="noopener noreferrer">
+        Apple unveils Apple Watch Series 11, Watch Ultra 3, and Watch SE 3
+      </a>
+    </h3>
+    
+    
+    <p class="summary">One perk is the Apple Watch Series 11 can alert you to possible hypertension. Apple says it plans to notify over 1 million people with undiagnosed hypertension in the first year alone.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/security/2025/09/as-hackers-exploit-one-high-severity-sap-flaw-company-warns-of-3-more/" target="_blank" rel="noopener noreferrer">
+        SAP warns of high-severity vulnerabilities in multiple products
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Users of SAP&#39;s S/4HANA and NetWeaver products are at risk and should patch soon.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/the-iphone-17s-new-selfie-camera-lets-you-take-group-shots-without-rotating-your-phone-195345475.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The iPhone 17&#39;s new selfie camera lets you take group shots without rotating your phone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you&#39;re trying to decide whether to buy a new iPhone 17 model and looking at the camera updates, there&#39;s mostly good news and a little bad following today&#39;s big event. Apple did upgrade the telephoto camera on the iPhone 17 Pro and Pro Max models and introduced some new pro video features. It also...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/apples-new-wireless-chips-give-it-even-more-control-of-the-iphone-194820274.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Apple&#39;s new wireless chips give it even more control of the iPhone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple introduced two new wireless chips in the iPhone Air, a preview of a world where all the key components of the company&#39;s products are custom-designed. The C1X and N1 chips enable wireless features like 5G connectivity and Wi-Fi 7, building on the original C1 modem the company introduced in the ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/09/hands-on-with-apple-watch-ultra-3-and-airpods-pro-3/" target="_blank" rel="noopener noreferrer">
+        Hands-on with Apple Watch Ultra 3 and AirPods Pro 3
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple just wrapped up its “Awe dropping” event where it unveiled new models of iPhone, Apple Watch, and AirPods Pro. We had the chance to check out all the new hardware following the keynote, including Apple Watch Ultra 3 and AirPods Pro 3. Head below to see shots of the newest Apple products. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/iphone-air-hands-on-the-super-sleek-precursor-to-apples-upcoming-foldable-185851102.html?src=rss" target="_blank" rel="noopener noreferrer">
+        iPhone Air hands-on: The super sleek precursor to Apple’s upcoming foldable
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple might not admit it (at least not yet), but the iPhone Air is more than just a slimmed-down version of the company&#39;s latest handset or a more sophisticated take on its usual Plus model. It&#39;s a super sleek preview of its upcoming foldable. Now this might seem like a stretch and there&#39;s something...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/ios-26-ipados-26-watchos-26-and-macos-26-will-be-released-on-september-15-182024821.html?src=rss" target="_blank" rel="noopener noreferrer">
+        iOS 26, iPadOS 26, watchOS 26 and macOS 26 will be released on September 15
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Alongside all of the new iPhones, Apple Watch models and other hardware, today&#39;s Apple event brought forth news of when you&#39;ll be able to install iOS 26, iPadOS 26, watchOS 26, macOS 26 and visionOS 26. You&#39;ll be able to install these operating systems on compatible devices on September 15 when they...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/earbuds-airpods/apple-didnt-even-mention-the-airpods-pro-3-upgrade-im-most-excited-by-in-its-livestream-a-case-thats-even-harder-to-lose" target="_blank" rel="noopener noreferrer">
+        Apple didn’t even mention the AirPods Pro 3 upgrade I’m most excited by in its livestream: a case that&#39;s even harder to lose
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AirPods Pro 3&#39;s un-loseable case becomes even less loseable and I&#39;m a huge fan.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:09</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2025-09-10 07:00 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
