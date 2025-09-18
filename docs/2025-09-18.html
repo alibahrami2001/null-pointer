@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for September 18, 2025</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/virtual-reality-augmented-reality/meta-connect-2025-7-things-we-learned-from-a-packed-keynote-with-plenty-of-smart-glasses" target="_blank" rel="noopener noreferrer">
+        Meta Connect 2025 – 7 things we learned from a packed keynote with plenty of smart glasses
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Read through for our roundup of the 7 biggest announcements from Meta Connect 2025 so you can get up to speed in no time, including on the new Meta Ray-Ban Display Glasses.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 06:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/virtual-reality-augmented-reality/ray-ban-meta-gen-2-ai-glasses-have-more-flair-battery-life-and-video-power-and-i-think-they-look-good-on-me" target="_blank" rel="noopener noreferrer">
+        Ray-Ban Meta Gen 2 AI glasses have more flair, battery life, and video power, and I think they look good on me
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With improvements all round, the second-generation Meta Ray-Ban smart glasses could prove worthwhile for content creators.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/big-tech/meta-horizon-tv-is-an-entertainment-hub-for-vr-headsets-011216955.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Meta Horizon TV is an entertainment hub for VR headsets
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After revealing his company&#39;s latest augmented reality and smart glasses at Meta Connect this year, Mark Zuckerberg has introduced a new entertainment hub for its Quest headsets called Horizon TV. Zuckerberg said Meta believes watching video content is going to be a huge category for both virtual re...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/780087/meta-connect-2025-ray-ban-oakley-biggest-announcements" target="_blank" rel="noopener noreferrer">
+        Meta Connect 2025: the 6 biggest announcements
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta just showed off all the latest in wearable technology, virtual reality, augmented reality, and more at its annual Connect keynote. In addition to the long-awaited reveal of Meta’s updated Ray-Ban smart glasses, the company had some other exciting surprises to share, too. Here’s a roundup of all...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/780353/meta-ray-ban-display-oakley-vanguard-preorder-price-how-to-buy" target="_blank" rel="noopener noreferrer">
+        Meta&amp;amp;#8217;s Ray-Ban Gen 2 and Oakley Vanguard glasses are available to preorder
+      </a>
+    </h3>
+    
+    
+    <p class="summary">At its Connect keynote on Wednesday, Meta officially introduced the $799.99 Meta Ray-Ban Display, also known as Hypernova. The brand&#39;s new, high-end smart glasses feature an in-lens display you can control with wrist-based gestures via the new Meta Neural Band that&#39;s included. The display pairs with...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/multi-room/want-to-upgrade-your-sonos-style-i-just-discovered-these-speaker-and-soundbar-covers-in-funky-colors-and-i-love-them" target="_blank" rel="noopener noreferrer">
+        Want to upgrade your Sonos&#39; style? I just discovered these speaker and soundbar covers in funky colors, and I love them
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Acoustically transparent, aesthetically tidy</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/17/meta-launches-hyperscape-technology-to-turn-real-world-spaces-into-vr/" target="_blank" rel="noopener noreferrer">
+        Meta launches Hyperscape, technology to turn real-world spaces into VR
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta launches Hyperscape into beta, allowing users to turn real world spaces into digital spaces for VR.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 04:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/780492/meta-quest-headset-horizon-tv-streaming" target="_blank" rel="noopener noreferrer">
+        Meta is bringing an all-in-one movie and TV streaming hub to Quest headsets
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta is making it easier to stream movies and TV shows on your Quest headset. During its Meta Connect keynote on Wednesday, the company announced that it’s rolling out a Horizon TV hub with access to streaming apps like Prime Video, Peacock, Twitch, and — finally — Disney Plus with Hulu and ESPN. Th...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/780256/meta-horizon-worlds-engine-studio" target="_blank" rel="noopener noreferrer">
+        Meta is making the metaverse look better
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta is making improvements to its Roblox-like social platform Horizon Worlds, with the biggest upgrades being the introduction of a new game engine with better graphics as well as the Meta Horizon Studio to help creators to make custom in-game experiences. Meta Horizon Studio is an editor that lets...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:09</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/780044/meta-quest-metaverse-hyperscape-capture-vr" target="_blank" rel="noopener noreferrer">
+        Meta will let you use a Quest VR headset to turn your real-world space into a virtual world
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta is rolling out tech that lets you capture a real-world space with a Quest VR headset so you can create a digital, photorealistic VR replica. The company calls the tech “Hyperscape,” and as part of a gradual rollout beginning today, users will be able to use the beta Hyperscape Capture app with ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:08</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/virtual-reality-augmented-reality/meta-announces-new-oakley-vanguard-smart-glasses-heres-how-theyre-better-than-the-hstn-glasses-for-athletes" target="_blank" rel="noopener noreferrer">
+        Meta announces new Oakley Vanguard smart glasses – here’s how they’re better than the HSTN glasses for athletes
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta debuted new Oakley Vanguard glasses at Meta Connect 2025 to join the Oakley HSTN glasses that launched earlier this year.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/wearables/meta-ray-ban-display-glasses-offer-an-ar-display-for-799-002921925.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Meta Ray-Ban Display glasses offer an AR display for $799
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The rumors were true. Meta&#39;s first pair of AR glasses with a built-in screen is the Meta Ray-Ban Display. They&#39;ll cost $799 and will come to a limited number of brick-and-mortar stores in the United States on September 30. Those retailers include Best Buy, LensCrafters, Ray-Ban and Verizon, and avai...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/17/meta-unveils-new-smart-glasses-with-a-display-and-wristband-controller/" target="_blank" rel="noopener noreferrer">
+        Meta unveils new smart glasses with a display and wristband controller
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta showed off its newest AI-powered smart glasses, which have a display and are controlled by a wristband, at Meta Connect 2025.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 03:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/virtual-reality-augmented-reality/i-wore-meta-ray-ban-display-glasses-they-succeed-in-almost-every-way-google-glass-failed-and-i-cant-wait-to-wear-them-again" target="_blank" rel="noopener noreferrer">
+        I wore Meta Ray-Ban Display Glasses – they succeed in almost every way Google Glass failed and I can&#39;t wait to wear them again
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta Ray-Ban Display Glasses are not AR glasses; they&#39;re an information pipeline that delivers text, photos, videos, directions, and more in a way that finally makes sense.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/780539/meta-ray-ban-display-mark-zuckerberg-interview" target="_blank" rel="noopener noreferrer">
+        I sat down with Mark Zuckerberg to try Meta’s impressive new Ray-Ban Display glasses
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Mark Zuckerberg mostly uses the new Meta Ray-Ban Display glasses to send text messages. Lots of them. He has been wearing the glasses around the office, firing off WhatsApp pings to his execs throughout the day. &#34;I run the company through text messages,&#34; he tells me recently. &#34;Mark is our number one...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 03:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/meta-smart-glasses-ray-ban-display-ray-ban-gen-2-oakley-vanguard/" target="_blank" rel="noopener noreferrer">
+        Meta Goes Even Harder Into Smart Glasses With 3 New Models
+      </a>
+    </h3>
+    
+    
+    <p class="summary">New glasses with a built-in display bring Meta’s vision of the augmented-reality future into focus. The popular Ray-Bans also get an update, and there’s a new Oakley style for action sports.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 03:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/779566/meta-ray-ban-display-hands-on-smart-glasses-price-battery-specs" target="_blank" rel="noopener noreferrer">
+        I regret to inform you Meta’s new smart glasses are the best I’ve ever tried
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I want to preface this hands-on by saying that I&#39;ve been a smart glasses skeptic for many years. In 2019, I even made a two-part mini documentary with a thesis that consumer smart glasses couldn&#39;t happen without massive societal and technological shifts. Well, color me pink and let me find a shoe to...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 03:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/virtual-reality-augmented-reality/meta-ray-ban-gen-2-smart-glasses-are-official-here-are-5-key-upgrades-you-need-to-know-about" target="_blank" rel="noopener noreferrer">
+        Meta Ray-Ban Gen 2 smart glasses are official – here are 5 key upgrades you need to know about
+      </a>
+    </h3>
+    
+    
+    <p class="summary">These new smart specs offer a significant selection of upgrades over the previous model.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:49</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/wearables/oakley-meta-vanguard-are-the-smart-glasses-athletes-might-actually-want-001511094.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Oakley Meta Vanguard are the smart glasses athletes might actually want
+      </a>
+    </h3>
+    
+    
+    <p class="summary">When Meta announced its first pair of Oakley-branded sunglasses, the HSTN frames, earlier this year, it called them &#34;performance AI&#34; glasses even though they only came with modest upgrades compared with Meta&#39;s Ray-Ban lineup. But the new Oakley Meta Vanguard glasses, which were just unveiled at Conn...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/17/meta-unveils-its-new-oakley-meta-vanguard-smart-glasses-for-athletes/" target="_blank" rel="noopener noreferrer">
+        Meta unveils its new Oakley Meta Vanguard smart glasses for athletes
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The new smart glasses are geared toward runners, cyclists, and other athletes.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 03:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/wearables/meta-unveils-its-second-gen-ray-ban-smart-glasses-at-connect-000834325.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Meta unveils its second-gen Ray-Ban smart glasses at Connect
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As expected, Meta has introduced new smart glasses during its Connect conference today. The announcements included a “Gen 2” of the Ray-Ban Meta glasses, which retail starting at $379. There are a bunch of upgrades over the $299 Ray-Ban Meta set that the duo released in 2023. Meta highlighted improv...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/779452/oakley-meta-vanguard-hands-on-smart-glasses-wearables" target="_blank" rel="noopener noreferrer">
+        The new Oakley Meta glasses are what athletes actually want
+      </a>
+    </h3>
+    
+    
+    <p class="summary">When the Oakley Meta HSTN arrived earlier this year, it wasn&#39;t what I thought Oakley-branded smart glasses would be. Sure, they had Oakley&#39;s famous PRIZM lenses, but where was the wraparound design? Where were the athlete-focused features like stronger water and sweat resistance? Confusingly, it fel...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 03:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/780012/meta-ray-ban-gen-2-smart-glasses-connect-2025" target="_blank" rel="noopener noreferrer">
+        Meta’s new Ray-Ban smart glasses have twice the battery life
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta has announced a new generation of its Ray-Ban smart glasses, featuring significantly improved battery life and the ability to record 3K video, which brings them up to par with the Oakley HSTN smart glasses. The new glasses, technically called the Ray-Ban Meta Gen 2, are available to order today...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 03:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/smart-speakers/4-ways-my-amazon-echo-dot-makes-my-day-easier-from-waking-up-to-winding-down" target="_blank" rel="noopener noreferrer">
+        4 ways my Amazon Echo Dot makes my day easier – from waking up to winding down
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Want to make the most out of your Amazon smart speaker? Here are 4 ways it streamlines my daily routine.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/chatgpt/chatgpt-will-guess-if-youre-a-teen-and-start-acting-like-a-chaperone-if-so" target="_blank" rel="noopener noreferrer">
+        ChatGPT will guess if you’re a teen and start acting like a chaperone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">OpenAI is rolling out age prediction and parental controls to give teens a safer version of ChatGPT.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/17/nvidia-ai-chip-challenger-groq-raises-even-more-than-expected-hits-6-9b-valuation/" target="_blank" rel="noopener noreferrer">
+        Nvidia AI chip challenger Groq raises even more than expected, hits $6.9B valuation
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The fresh raise comes in above the rumored numbers when word leaked in July that it was raising.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 03:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/policy/780502/heres-the-jimmy-kimmel-clip-that-got-him-pulled-off-the-air" target="_blank" rel="noopener noreferrer">
+        Here&amp;amp;#8217;s the Jimmy Kimmel clip that got him pulled off the air
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Disney gave in to threats from FCC chairman and occasional speech regulator Brendan Carr this evening, announcing that Jimmy Kimmel Live! would be pulled off the air “indefinitely.” Carr was unhappy that Kimmel characterized the alleged shooter of Charlie Kirk as “anything other than” a member of th...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 03:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/17/photographer-tyler-stalman-reviews-the-iphone-17-iphone-air-and-iphone-17-pro-cameras/" target="_blank" rel="noopener noreferrer">
+        Photographer Tyler Stalman reviews the iPhone 17, iPhone Air, and iPhone 17 Pro cameras
+      </a>
+    </h3>
+    
+    
+    <p class="summary">In a new video shot entirely on the iPhone 17 Pro and iPhone 17 Pro Max, photographer Tyler Stalman takes an in-depth look at the cameras on the new iPhone 17 lineup, with a special focus on the Pro models. Here’s what he found. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 03:09</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/17/eric-bakers-long-winding-road-to-taking-stubhub-public/" target="_blank" rel="noopener noreferrer">
+        Eric Baker’s long, winding road to taking StubHub public
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Although StubHub&#39;s shares fell 6% in first day of trading, the IPO is testament to the co-founder&#39;s 25-year effort.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 03:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/ryzen-ai-max-395-cpu-could-be-amds-sleeper-hit-against-nvidias-ai-dominance-as-nearly-30-strix-halo-mini-ai-workstation-models-hit-the-market-including-some-rather-funky-ones" target="_blank" rel="noopener noreferrer">
+        Ryzen AI Max+ 395 CPU could be AMD&#39;s sleeper hit against Nvidia&#39;s AI dominance, as nearly 30 Strix Halo mini AI workstation models hit the market - including some rather funky ones
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AMD’s Ryzen AI Max+ 395 powers a wave of mini AI workstations and laptops, promising affordability and efficiency, but untested performance claims.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:57</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/tesla-exec-says-the-company-will-redesign-door-handles-that-reportedly-pose-safety-risks-225500245.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Tesla exec says the company will redesign door handles that reportedly pose safety risks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Yesterday, the US National Highway Traffic Safety Administration opened an investigation into Tesla following a report by Bloomberg that its electric door handles could stop working when a vehicle&#39;s low-voltage battery fails. That created a safety hazard that the publication found could trap passeng...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/pc/ambrosia-sky-is-an-essay-on-death-masquerading-as-a-sci-fi-cleaning-sim-223022816.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Ambrosia Sky is an essay on death masquerading as a sci-fi cleaning sim
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Dalia is a death cleaner. Death cleaning, as we know it, is the process of sanitizing and tidying the spaces where people take their final breaths, sometimes long after their bodies have begun to decompose. It’s a job here on Earth in the year 2025, but Dalia’s version of death cleaning takes place ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/17/heres-apples-official-method-to-charge-your-apple-watch-faster/" target="_blank" rel="noopener noreferrer">
+        Here’s Apple’s official method to charge your Apple Watch faster
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With iOS 18, Apple introduced a “Slow Charger” warning for iPhone users looking to diagnose or improve the charging speed of their iPhones. Now, the same warning is coming to watchOS 26. Here’s how to find it. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 02:09</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/coffee-machines/delonghi-dedica-duo-vs-delonghi-dedica-style-which-is-the-right-entry-level-espresso-machine-for-you" target="_blank" rel="noopener noreferrer">
+        De&#39;Longhi Dedica Duo vs De&#39;Longhi Dedica Style – which is the right entry-level espresso machine for you?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for a compact, entry-level coffee machine? I&#39;ll help you pick the best one for your kitchen.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/science/2025/09/distinct-digits-may-have-evolved-by-using-dna-that-makes-the-cloaca/" target="_blank" rel="noopener noreferrer">
+        You can hold on to your butts thanks to DNA that evolved in fish
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Making digits seems to involve gene activity that was needed to make a cloaca.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:49</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/ios-26-has-arrived-see-if-your-iphone-is-eligible-for-the-free-update-191854431.html?src=rss" target="_blank" rel="noopener noreferrer">
+        iOS 26 has arrived: See if your iPhone is eligible for the free update
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Have you downloaded iOS 26 on your iPhone yet? The update became available earlier this week, along with iPadOS 26 and Apple&#39;s other operating system updates. However, that&#39;s only if you have an eligible device. If your phone is compatible with the latest OS, you&#39;ll notice substantial changes when y...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:46</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/17/tim-cook-windsor-castle-state-banquet/" target="_blank" rel="noopener noreferrer">
+        Tim Cook attends Windsor Castle State Banquet as part of Trump’s visit to the UK
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple CEO Tim Cook was among multiple high-profile guests at a state dinner at Windsor Castle on Wednesday, joining King Charles III and Donald Trump. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/ai/2025/09/white-house-officials-reportedly-frustrated-by-anthropics-law-enforcement-ai-limits/" target="_blank" rel="noopener noreferrer">
+        White House officials reportedly frustrated by Anthropic’s law enforcement AI limits
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Officials say Claude chatbot usage policies block FBI, Secret Service contractors&#39; work.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/netflix/the-3-best-new-netflix-shows-that-were-added-in-september-2025-including-an-emmy-winning-sci-fi-thriller" target="_blank" rel="noopener noreferrer">
+        The 3 best new Netflix shows that were added in September 2025 – including an Emmy-winning sci-fi thriller
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nine shows were added to Netflix in September but these three are the ones I&#39;m most excited for.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/vehicle-tech/hybrid-electric-vehicles/a-chinese-robot-vacuum-company-wants-to-take-on-bugatti-with-an-upcoming-hyper-ev-but-its-off-to-a-shaky-start-with-these-ridiculous-renders" target="_blank" rel="noopener noreferrer">
+        A Chinese robot vacuum company wants to take on Bugatti with an upcoming hyper-EV – but it’s off to a shaky start with these ridiculous renders
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From air purifiers to the fastest EV in the world? This company has big Dreames.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/health-fitness/smartwatches/5-reasons-to-buy-the-new-garmin-venu-4-instead-of-an-apple-watch-series-11" target="_blank" rel="noopener noreferrer">
+        5 reasons to buy the new Garmin Venu 4 – instead of an Apple Watch Series 11
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Garmin just surprise-dropped the Venu 4 – here&#39;s a quintet of features it packs that gives it an edge over the Apple Watch.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/vacuums/dyson-is-about-to-unveil-auto-empty-docks-for-its-stick-vacs-heres-why-it-could-be-a-game-changer" target="_blank" rel="noopener noreferrer">
+        Dyson is about to unveil auto-empty docks for its stick vacs – here&#39;s why it could be a game changer
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Dyson is hopping on the auto-empty bandwagon, and I&#39;m not mad about it.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/general/democrats-are-investigating-trump-crypto-advisor-david-sacks-over-a-possible-sge-violation-215758087.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Democrats are investigating Trump crypto advisor David Sacks over a possible SGE violation
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Senator Elizabeth Warren (D-MA) and Representative Melanie Stansbury (D-N.M.) are leading a group of congressional Democrats in investigating White House Special Advisor David Sacks for possibly serving in his position for longer than he&#39;s allowed. Sacks, a former PayPal executive and venture capita...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:28</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/17/irregular-raises-80-million-to-secure-frontier-ai-models/" target="_blank" rel="noopener noreferrer">
+        Irregular raises $80 million to secure frontier AI models
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Irregular, the AI security startup, now has a valuation of $450 million, a source close to the deal told TechCrunch.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/health/2025/09/rfk-jrs-anti-vaccine-delusions-not-science-steer-cdc-now-ex-director-testifies/" target="_blank" rel="noopener noreferrer">
+        RFK Jr.’s anti-vaccine delusions—not science—steer CDC now, ex-director testifies
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ex-CDC director warns senators about RFK Jr.&#39;s anti-vaccine agenda.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/17/ben-stiller-apple-tv-star-new-series/" target="_blank" rel="noopener noreferrer">
+        Ben Stiller to star in new Apple TV+ limited series, after stepping back from Severance directing role
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple TV+ is staying in the Ben Stiller business. After reeling in the success of Severance, which Stiller was intimately involved with in the first two seasons, the streamer has managed to sign up Stiller in a rare acting capacity. He will star, alongside Jessica Chastain, in a new eight-part limit...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/17/whatsapp-message-reminders/" target="_blank" rel="noopener noreferrer">
+        WhatsApp for iOS gets message reminders
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A few weeks ago, WhatsApp started testing a feature that would let users set reminders for incoming messages. This feature is now live. Here’s how it works. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/ios-26-is-finally-here-everything-to-know-about-the-free-iphone-software-update-135749206.html?src=rss" target="_blank" rel="noopener noreferrer">
+        iOS 26 is finally here: Everything to know about the free iPhone software update
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The new iOS 26 is finally available to download on your iPhone — have you done it yet? You&#39;ll notice a slew of changes when you do, including a new clear design language that Apple dubs Liquid Glass. The translucent look can be found within apps as well as your lock and home screens. (If you don&#39;t l...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/shinyhunters-claims-15-billion-salesforce-records-stolen-in-drift-hacks/" target="_blank" rel="noopener noreferrer">
+        ShinyHunters claims 1.5 billion Salesforce records stolen in Drift hacks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The ShinyHunters extortion group claims to have stolen over 1.5 billion Salesforce records from 760 companies using compromised Salesloft Drift OAuth tokens. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 00:41</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/rgg-accidentally-leaked-that-its-working-on-yakuza-kiwami-3-211036458.html?src=rss" target="_blank" rel="noopener noreferrer">
+        RGG accidentally leaked that it&#39;s working on Yakuza Kiwami 3
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Get ready for a return to the life of Kazuma Kiryu, because it seems that a remake of Yakuza 3 is on the way. The leak was discovered on developer Ryu Ga Gotoku Studios&#39; website. Fans noticed that there was an entry for Yakuza Kiwami 3 alongside the listings for the remakes of the first two Yakuza g...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/the-doge-subcommittee-hearing-on-weather-modification-was-a-nest-of-conspiracy-theorizing/" target="_blank" rel="noopener noreferrer">
+        The DOGE Subcommittee Hearing on Weather Modification Was a Nest of Conspiracy Theorizing
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A House Oversight Committee hearing produced a flood of bizarre claims about cloud seeding, chemtrails, and solar geoengineering. Proven, human-driven changes to the weather were dismissed.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 00:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/you-can-plug-25-usb-devices-into-this-asrock-atx-motherboard-yes-25-shame-10-of-them-are-usb-2-0-an-abomination-in-2025" target="_blank" rel="noopener noreferrer">
+        You can plug 25 USB devices into this ASRock ATX motherboard - shame 10 of them are USB 2.0, an abomination in 2025
+      </a>
+    </h3>
+    
+    
+    <p class="summary">ASRock X870 LiveMixer WiFi motherboard arrives with dual USB4 support and 25 USB ports - although ten of those are USB 2.0.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/cameras/drones/dji-mini-5-pro-vs-dji-mini-4k-5-reasons-why-you-should-spend-extra-on-the-pro-model" target="_blank" rel="noopener noreferrer">
+        DJI Mini 5 Pro vs DJI Mini 4K – 5 reasons why you should spend extra on the pro model
+      </a>
+    </h3>
+    
+    
+    <p class="summary">DJI&#39;s Mini 5 Pro and Mini 4K both shoot 4K video and weigh less than 250g, but that&#39;s about where the similarities end. Here are the key differences and which beginner drone I&#39;d recommend buying</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/save-big-on-our-favorite-tcl-televisions/" target="_blank" rel="noopener noreferrer">
+        Big Deals on Big TCL TVs—Some Of Our Top Tested Models Are Nearly 50% Off
+      </a>
+    </h3>
+    
+    
+    <p class="summary">TCL is offering deep discounts across its mini LED range, but our favorites are at the top end.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 00:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/17/heres-how-the-iphone-17-pro-vapor-chamber-actually-works/" target="_blank" rel="noopener noreferrer">
+        Here’s how the iPhone 17 Pro vapor chamber actually works
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Following multiple years of rumors, this was the year that Apple’s Pro iPhones finally got a vapor chamber to help dissipate heat. If you’ve never really looked into or understood how this component works, the video below will tell you everything you need to know. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/17/iphone-sales-boost-iphone-fold-production/" target="_blank" rel="noopener noreferrer">
+        Apple prepares suppliers for an iPhone sales boost next year, fueled by the new foldable model
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple is apparently preparing its supply chain for an uptick in new iPhone sales next year, according to a new report by Nikkei. The company has apparently targeted sales of about 95 million iPhone 18 models in 2026, noting that the new lineup won’t arrive until the fall. While the new foldable mode...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/earbuds-airpods/one-handy-feature-means-these-akg-headphones-just-became-my-go-to-for-gaming-and-movies-not-just-music" target="_blank" rel="noopener noreferrer">
+        One handy feature means these AKG headphones just became my go-to for gaming and movies, not just music
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Top-tier cans that go some way to justifying the price</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/binaural-beats-calm-my-anxious-adhd-brain-but-is-there-any-science-to-it" target="_blank" rel="noopener noreferrer">
+        Binaural beats calm my anxious ADHD brain, but is there any science to it?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">People swear binaural beats ease anxiety, boost focus and help them get to sleep. Here’s what the science says about this cool brain illusion.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gaming/2025/09/thirty-years-later-simcity-2000-hasnt-changed-but-i-have/" target="_blank" rel="noopener noreferrer">
+        Why, as a responsible adult, SimCity 2000 hits differently
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After years as a parent and homeowner, I sympathize more with my virtual citizens.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/17/tesla-is-redesigning-its-door-handles-following-safety-probe-bloomberg-investigation/" target="_blank" rel="noopener noreferrer">
+        Tesla is redesigning its door handles following safety probe, Bloomberg investigation
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Chief designer Franz von Holzhausen said Wednesday that the company is &#34;working on&#34; combining the electronic and manual door releases after owners have reported getting trapped.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/windows-laptops/best-buy-slashes-usd350-off-this-top-rated-microsoft-surface-pro-bundle" target="_blank" rel="noopener noreferrer">
+        Best Buy slashes $350 off this top-rated Microsoft Surface Pro bundle
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Snap up the Microsoft Surface Pro with a keyboard cover for only $999.99 at Best Buy.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/17/apple-promises-software-update-to-fix-very-rare-iphone-air-camera-glitch/" target="_blank" rel="noopener noreferrer">
+        Apple promises software update to fix ‘very rare’ iPhone Air camera glitch
+      </a>
+    </h3>
+    
+    
+    <p class="summary">My friend Henry Casey at CNN Underscored published his iPhone Air review this afternoon, and he noticed an odd imaging problem with the camera. Apple says a fix is coming in a future software update. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/17/heres-everything-new-in-the-messages-app-with-ios-26/" target="_blank" rel="noopener noreferrer">
+        Here’s everything new for the Messages app in iOS 26
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iOS 26 is the latest major iPhone update, packing big changes for Apple Wallet, CarPlay, Apple Music, and a variety of new features for the Messages app too. Here’s what’s new in the Messages app with iOS 26. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/17/iphone-17-battery-life-test-iphone-air-longevity/" target="_blank" rel="noopener noreferrer">
+        iPhone 17 battery life test shows strong results across the lineup
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We’ve got our first battery life shootout results for the new iPhone 17, iPhone 17 Pro and iPhone Air lineup, courtesy of The Tech Chap. At least in this test comprising continuous streaming YouTube video playback on Wi-Fi and cellular, all the new iPhone models perform well, and are a lot closer to...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/this-tiny-magnetic-ssd-snaps-onto-your-laptop-and-blasts-out-mind-bending-40-gbps-transfers-without-breaking-a-sweat" target="_blank" rel="noopener noreferrer">
+        This tiny magnetic SSD snaps onto your laptop and blasts out mind-bending 40Gbps transfers without breaking a sweat
+      </a>
+    </h3>
+    
+    
+    <p class="summary">MSI’s Datamag SSD blends USB4 speeds, magnetic mounting, and 4TB capacity, aiming for creators but requiring independent performance validation.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/gaming-accessories/im-not-worried-bloodlines-2-doesnt-appear-to-be-an-rpg-like-the-original-heres-why-you-shouldnt-be-either" target="_blank" rel="noopener noreferrer">
+        I’m not worried Bloodlines 2 doesn’t appear to be an RPG like the original – here’s why you shouldn’t be either
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The long awaited sequel might have taken a stake to its RPG heart – but it looks like there’s still plenty to sink your fangs into.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/i-tested-samsungs-flagship-and-most-affordable-2025-oled-tvs-side-by-side-and-i-was-surprised-by-the-results" target="_blank" rel="noopener noreferrer">
+        I tested Samsung&#39;s flagship and most affordable 2025 OLED TVs side-by-side, and I was surprised by the results
+      </a>
+    </h3>
+    
+    
+    <p class="summary">How does an entry-level OLED compare to a flagship OLED from the same brand? I tested Samsung&#39;s 2025 TVs side by side to find out.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/apple-music/automix-is-the-apple-music-feature-that-made-me-love-listening-to-music-on-my-iphone-again" target="_blank" rel="noopener noreferrer">
+        Automix is the Apple Music feature that made me love listening to music on my iPhone again
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AutoMix comes as an upgrade to Apple Music as part of the new iOS 26 update, and it sounds great.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/17/kleiner-perkins-backed-voice-ai-startup-keplar-aims-to-replace-traditional-market-research/" target="_blank" rel="noopener noreferrer">
+        Kleiner Perkins-backed voice AI startup Keplar aims to replace traditional market research
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The two-year-old startup raised a $3.2 million seed round led by Kleiner Perkins.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/17/meet-macroscope-an-ai-tool-for-understanding-your-code-base-fixing-bugs/" target="_blank" rel="noopener noreferrer">
+        Meet Macroscope: an AI tool for understanding your code base, fixing bugs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">On Wednesday, former Twitter head of product Kayvon Beykpour announced the launch of Macroscope, an AI system aimed at developers and product leaders that summarizes updates to a codebase and catches bugs, among other things.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/17/china-tells-its-tech-companies-they-cant-buy-ai-chips-from-nivida/" target="_blank" rel="noopener noreferrer">
+        China tells its tech companies they can’t buy AI chips from Nivida
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After strongly discouraging tech companies from buying Nivdia&#39;s AI chips in August, the country is now banning the practice outright.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:09</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/17/iphone-17-pro-vs-iphone-15-pro-worth-going-new-after-two/" target="_blank" rel="noopener noreferrer">
+        iPhone 17 Pro vs iPhone 15 Pro: Worth going new after two?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple’s iPhone 17 Pro vs. iPhone 15 Pro: what does a two-year upgrade get you? iPhone 17 Pro is a bold update that goes even more ‘pro,’ but if you’re considering an upgrade from the iPhone 15 Pro, here are the key differences to know. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/nvidia-and-a-huawei-subsidiary-shared-a-building-now-its-being-probed-for-chinese-espionage" target="_blank" rel="noopener noreferrer">
+        Nvidia and a Huawei subsidiary shared a building - and now it&#39;s being probed for Chinese espionage
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Futurewei held the same space as Nvidia for years despite Huawei being flagged as a threat to national security.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/us-pc-shipments-fell-in-q2-2025-as-businesses-upgrade-ahead-of-windows-10-end-of-life-deadline-but-doubts-remain-over-ai-use" target="_blank" rel="noopener noreferrer">
+        US PC shipments fall as firms upgrade ahead of Windows 10 End of Life deadline – but doubts remain over AI use
+      </a>
+    </h3>
+    
+    
+    <p class="summary">US PC shipments slip in Q2 2025 year on year as vendors worked through inventory built up to avoid tariff exposure.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/susan-monarez-fired-cdc-director-senate-testimony/" target="_blank" rel="noopener noreferrer">
+        Fired CDC Director Says RFK Jr. Pressured Her to Blindly Approve Vaccine Changes
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Susan Monarez told a Senate committee that Robert F. Kennedy Jr. demanded she dismiss career officials without cause—and accept vaccine recommendations regardless of whether science backed them up.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 22:27</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/social-media/house-committee-asks-discord-valve-twitch-and-reddit-to-testify-on-online-radicalization-184100470.html?src=rss" target="_blank" rel="noopener noreferrer">
+        House committee asks Discord, Valve, Twitch and Reddit to testify on online radicalization
+      </a>
+    </h3>
+    
+    
+    <p class="summary">House Oversight and Government Reform Committee Chairman James Comer (R-KY) has asked the CEOs of Discord, Twitch, Valve and Reddit to testify at a hearing on online radicalization. The hearing will be held on October 8, 2025, and is in direct response to the assassination of political activist Char...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/17/the-iphone-airs-real-breakthrough-is-its-battery/" target="_blank" rel="noopener noreferrer">
+        The iPhone Air’s real breakthrough is its battery
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple&#39;s slimmest iPhone uses a &#34;revolutionary&#34; battery design that allows the cell to fill more space within the device, boosting overall energy storage.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 22:08</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/video-games/playstation/playstation-5-digital-edition-with-1tb-ssd-downgraded-to-825gb-listed-at-the-same-price-cfi-2116-revision-emerges-overseas-on-amazon" target="_blank" rel="noopener noreferrer">
+        PlayStation 5 Digital Edition with 1TB SSD downgraded to 825GB listed at the same price — CFI-2116 revision emerges overseas on Amazon
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The new revision (CFI-2116) of the PlayStation 5 Digital Edition has been listed on Amazon Italy, Amazon France, and Amazon Germany at the same MSRP.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 22:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://thehackernews.com/2025/09/ta558-uses-ai-generated-scripts-to.html" target="_blank" rel="noopener noreferrer">
+        TA558 Uses AI-Generated Scripts to Deploy Venom RAT in Brazil Hotel Attacks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The threat actor known as TA558 has been attributed to a fresh set of attacks delivering various remote access trojans (RATs) like Venom RAT to breach hotels in Brazil and Spanish-speaking markets. Russian cybersecurity vendor Kaspersky is tracking the activity, observed in summer 2025, to a cluster...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Hacker News</span>
+      
+      
+      
+      <span class="time">🕒 22:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/motorola-phones/the-best-cheap-phone-ive-tested-in-years-the-motorola-edge-60-just-earned-a-spot-in-our-best-cheap-phones-guide-heres-why" target="_blank" rel="noopener noreferrer">
+        &#39;The best cheap phone I&#39;ve tested in years&#39;: the Motorola Edge 60 just earned a spot in our best cheap phones guide – here’s why
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Motorola Edge 60 is one of our favorite cheap Androids of 2025 – here’s why.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:49</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2025-09-18 06:21 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
