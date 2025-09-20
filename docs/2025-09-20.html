@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for September 20, 2025</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/gemini/how-to-share-your-gemini-gems-custom-ai-experts-with-all-your-friends" target="_blank" rel="noopener noreferrer">
+        How to share your Gemini Gems custom AI experts with all your friends
+      </a>
+    </h3>
+    
+    
+    <p class="summary">4 ways to best use custom Gemini Gems.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/19/trump-hits-h-1b-visas-with-100000-fee-targeting-the-program-that-launched-elon-musk-and-instagram/" target="_blank" rel="noopener noreferrer">
+        Trump hits H-1B visas with $100,000 fee, targeting the program that launched Elon Musk and Instagram
+      </a>
+    </h3>
+    
+    
+    <p class="summary">President Trump signed a proclamation Friday requiring employers to pay a hefty $100,000 fee for new H-1B visa applications—an enormous jump from the current $215 lottery registration fee—targeting the very program that helped create some of Silicon Valley&#39;s biggest success stories.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 05:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/space/2025/09/starship-will-soon-fly-over-towns-and-cities-but-will-dodge-the-biggest-ones/" target="_blank" rel="noopener noreferrer">
+        Starship will soon fly over towns and cities, but will dodge the biggest ones
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Starship&#39;s next chapter will involve launching over Florida and returning over Mexico.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 03:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/thrustmaster-t248r-review" target="_blank" rel="noopener noreferrer">
+        If you thought belt-driven racing wheels were dead, the Thrustmaster T248R would like a word
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Great pedals, quieter shifting, and a materials upgrade give the affordable belt-driven Thrustmaster T248R a place at the table for anyone who doesn’t want to spend big on direct drive</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/claude/anthropics-ceo-gives-a-25-percent-chance-things-go-really-really-badly-with-ai" target="_blank" rel="noopener noreferrer">
+        Anthropic&#39;s CEO gives &#39;a 25% chance things go really, really badly&#39; with AI
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Anthropic CEO Dario Amodei says there’s a 1-in-4 chance AI ends badly for humanity.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/robot-vacuums/ive-tested-and-loved-6-ecovacs-deebot-robot-vacuums-the-t50-max-pro-omni-has-been-the-first-to-disappoint-me" target="_blank" rel="noopener noreferrer">
+        I’ve tested and loved 6 Ecovacs Deebot robot vacuums – the T50 Max Pro Omni has been the first to disappoint me
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I’ve never had cause for complaint when testing a Deebot, but Ecovacs should pull the T50 Max Pro Omni off shelves.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/dbrands-never-yellowing-ghost-case-quality-screen-protectors-will-level-up-your-iphone-17/" target="_blank" rel="noopener noreferrer">
+        dbrand’s never-yellowing Ghost case &amp;amp; quality screen protectors will level up your iPhone 17
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It’s iPhone season once again – and no matter which of the four new iPhone models you’re buying, dbrand has something for you. Their ghost cases, grip cases, and prism screen protectors are a best-in-class way to protect your new iPhone – and they’re all available to order right now. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 03:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/782218/trump-claims-the-us-is-about-to-get-a-tremendous-fee-for-taking-tiktok-out-of-china" target="_blank" rel="noopener noreferrer">
+        Trump claims the US is about to get a tremendous fee for taking TikTok out of China
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A 10 percent stake in Intel, 15 percent of Nvidia’s China sales, a “golden share” of Nippon Steel — what price will Trump extract next in exchange for favorable treatment? Well, The Wall Street Journal is reporting that the Trump Administration is “expected to collect a multibillion-dollar fee” in e...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/social-media/us-and-china-agree-to-agree-on-a-tiktok-deal-231254041.html?src=rss" target="_blank" rel="noopener noreferrer">
+        US and China agree to agree on a TikTok deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The long-promised deal to &amp;amp;quot;save&amp;amp;quot; TikTok remains elusive even as the US and China seem to be inching toward an agreement. On Friday, President Donald Trump did little to clarify where the deal currently stands following a call with Chinese President Xi Jinping. In a post on Truth Social, Tr...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/vehicle-tech/hybrid-electric-vehicles/pop-out-car-door-handles-could-finally-disappear-for-good-as-tesla-responds-to-global-backlash-about-their-safety" target="_blank" rel="noopener noreferrer">
+        Pop-out car door handles could finally disappear for good –as Tesla responds to global backlash about their safety
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tesla has responded to a new investigation and potential Chinese ban on pop-up door handles, but I want to see them disappear for good.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/space/2025/09/amid-budget-uncertainty-nasa-gets-some-good-news-use-house-funding-levels/" target="_blank" rel="noopener noreferrer">
+        In a win for science, NASA told to use House budget as shutdown looms
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The House budget still cuts science at NASA, but not as deeply as the White House sought.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 02:08</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/ready-to-download-ios-26-see-if-your-iphone-is-eligible-for-the-free-update-first-191854926.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Ready to download iOS 26? See if your iPhone is eligible for the free update first
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Have you checked to see if your iPhone is eligible for the new iOS 26 update? It became available earlier this week — here&#39;s how to install it if you haven&#39;t yet. The new OS was released on Monday, along with iPadOS 26 and Apple&#39;s other operating system updates. If your phone is compatible with the ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/782194/windows-11-share-with-copilot-button" target="_blank" rel="noopener noreferrer">
+        Windows 11 is adding another Copilot button nobody asked for
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Have enough Copilot buttons in your life? No you don’t — have another one! This one pops up in the latest Windows 11 Insider Preview when mousing over an open app in your taskbar; it lets you share the contents with Copilot Vision. Want to know who is celebrating in that dogpile on the mound, [&amp;amp;#823...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 01:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/space/2025/09/after-a-very-slow-start-europes-reusable-rocket-program-shows-signs-of-life/" target="_blank" rel="noopener noreferrer">
+        After a very slow start, Europe’s reusable rocket program shows signs of life
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Although Themis is making progress, the program is several years behind schedule.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/nvidias-revolutionary-memory-format-for-ai-gpu-could-come-to-other-platforms" target="_blank" rel="noopener noreferrer">
+        Nvidia&#39;s revolutionary memory format for AI GPUs could come to other platforms, rivaling LPDDR6 on the horizon
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nvidia shifts from SOCAMM 1 to SOCAMM 2, targeting faster AI memory performance, broader suppliers, and possible JEDEC standardization efforts.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/streaming/782191/ex-disney-ceo-michael-eisner-calls-the-fccs-threats-out-of-control-intimidation" target="_blank" rel="noopener noreferrer">
+        Ex-Disney CEO Michael Eisner calls the FCC’s threats ‘out-of-control intimidation’
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Michael Eisner, Disney&#39;s former CEO who ran the company for 21 years and oversaw its acquisition of ABC in 1995, does not think his successor, Bob Iger, made the right decision in moving to put Jimmy Kimmel Live! on indefinite pause following threats from Trump-appointed FCC chairman Brendan Carr. I...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 01:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/entertainment/f1s-filmmaking-secrets-revealed-heres-how-sonys-custom-camera-shot-those-hyper-realistic-in-car-scenes" target="_blank" rel="noopener noreferrer">
+        F1’s filmmaking secrets revealed – here&#39;s how Sony’s custom camera shot those hyper-realistic in-car scenes
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Sony’s head of cinema cameras reveals how his team marries art with technology when working on movies like Top Gun: Maverick, Avatar and F1.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/video-games/xbox/microsoft-hikes-xbox-series-x-price-again-to-usd649-second-price-increase-of-2025-comes-as-shifting-tariffs-continue-to-plague-tech-prices" target="_blank" rel="noopener noreferrer">
+        Microsoft hikes Xbox Series X price, again, to $649 — second price increase of 2025 comes as shifting tariffs continue to plague tech prices
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft jacked up the price of its Xbox Series lineup by $20 to $50, placing the Series X at a cool $649.99.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 01:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/apple-releases-watchos-26-0-1-but-very-few-users-will-get-it/" target="_blank" rel="noopener noreferrer">
+        Apple releases watchOS 26.0.1, but very few users will get it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple is rolling out a watchOS 26.0.1 build that appears to be specific to the . Here’s what’s new. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:19</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/health/2025/09/bonkers-cdc-vaccine-meeting-ends-with-vote-to-keep-covid-shot-access/" target="_blank" rel="noopener noreferrer">
+        Bonkers CDC vaccine meeting ends with vote to keep COVID shot access
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A push to require prescriptions for every COVID shot failed in a split vote.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/rfk-jrs-vaccine-panel-votes-down-its-own-proposal-to-require-prescriptions-for-covid-19-shots/" target="_blank" rel="noopener noreferrer">
+        RFK Jr.’s Vaccine Panel Votes Down Its Own Proposal to Require Prescriptions for Covid-19 Shots
+      </a>
+    </h3>
+    
+    
+    <p class="summary">In a chaotic meeting, ACIP voted not to recommend a prescription requirement for Covid-19 vaccines. Some panelists seemed unaware of the point of the meeting, while others went on strange tangents.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:09</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/earbuds-airpods/want-to-get-into-audiophile-grade-sound-id-start-with-these-excellent-yet-affordable-wired-earbuds" target="_blank" rel="noopener noreferrer">
+        Want to get into audiophile-grade sound? I’d start with these excellent yet affordable wired earbuds
+      </a>
+    </h3>
+    
+    
+    <p class="summary">These affordable IEMs are the ultimate buy for music lovers that wants to hear every detail – here’s why.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/final-cut-pro-camera-apps-update-iphone-17-support/" target="_blank" rel="noopener noreferrer">
+        Apple updates Final Cut Pro and Camera apps with full iPhone 17 support
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Today, Apple rolled out an update to its Final Cut apps, with full support for the new camera features of the iPhone 17, iPhone Air, and iPhone 17 Pro. Here’s what’s new more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/ios-26-is-ready-to-download-everything-to-know-about-the-free-iphone-software-update-135749287.html?src=rss" target="_blank" rel="noopener noreferrer">
+        iOS 26 is ready to download: Everything to know about the free iPhone software update
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Are you using the new iOS 26 yet? You can download it on your iPhone now, and once you do, you&#39;ll see tons of new changes, including a clear design called Liquid Glass. The translucent look can be found within apps as well as your lock and home screens. (You can&#39;t turn it off, but you can reduce the...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.schneier.com/blog/archives/2025/09/friday-squid-blogging-giant-squid-vs-blue-whale.html" target="_blank" rel="noopener noreferrer">
+        Friday Squid Blogging: Giant Squid vs. Blue Whale
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A comparison aimed at kids.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Schneier on Security</span>
+      
+      
+      
+      <span class="time">🕒 00:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/19/why-californias-sb-53-might-provide-a-meaningful-check-on-big-ai-companies/" target="_blank" rel="noopener noreferrer">
+        Why California’s SB 53 might provide a meaningful check on big AI companies
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Equity debates California&#39;s new AI safety bill and why it has a better shot at becoming law.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/pc-gaming/dying-light-the-beast-shows-borderlands-4-how-its-done-with-stellar-pc-optimization-and-exposes-gearbox-ceos-tone-deaf-response" target="_blank" rel="noopener noreferrer">
+        Dying Light: The Beast shows Borderlands 4 how it’s done with stellar PC optimization – and exposes Gearbox CEO&#39;s tone-deaf response
+      </a>
+    </h3>
+    
+    
+    <p class="summary">In a time of bad PC ports and CEOs like Gearbox&#39;s Randy Pitchford hitting back at gamers for bad Borderlands 4 performance, it&#39;s great to see Techland&#39;s Dying Light: The Beast stand in a positive light.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/19/nvidia-eyes-500m-investment-into-self-driving-tech-startup-wayve/" target="_blank" rel="noopener noreferrer">
+        Nvidia eyes $500M investment into self-driving tech startup Wayve
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nvidia CEO Jensen Huang took his first ride in a Wayve-equipped self-driving car through Central London.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/daily-september-19-2025/" target="_blank" rel="noopener noreferrer">
+        9to5Mac Daily: September 19, 2025 – iPhone 17 launch, more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Listen to a recap of the top stories of the day from 9to5Mac. 9to5Mac Daily is available on iTunes and Apple’s Podcasts app, Stitcher, TuneIn, Google Play, or through our dedicated RSS feed for Overcast and other podcast players. Sponsored by iMazing: iMazing lets you back up, transfer, and manage y...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/tech-industry/openai-reportedly-poaching-apple-talent-to-build-first-consumer-device" target="_blank" rel="noopener noreferrer">
+        OpenAI is reportedly poaching Apple talent to build its first consumer hardware device — could potentially be a smart speaker
+      </a>
+    </h3>
+    
+    
+    <p class="summary">OpenAI has signed a manufacturing agreement with Luxshare to build its first consumer hardware product, according to a report by The Information on September 19.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 00:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/culture/2025/09/oklahomas-big-tv-nudes-scandal-was-a-jackie-chan-movie-on-a-samsung-streaming-service/" target="_blank" rel="noopener noreferrer">
+        Oklahoma’s big “TV nudes” scandal was… a Jackie Chan movie on a Samsung streaming service
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Smart TVs strike again.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/peripherals/how-often-should-you-expect-to-replace-your-headset-keyboard-or-mouse-buying-tips-for-picking-longer-lasting-gear" target="_blank" rel="noopener noreferrer">
+        How often should you expect to replace your headset, keyboard, or mouse — buying tips for picking longer-lasting gear
+      </a>
+    </h3>
+    
+    
+    <p class="summary">How long should your gaming headset, keyboard, and mouse last before you should think about replacing them?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 00:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/19/crack-the-code-to-startup-traction-with-insights-from-chef-robotics-nea-and-iconiq-at-techcrunch-disrupt-2025/" target="_blank" rel="noopener noreferrer">
+        Cracking product-market fit: Lessons from founders and investors at TechCrunch Disrupt 2025
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Rajat Bhageria (Chef Robotics), Ann Bordetsky (NEA), and Murali Joshi (ICONIQ) share actionable strategies for finding product-market fit at TechCrunch Disrupt 2025.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gaming/2025/09/microsoft-raises-xbox-console-prices-for-the-second-time-this-year/" target="_blank" rel="noopener noreferrer">
+        Microsoft raises Xbox console prices for the second time this year
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Asking prices for some models are up 33 percent in less than a year.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/iphone-17-pro-teardown-reveals-larger-camera-sensors-and-a-repair-friendly-design/" target="_blank" rel="noopener noreferrer">
+        iPhone 17 Pro teardown reveals larger camera sensors, and a repair-friendly design
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Let the teardowns begin. Following yesterday’s peek at the , the first teardown of the new iPhone 17 Pro is already up, and it reveals some interesting tidbits about its internal architecture. Watch it below. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/science/2025/09/chimps-consume-alcohol-equivalent-of-nearly-2-drinks-a-day/" target="_blank" rel="noopener noreferrer">
+        Chimps consume alcohol equivalent of nearly 2 drinks a day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It&#39;s the latest evidence in support of Robert Dudley&#39;s controversial &#34;drunk monkey&#34; hypothesis.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/ac-shadows-claws-of-awaji-is-a-refreshingly-focused-experience-that-does-everything-the-main-game-does-just-much-better" target="_blank" rel="noopener noreferrer">
+        Assassin&#39;s Creed Shadows DLC, Claws of Awaji, is a refreshingly focused experience that does everything the main game does – just much better
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Assassin’s Creed Shadows: Claws of Awaji is the action role-playing game’s (RPGs) first major expansion since launch. Claws of Awaji is an essential experience for those looking to finish off Shadows’ story.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/google-pixel-phones/the-google-pixel-9-is-still-a-great-buy-for-2025-especially-when-its-just-usd599" target="_blank" rel="noopener noreferrer">
+        The Google Pixel 9 is still a great buy for 2025 - especially when it&#39;s just $599
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Best Buy is clearing out stock on the still-great Google Pixel 9 this week - a great bargain now that it&#39;s a little older.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/xbox/microsoft-is-making-xbox-consoles-even-more-expensive-in-the-us-192443699.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Microsoft is making Xbox consoles even more expensive in the US
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Starting on October 3, Microsoft says Xbox consoles will be getting yet another price bump, this time ranging anywhere from a $20 increase on the company&#39;s entry-level model to $70 for a special edition model with 2TB of storage. If all of this sounds familiar, there&#39;s a good reason, the last time x...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:28</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/the-reluctant-traveler-season-3-now-available-on-apple-tv/" target="_blank" rel="noopener noreferrer">
+        ‘The Reluctant Traveler’ season 3 now available on Apple TV+
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Eugene Levy’s “The Reluctant Traveler” is back for its third season, with an entertaining twist and plenty of special guests. Here’s what to expect. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/video-games/pc-gaming/gpu-sales-skyrocketed-27-percent-last-quarter-tariff-jitters-sparked-an-odd-gaming-hardware-spending-surge-in-q2-25" target="_blank" rel="noopener noreferrer">
+        GPU sales skyrocketed 27% last quarter — tariff jitters sparked an odd gaming hardware spending surge in Q2 &#39;25
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A report from Jon Peddie Research highlights an unusual PC hardware spending surge in the first half of 2025.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 23:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/science/elon-musks-neuralink-plans-a-brain-speech-trial-in-october-194004627.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Elon Musk&#39;s Neuralink plans a brain speech trial in October
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Neuralink plans to begin another US clinical trial in October, using the implant to translate thoughts into text. The study will be held through an FDA investigational device exemption. &amp;amp;quot;If you&#39;re imagining saying something, we would be able to pick that up,&amp;amp;quot; Neuralink president DJ Seo sai...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/security/2025/09/two-of-the-kremlins-most-active-hack-groups-are-collaborating-eset-says/" target="_blank" rel="noopener noreferrer">
+        Two of the Kremlin’s most active hack groups are collaborating, ESET says
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Turla is getting a helping hand from Gamaredon. Both are units of Russia&#39;s FSB.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/19/best-apple-watch-apps-for-boosting-your-productivity/" target="_blank" rel="noopener noreferrer">
+        Best Apple Watch apps for boosting your productivity
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Although the Apple Watch comes with simple built-in productivity apps like Reminders and Calendar, it’s worth exploring some third-party apps that are designed to boost productivity by offering additional functionality.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 22:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/782079/microsoft-xbox-console-price-increase-us" target="_blank" rel="noopener noreferrer">
+        Microsoft is raising prices on Xbox consoles in the US again
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft is raising the prices of its Xbox Series S / X consoles in the US next month. The Xbox Series X will be priced at $649.99 in the US starting October 3rd, up from its existing $599.99 price. The Xbox Series S will move to $399.99, up from $379.99. Microsoft blames the price hikes [&amp;amp;#8230;]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 22:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/trump-xi-us-china-tiktok-deal/" target="_blank" rel="noopener noreferrer">
+        Donald Trump Is Saying There’s a TikTok Deal. China Isn’t
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Donald Trump claimed victory on a deal that would put TikTok in the hands of his allies after a call with Xi Jinping. But details on the agreement—and Beijing’s buy-in—remain murky.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 22:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/thrustmaster-t98-review" target="_blank" rel="noopener noreferrer">
+        The new Thrustmaster T98 racing wheel took me back to my childhood, and I couldn&#39;t wait to grow up
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Thrustmaster T98 offers one of the cheapest entry points into sim racing for new and younger gamers, but you might avoid a few headaches by saving up a little longer.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/apple-boosts-iphone-17-production-targets-following-strong-pre-order-demand/" target="_blank" rel="noopener noreferrer">
+        Apple boosts iPhone 17 production targets following strong pre-order demand
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As it does in most years, Apple is taking a cue from the pre-order week to align its production orders with actual iPhone demand across the lineup. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/pc-cases/building-in-the-thermaltake-tower-250-made-me-furious-about-one-design-flaw-that-could-be-easily-solved-cramped-cable-cut-outs-and-inaccessible-i-o" target="_blank" rel="noopener noreferrer">
+        Building in the Thermaltake Tower 250 made me furious about one design flaw that could be easily solved — cramped cable cut-outs and inaccessible I/O
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After building in the Thermaltake Tower 250, I found that the ITX PC case has one issue that drove me mad: the Motherboard I/O is difficult to access.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 22:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-starts-rolling-out-gaming-copilot-on-windows-11-pcs/" target="_blank" rel="noopener noreferrer">
+        Microsoft starts rolling out Gaming Copilot on Windows 11 PCs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft has begun rolling out the beta version of its AI-powered Gaming Copilot to Windows 11 systems for users aged 18 or older, excluding those in mainland China. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 22:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/science/2025/09/despite-congressional-threat-national-academies-releases-new-climate-report/" target="_blank" rel="noopener noreferrer">
+        Despite congressional threat, National Academies releases new climate report
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Things have changed since 2009: We&#39;re more certain about the problems.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 22:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/gpus/asus-gives-us-the-pcie-finger-teases-new-concept-that-boosts-motherboard-gpu-slot-power-to-250w" target="_blank" rel="noopener noreferrer">
+        Asus gives us the PCIe finger — teases new concept that boosts motherboard GPU slot power to 250W
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Asus teases a new concept design that pushes a PCIe slot to 250 watts of power delivery through modifications to its five 12V pins. The concept could make cableless GPUs more mainstream if it becomes widely adopted in the future.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 22:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/health-fitness/smartwatches/i-just-tested-the-apple-watch-ultra-3s-heart-rate-tracking-against-a-polar-h10-chest-strap-here-are-the-results" target="_blank" rel="noopener noreferrer">
+        I just tested the Apple Watch Ultra 3&#39;s heart rate tracking against a Polar H10 chest strap – here are the results
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Checking how the Apple Watch Ultra 3 fares against a highly-accurate HRM.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/these-30-apps-feature-a-new-liquid-glass-design-for-ios-26/" target="_blank" rel="noopener noreferrer">
+        These 30+ apps feature a new Liquid Glass design for iOS 26
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple released iOS 26 for iPhone this week, introducing the world to its new Liquid Glass design language. If you’re looking for fun third-party apps that take advantage of the new Liquid Glass design, here are over 30 recommendations. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:57</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/cpus/nvidia-ceo-huang-says-upcoming-dgx-spark-systems-are-powered-by-n1-silicon-confirms-gb10-superchip-and-n1-n1x-socs-are-identical" target="_blank" rel="noopener noreferrer">
+        Nvidia CEO Huang says upcoming DGX Spark systems are powered by N1 silicon — confirms GB10 Superchip and N1/N1X SoCs are identical
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nvidia&#39;s long-rumoed N1 SoC, featuring ARM-based CPU cores from MediaTek and Blackwell-based GPU cores, has now been confirmed as the same chip as the GB10 Superchip. They both share similar, if not identical, specs and Nvidia CEO Jensen Huang has just said that DGX Spark (which has the GB10) is pow...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 21:57</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/tech-policy/2025/09/after-getting-jimmy-kimmel-suspended-fcc-chair-threatens-abcs-the-view/" target="_blank" rel="noopener noreferrer">
+        After getting Jimmy Kimmel suspended, FCC chair threatens ABC’s The View
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Carr: &#34;Turn your license in to the FCC, we&#39;ll find something else to do with it.&#34;</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 21:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/heres-everything-new-for-apple-wallet-in-ios-26/" target="_blank" rel="noopener noreferrer">
+        Here’s everything new for Apple Wallet in iOS 26
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple Wallet, like every other iOS 26 app, has gotten some Liquid Glass UI changes this year. But iOS 26 is also an especially packed update for new features coming to Apple Wallet. Here’s what’s new. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/iphone-air-is-here-and-i-already-cant-imagine-going-back/" target="_blank" rel="noopener noreferrer">
+        iPhone Air is here, and I already can’t imagine going back
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iPhone Air has arrived, and our full, in-depth review is here. But I’ve only had Apple’s ultra-thin model for half a day now, and my first impressions are clear: this feels like the new normal. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/report/781673/meta-demo-fail-connect-2025-mark-zuckerberg-google-glass-steve-jobs-wi-fi" target="_blank" rel="noopener noreferrer">
+        I know why Mark Zuckerberg risked live demo failure
+      </a>
+    </h3>
+    
+    
+    <p class="summary">&amp;amp;#8203;&amp;amp;#8203;On Wednesday evening, I had a profound sense of d&amp;amp;#233;j&amp;amp;#224; vu. When I watched Mark Zuckerberg open his Meta Connect keynote by giving the world a live backstage tour from his new glasses, I was transported back to 2012. I was in the live audience at Google I/O when Sergey Brin intr...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 21:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/781914/iphone-17-pro-air-screen-protector-anker-nano-travel-adapter-deal-sale" target="_blank" rel="noopener noreferrer">
+        It&amp;amp;#8217;s new iPhone day, so grab some screen protectors for just $4.49
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Happy iPhone Day! If you’re picking up the new iPhone 17 or iPhone Air and want to avoid scratches or cracks on its front glass, we spotted a great deal on a two-pack of amFilm’s OneTouch screen protectors over at Slickdeals. Designed specifically to fit the front of the new 6.3-inch iPhone 17, you ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 21:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/mac-os/4-iphone-security-features-you-might-not-know-about" target="_blank" rel="noopener noreferrer">
+        4 iPhone security features you might not know about
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With the new iPhone 17 about to be released, we look at 4 ways to help protect your iPhone&#39;s data that you might not know about.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/iphone/iphone-17-lineup-photography-specs-explained-fusion-camera-center-stage-and-48mp-mode" target="_blank" rel="noopener noreferrer">
+        iPhone 17 lineup photography specs explained: Fusion Camera, Center Stage, and 48MP mode
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has plenty to say about the iPhone 17 family’s Fusion Camera systems – we’ve sorted the genuine from the guff so you can choose the right iPhone camera for you.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/19/techcrunchs-equity-podcast-is-on-video-starting-today/" target="_blank" rel="noopener noreferrer">
+        TechCrunch’s Equity podcast is on video, starting today
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We get it, it seems like every single podcast you love is now on video. And guess what … so is TechCrunch&#39;s flagship podcast Equity.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 21:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/switchbot-hub-3-is-a-device-type-i-want-to-see-from-apple/" target="_blank" rel="noopener noreferrer">
+        HomeKit Weekly: SwitchBot Hub 3 shows the kind of device Apple should build
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I love being able to control my smart home from the Home app, Control Center (my most used right now), or by asking Siri via a HomePod, but sometimes you just can’t beat a physical product for things. For my Matter enabled shades, I use the remote as much as I control them with the Home app. There a...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/781945/ugreen-finetrack-slim-smart-g-bluetooth-tracker-battery-life" target="_blank" rel="noopener noreferrer">
+        Ugreen’s new super slim wallet tracker has 5 years of battery life
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ugreen has released a new wallet tracker that’s just as thin as the FineTrack Slim Smart Finder the company debuted earlier this year, but with a massive boost in battery life from 12 months to five years. However, while the previous version was compatible with Apple’s Find My network and recharable...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 21:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/laptops/the-dos-and-donts-of-buying-a-new-laptop-for-college" target="_blank" rel="noopener noreferrer">
+        The dos and don&#39;ts of buying a new laptop for college
+      </a>
+    </h3>
+    
+    
+    <p class="summary">On the hunt for a new laptop for college? I built this list of key factors to remember and red flags to avoid so you can cut through the noise and get a good deal.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/netflix/the-bleaker-the-better-black-rabbit-is-netflixs-new-must-see-show-heres-what-people-are-saying-about-the-jude-law-and-jason-bateman-thriller" target="_blank" rel="noopener noreferrer">
+        ‘The bleaker the better’: Black Rabbit is Netflix’s new must-see show - here’s what people are saying about the Jude Law and Jason Bateman thriller
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Black Rabbit is the latest thriller to land on Netflix, and fans everywhere are telling you to watch it.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:09</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/policy/781967/tiktok-deal-us-china-still-ambiguous" target="_blank" rel="noopener noreferrer">
+        So… is there a TikTok deal or not?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">China and the US have “made progress” on granting permission for ByteDance to sell TikTok to an American consortium, fulfilling a nine-months-overdue legal requirement. After saying a tentative deal had been reached Monday and that approval would come Friday, President Donald Trump’s administration ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 21:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/best-smartwatches/" target="_blank" rel="noopener noreferrer">
+        10 Best Smartwatches (2025): Apple, Wear OS, Hybrid &amp;amp; Kids’ Watches
+      </a>
+    </h3>
+    
+    
+    <p class="summary">These WIRED-tested wearables reduce your reliance on a phone while keeping you connected.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 20:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/09/19/apples-new-home-products-just-got-even-more-appealing-thanks-to-a-competitor/" target="_blank" rel="noopener noreferrer">
+        Apple’s new Home products just got even more appealing thanks to a competitor
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple is about to kick off what’s arguably its first serious push into smart home products, starting with two launches very soon but ramping up in 2026. And Samsung just provided users another great reason to wait for Apple’s products. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 20:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/09/19/trump-and-bytedance-tout-tiktok-deal-approval-but-no-official-details-yet/" target="_blank" rel="noopener noreferrer">
+        Trump and ByteDance tout TikTok deal approval, but no official details yet
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The two countries have been working on a way to save TikTok&#39;s U.S. business, after TikTok was banned in January over national security concerns.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 20:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/video/metas-ar-ambitions-meet-reality-and-california-gets-serious-about-ai-safetyagain/" target="_blank" rel="noopener noreferrer">
+        Meta’s AR ambitions meet reality, and California gets serious about AI safety … again
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This week on Equity, Anthony Ha, Kirsten Korosec, and Max Zeff unpack the biggest moves in AI, robotics, and regulation. Listen to the full episode to hear about: Equity is TechCrunch’s flagship podcast, produced by Theresa Loconsolo, and posts every Wednesday and Friday.Subscribe to us on Apple Pod...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 20:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gaming/2025/09/steam-will-drop-support-for-the-last-32-bit-windows-systems-in-january-2026/" target="_blank" rel="noopener noreferrer">
+        Steam will wind down support for 32-bit Windows as that version of Windows fades
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Change only affects 32-bit Windows 10; Windows 7 and 8 lost support years ago.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 20:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/ai/2025/09/science-journalists-find-chatgpt-is-bad-at-summarizing-scientific-papers/" target="_blank" rel="noopener noreferrer">
+        Science journalists find ChatGPT is bad at summarizing scientific papers
+      </a>
+    </h3>
+    
+    
+    <p class="summary">LLM &#34;tended to sacrifice accuracy for simplicity&#34; when writing news briefs.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 20:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/football/how-to-watch-sbs-on-demand-outside-australia" target="_blank" rel="noopener noreferrer">
+        How to watch SBS On Demand outside Australia – stream online and from anywhere with a VPN
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Here&#39;s how to watch SBS On Demand from outside Australia, and learn how to access streams from anywhere abroad with a VPN.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/vpn/vpn-privacy-security/chat-control-can-the-eu-parliament-save-our-encrypted-chats" target="_blank" rel="noopener noreferrer">
+        Chat Control: Can the EU Parliament save our encrypted chats?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As the so-called Chat Control has never been closer to become law, the EU Parliament seems to be the only chance left to save encryption in Europe. But, will the new squad live up to that promise?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gadgets/2025/09/your-very-own-humane-interface-try-jef-raskins-ideas-at-home/" target="_blank" rel="noopener noreferrer">
+        Your very own humane interface: Try Jef Raskin’s ideas at home
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Use the magic of emulation to see a different kind of computer design.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 20:28</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/audibles-new-ai-ask-a-question-feature-lets-you-interrupt-jane-austen-politely" target="_blank" rel="noopener noreferrer">
+        Audible’s new AI “Ask a Question” feature lets you interrupt Jane Austen (politely)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Audible&#39;s new in-app AI feature lets listeners ask questions and get real-time answers.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/tech-policy/2025/09/ticketmaster-intentionally-screwed-fans-out-of-billions-ftc-lawsuit-says/" target="_blank" rel="noopener noreferrer">
+        “Yikes”: Internal emails reveal Ticketmaster helped scalpers jack up prices, FTC says
+      </a>
+    </h3>
+    
+    
+    <p class="summary">FTC sued Ticketmaster and Live Nation for turning &#34;blind eye&#34; to scalpers.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 20:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/fbi-warns-of-fake-fbi-crime-complaint-portals-used-for-cybercrime/" target="_blank" rel="noopener noreferrer">
+        FBI warns of cybercriminals using fake FBI crime reporting portals
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The FBI warned today that cybercriminals are impersonating its Internet Crime Complaint Center (IC3) website in what the law enforcement agency described as &#34;possible malicious activity.&#34; [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 20:13</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2025-09-20 05:30 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
