@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for October 06, 2025</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/oracle-patches-ebs-zero-day-exploited-in-clop-data-theft-attacks/" target="_blank" rel="noopener noreferrer">
+        Oracle patches EBS zero-day exploited in Clop data theft attacks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Oracle is warning about a critical E-Business Suite zero-day vulnerability tracked as CVE-2025-61882 that allows attackers to perform unauthenticated remote code execution, with the flaw actively exploited in Clop data theft attacks. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 05:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/10/05/apple-macbook-best-deals-currently-october-2025/" target="_blank" rel="noopener noreferrer">
+        These are the best new MacBook deals in October: prices starting at $599
+      </a>
+    </h3>
+    
+    
+    <p class="summary">In the Apple Silicon era, MacBooks have become more affordable than ever – with brand new models starting as low as $599. With looming global tariffs, these great deals could potentially be coming to an end soon – so if you’re in the market for a new MacBook for any reason, now may be one of the bes...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 04:57</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/huge-numbers-of-managers-admit-to-using-ai-to-convincingly-draft-or-revise-performance-reviews-and-i-fear-it-will-only-accelerate-the-death-of-traditional-hr" target="_blank" rel="noopener noreferrer">
+        Huge numbers of managers admit to using AI to convincingly draft or revise performance reviews - and I fear it will only accelerate the death of traditional HR
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Managers and workers increasingly depend on AI writers for sensitive communication, raising concerns about empathy, trust, and HR’s long-term role.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/10/05/waffles-eat-bluesky/" target="_blank" rel="noopener noreferrer">
+        Waffles eat Bluesky
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A waffle-centric controversy underlines ongoing tensions between Bluesky and some of its most vocal users.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:28</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/nobel-laureate-backs-cambridge-based-crowdfunding-effort-to-digitize-100-000-hours-of-recordings-from-some-of-the-brightest-minds-humanity-has-ever-conceived" target="_blank" rel="noopener noreferrer">
+        Nobel Laureate backs Cambridge-based crowdfunding effort to digitize 100,000 hours of recordings from some of the brightest minds in human history
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A Cambridge-led project seeks funds to digitize and restore 100,000 hours of historic scientific recordings featuring leading global thinkers.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/792477/jane-goodall-netflix-famous-last-words" target="_blank" rel="noopener noreferrer">
+        Jane Goodall’s death triggered the premiere of Netflix’s new show
+      </a>
+    </h3>
+    
+    
+    <p class="summary">For the last several years Netflix has been quietly banking episodes of a new show called Famous Last Words, interviews with famous people entering their twilight years. The catch is that episodes will only air after the subject passes away. The full list of interviewees is a closely guarded secret,...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/microsofts-new-photos-app-update-is-so-good-that-it-could-well-become-my-favorite-photo-organizing-tool-but-you-will-need-a-copilot-pc-to-experience-it" target="_blank" rel="noopener noreferrer">
+        Microsoft&#39;s new Photos app update is so good that it could well become my favorite photo organizing tool - but you will need a Copilot+ PC to experience it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft’s Photos app adds AI-powered sorting and super resolution features, but they only work on Copilot+ PCs with NPU hardware.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/drop-what-youre-doing-lgs-c5-oled-tv-crashes-to-its-lowest-price-ever-ahead-of-prime-day" target="_blank" rel="noopener noreferrer">
+        Drop what you&#39;re doing – LG&#39;s C5 OLED TV crashes to its lowest price ever ahead of Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Thanks to early Prime Day deals, you can get LG&#39;s 65-inch C5 OLED TV on sale for its lowest price yet, thanks to a massive $1,250 discount.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/10/05/ios-26-wallet-app-new-boarding-pass-features-united-airlines-support/" target="_blank" rel="noopener noreferrer">
+        Apple Wallet’s new boarding passes in iOS 26 now supported by a major airline
+      </a>
+    </h3>
+    
+    
+    <p class="summary">At WWDC earlier this year, Apple unveiled three key upgrades for flight boarding passes in Apple Wallet. Now, shortly after the public launch of iOS 26, United Airlines has added support for the new set of features. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/10/05/suspect-arrested-after-threats-against-tiktoks-culver-city-headquarters/" target="_blank" rel="noopener noreferrer">
+        Suspect arrested after threats against TikTok’s Culver City headquarters
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Police say they have arrested a suspect allegedly connected to multiple online threats that led TikTok to evacuate its headquarters near Los Angeles on Friday.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 22:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/ive-covered-prime-day-for-8-years-here-are-25-amazon-device-deals-that-are-actually-worth-buying" target="_blank" rel="noopener noreferrer">
+        I&#39;ve covered Prime Day for 8 years - here are 25 Amazon device deals that are actually worth buying
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The best discounts at Amazon&#39;s October Prime Day sale are on its best-selling devices, and as a shopping expert, I&#39;ve rounded up 25 deals that are actually worth buying.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/robot-vacuums/narwal-flow-review" target="_blank" rel="noopener noreferrer">
+        I was blown away by this robot vacuum&#39;s mopping performance, but it&#39;s let down by frustrating software quirks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Narwal Flow rolls right over the competition when it comes to mopping, but doesn&#39;t always do as it&#39;s told.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ai/openais-first-device-with-jony-ive-could-be-delayed-due-to-technical-issues-182226416.html?src=rss" target="_blank" rel="noopener noreferrer">
+        OpenAI&#39;s first device with Jony Ive could be delayed due to &#39;technical issues&#39;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">OpenAI and Jony Ive could still have some serious loose ends to tie up before releasing their highly anticipated AI device. According to a Financial Times report, the partnership is still struggling with some &amp;amp;quot;technical issues&amp;amp;quot; that could ultimately end up pushing back the device&#39;s release...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 21:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/genai-is-no-longer-a-future-consideration-marketing-teams-ecstatic-about-ai-as-a-paltry-7-percent-of-cmos-in-a-research-say-they-dont-see-an-roi" target="_blank" rel="noopener noreferrer">
+        &#39;GenAI is no longer a future consideration&#39; - marketing teams ecstatic about AI as a paltry 7% of CMOs in a research say they don&#39;t see an ROI
+      </a>
+    </h3>
+    
+    
+    <p class="summary">GenAI adoption soaring, with 93% of CMOs reporting ROI while skepticism lingers over sustainability and ethical integration.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/ankers-latest-prime-charging-devices-are-already-20-percent-off-152040336.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Anker&#39;s latest Prime charging devices are already 20 percent off
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Anker&#39;s latest Prime charging devices are already on sale thanks to some handy coupons. The best deals include the laptop-compatible Prime Power Bank (26,250mAh, 300W), which is 20 percent off and down to $184 when you clip the on-page coupon on its Amazon page. This portable charger delivers a whop...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 21:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/20-years-later-how-ai-is-revolutionizing-my-back-to-college-experience" target="_blank" rel="noopener noreferrer">
+        20 years later: How AI is revolutionizing my &#39;Back to College&#39; experience
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Homescreen Heroes: Genio Notes is the app I wish I had when I was at school</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/10/05/californias-new-ai-safety-law-shows-regulation-and-innovation-dont-have-to-clash/" target="_blank" rel="noopener noreferrer">
+        California’s new AI safety law shows regulation and innovation don’t have to clash
+      </a>
+    </h3>
+    
+    
+    <p class="summary">“Are bills like SB 53 the thing that will stop us from beating China? No,” said Adam Billen, vice president of public policy at youth-led advocacy group Encode AI. “I think it is just genuinely intellectually dishonest to say that that is the thing that will stop us in the race.”</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 21:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/792368/if-you-can-get-past-the-terrible-logo-audacity-4-looks-pretty-great" target="_blank" rel="noopener noreferrer">
+        If you can get past the terrible logo, Audacity 4 looks pretty great
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Rebrands rarely get much love. That backlash can be especially strong if you’re giving a facelift to a decades-old piece of software beloved by nerds around the globe. So, it was no surprise that when Audacity revealed its new logo people on the internet got a little worked up. And look, there’s no ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 21:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/samsung-will-collaborate-with-openai-to-develop-floating-data-centers-and-power-plants-as-sam-altman-rushes-to-compete-with-his-firms-own-partners" target="_blank" rel="noopener noreferrer">
+        Samsung will collaborate with OpenAI to develop floating data centers and power plants as Sam Altman rushes to compete with his firm&#39;s own partners
+      </a>
+    </h3>
+    
+    
+    <p class="summary">OpenAI signs letter of intent with Samsung covering semiconductors, floating data centers, and enterprise AI services.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/transportation/uber-and-lyft-drivers-in-california-are-able-to-unionize-under-new-law-171309594.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Uber and Lyft drivers in California are able to unionize under new law
+      </a>
+    </h3>
+    
+    
+    <p class="summary">California governor Gavin Newsom signed legislation on Friday that grants rideshare drivers in the state the right to unionize. It&#39;s the second state to grant organizing rights to rideshare drivers, who are independent contractors, following the passage of a similar law in Massachusetts in 2024. The...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 20:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/this-roomba-robot-vacuum-is-on-sale-for-150-for-prime-day-164953753.html?src=rss" target="_blank" rel="noopener noreferrer">
+        This Roomba robot vacuum is on sale for $150 for Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Robot vacuums are great items to look for during events like October Prime Day. They&#39;re usually hundreds of dollars off, so you can save a ton if you&#39;re buying one as a gift or you want to upgrade an aging robovac you have at home already. One of the best deals this time around is on the iRobot Room...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 20:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/uplift-v3-standing-desk-review" target="_blank" rel="noopener noreferrer">
+        I tested the Uplift V3 Standing Desk and everything I loved about the previous models is upgraded and updated
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Uplift V3 Standing Desk is an upgraded and updated version of one of the best options in the standing desk market today. It takes what was great and refines what needed improvement, resulting in an even better desk experience for users.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/social-media/ice-is-planning-to-create-a-surveillance-team-that-hunts-for-leads-on-social-media-163743143.html?src=rss" target="_blank" rel="noopener noreferrer">
+        ICE is planning to create a surveillance team that hunts for leads on social media
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The US Immigration and Customs Enforcement (ICE) has plans to build out a 24/7/365 surveillance team that focuses on scouring social media for case leads, as revealed in documents first discovered by Wired. According to public records, ICE has put out a request for information — which allows the age...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 20:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/10/05/openai-and-jony-ive-may-be-struggling-to-figure-out-their-ai-device/" target="_blank" rel="noopener noreferrer">
+        OpenAI and Jony Ive may be struggling to figure out their AI device
+      </a>
+    </h3>
+    
+    
+    <p class="summary">OpenAI and Jony Ive reportedly face significant technical challenges as they work to develop a screen-less, AI-powered device.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 20:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/adata-sc735-external-ssd-review" target="_blank" rel="noopener noreferrer">
+        This rugged SSD survived my bag, pocket, and a few drops - but I&#39;m still wary of the build quality
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Marketed as a rugged portable SSD with an integrated connector, the SC735 gives you capacity and speed in a tidy package without the need for an additional cable. The rugged design is backed up by a decent 2 TB capacity and transfer rates of over 1000 MB per second. Making the SC735 a versatile opti...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 19:41</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/10/05/techcrunch-mobility-toyota-makes-a-1-5b-bet-on-the-startup-ecosystem/" target="_blank" rel="noopener noreferrer">
+        TechCrunch Mobility: Toyota makes a $1.5B bet on the startup ecosystem
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Welcome back to TechCrunch Mobility — your central hub for news and insights on the future of transportation.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 19:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/prime-day-kindle-deals-include-the-second-gen-scribe-for-100-off-134701051.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Prime Day Kindle deals include the second-gen Scribe for $100 off
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon devices are already on sale for fall Prime Day. Case in point: the second-gen Kindle Scribe. The E Ink tablet with 16GB of storage is $100 off, down from $400 to $300, which is a record-low price. If you want more storage, the 32GB and 64GB versions are also 25 and 24 percent off, respectivel...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 19:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/entertainment/792209/roland-is-finally-honoring-its-legacy-instead-of-just-cashing-in-tr-1000" target="_blank" rel="noopener noreferrer">
+        Roland is finally honoring its legacy instead of just cashing in on it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If the only thing Roland ever released was the TR-808, the company would still deserve a place in the music gear hall of fame. The 808 is arguably the most important instrument since the creation of the electric guitar. It&#39;s been a cornerstone of hip-hop, electronic, and pop music for 45 years now, ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 19:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/coffee-machines/i-test-coffee-makers-for-a-living-and-these-are-the-3-best-espresso-machines-ive-used-this-year" target="_blank" rel="noopener noreferrer">
+        I test coffee makers for a living, and these are the 3 best espresso machines I&#39;ve used this year
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Whatever your budget and level of experience, I have the perfect espresso machine for your kitchen.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 19:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/tech-industry/japanese-tech-giant-deploys-laser-drones-to-protect-chickens-drones-are-hoped-to-prevent-the-spread-of-avian-flu" target="_blank" rel="noopener noreferrer">
+        Japanese tech giant deploys laser drones to protect chickens — drones are hoped to prevent the spread of avian flu
+      </a>
+    </h3>
+    
+    
+    <p class="summary">NTT has designed a laser drone system to protect poultry farms from potential spreaders of avian flu.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 19:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-amazon-prime-day-vacuum-deals-you-can-get-right-now-save-on-machines-from-irobot-shark-dyson-and-others-151504387.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Amazon Prime Day vacuum deals you can get right now: Save on machines from iRobot, Shark, Dyson and others
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It&#39;s frankly amazing how good vacuum cleaners are these days. Once the laughingstock of the gadget world with their dusty bags and tiny wheels, today&#39;s vacuums are sleek dirt-destroying machines, capable of rendering a house habitable no matter how many cats live in it. Some of them are even robots ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 19:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/save-over-usd1-200-on-a-rtx-4060-gaming-laptop-during-prime-day-pay-less-than-half-the-normal-price-for-the-msi-raider-ge68hx" target="_blank" rel="noopener noreferrer">
+        Save over $1,200 on a RTX 4060 gaming laptop during Prime Day — pay less than half the normal price for the MSI Raider GE68HX
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Last year’s MSI Raider GE68HX combines solid performance and premium features, and at this price, it’s a steal.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 18:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-amazon-prime-day-deals-on-anker-wireless-chargers-power-banks-and-other-accessories-164536013.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Amazon Prime Day deals on Anker wireless chargers, power banks and other accessories
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Maybe you’re not looking to snag an iPad, a robot vacuum or a VR headset this Amazon Prime Day because you’re set with what you already have. Instead, though, consider picking up a few discounted “essential” gadgets, or really, devices you don’t want to be left without in a pinch. Charging gear fall...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 18:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-prime-day-ssd-deals-save-on-gear-from-samsung-crucial-seagate-and-others-170039409.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Prime Day SSD deals: Save on gear from Samsung, Crucial, Seagate and others
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you&#39;ve never considered adding a solid-state drive (SSD) to your PC or game console, October Prime Day is a great time to start — and if you already know what a difference extra storage can make, October Prime Day is the perfect time to outfit your build. For those who haven&#39;t heard of SSDs, they...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/jurassic-world-evolution-3-developers-on-making-a-canon-instalment-in-the-legendary-dinosaur-franchise-to-be-a-tiny-part-of-something-so-beloved-is-really-a-privilege" target="_blank" rel="noopener noreferrer">
+        Jurassic World Evolution 3 developers on making a canon instalment in the legendary dinosaur franchise – &#39;to be a tiny part of something so beloved is really a privilege&#39;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We sit down with the developers to discuss some of the big new features and exciting additions coming to Jurassic World Evolution 3.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/windows/gamers-dont-wait-for-windows-10s-demise-its-time-to-upgrade-to-windows-11-or-even-steamos" target="_blank" rel="noopener noreferrer">
+        Gamers, don&#39;t wait for Windows 10&#39;s demise - it&#39;s time to upgrade to Windows 11 or even SteamOS
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Windows 10&#39;s End of Life is upon us, and although there&#39;s an option for extended updates, I&#39;d advise gamers to move on now.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/10/05/the-reinforcement-gap-or-why-some-ai-skills-improve-faster-than-others/" target="_blank" rel="noopener noreferrer">
+        The Reinforcement Gap — or why some AI skills improve faster than others
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AI tasks that work well with reinforcement learning are getting better fast — and threatening to leave the rest of the industry behind.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-october-prime-day-tv-deals-early-discounts-on-sets-from-sony-samsung-tcl-and-others-180051602.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best October Prime Day TV deals: Early discounts on sets from Sony, Samsung, TCL and others
+      </a>
+    </h3>
+    
+    
+    <p class="summary">While Black Friday remains the best time to grab a new TV at a discount, Amazon’s latest October Prime Day sale looks to be a decent time to take the plunge if you need to upgrade right away. A handful of well-reviewed sets from Samsung, Sony and other name brands are a bit cheaper than usual, inclu...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 18:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/tech-industry/ukraines-rotating-barbed-wire-drone-barriers-discovered-by-russians-motorized-barriers-tear-and-slice-the-fiber-optic-lines-that-jam-proof-drones-leave-in-their-trail" target="_blank" rel="noopener noreferrer">
+        Ukraine’s rotating barbed wire drone barriers discovered by Russians — motorized barriers tear and slice the fiber-optic lines that jam-proof drones leave in their trail
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Remote controlled fiber optic-tethered drones may have met their match with a new Ukrainian innovation.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 18:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/hackers-exploited-zimbra-flaw-as-zero-day-using-icalendar-files/" target="_blank" rel="noopener noreferrer">
+        Hackers exploited Zimbra flaw as zero-day using iCalendar files
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Researchers monitoring for larger .ICS calendar attachments found that a flaw in Zimbra Collaboration Suite (ZCS) was used in zero-day attacks at the beginning of the year. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 18:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/video-games/nintendo/nintendo-switch-2-supports-two-different-types-of-nvidia-dlss-a-second-light-version-for-upscaling-beyond-1080p-along-with-the-standard-pc-like-cnn-model" target="_blank" rel="noopener noreferrer">
+        Nintendo Switch 2 supports two different types of Nvidia DLSS — A second, &#39;light&#39; version for upscaling beyond 1080p, along with the standard, PC-like CNN model
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nintendo apparently includes two different versions of DLSS on the Switch 2, corroborating long-standing rumors of a custom DLSS present on the console. Digital Foundry&#39;s latest testing reveals that the second, &#39;light&#39; version of DLSS can upscale beyond 1080p at the cost of an inferior image while i...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 18:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-amazon-prime-day-kitchen-deals-get-up-to-50-percent-off-our-favorite-air-fryers-and-more-193009513.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Amazon Prime Day kitchen deals: Get up to 50 percent off our favorite air fryers and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Whether you call it October Prime Day or use Amazon’s official title, Prime Big Deal days, the sale represents some of the lowest prices of the year in nearly every department — and that includes kitchen gear. We have a slew of food enthusiasts on staff who have tested plenty of excellent kitchen te...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 18:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/oneplus-phones/more-oneplus-15-specs-and-photos-have-leaked-ahead-of-the-flagship-phones-official-launch" target="_blank" rel="noopener noreferrer">
+        More OnePlus 15 specs and photos have leaked ahead of the flagship phone&#39;s official launch
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We may now know a little bit more about what the OnePlus 15 is bringing with it, thanks to a fresh leak.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/best-amazon-prime-day-laptop-deals-early-sales-on-machines-from-apple-dell-lenovo-hp-and-more-130507583.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Best Amazon Prime Day laptop deals: Early sales on machines from Apple, Dell, Lenovo, HP and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If your laptop simply isn’t cutting it anymore, October Prime Day might have arrived just in time. As has been the case for the past few years, laptop deals are abundant for Amazon&#39;s Big Deal Days, bringing discounts to MacBooks, Windows laptops, Chromebooks and more. But we wouldn’t blame you if yo...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/10/05/the-young-minds-app-wants-to-protect-and-educate-children-online-and-will-show-its-tech-at-techcrunch-disrupt-2025/" target="_blank" rel="noopener noreferrer">
+        The Young Minds App wants to protect and educate children online and will show its tech at TechCrunch Disrupt 2025
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Young Minds gives parents control over what their kids do on the internet, while also protecting their children’s privacy and teaching them good online habits.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 17:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/the-best-humidifier/" target="_blank" rel="noopener noreferrer">
+        Our Favorite Humidifiers for Home, Travel &amp;amp; More (2025)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From models for traveling to humidifiers that double as planters or air purifiers, we&#39;ve tested a dozen of them.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 17:38</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/shark-robot-vacuums-are-up-to-400-off-for-amazon-prime-day-171836038.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Shark robot vacuums are up to $400 off for Amazon Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">For the Amazon Big Deal Days event (aka October Prime Day), a tasty deal on a Shark robot vacuum has popped up. You&#39;ll need to be a Prime member to take advantage of the offer on the Shark AV2501S AI Ultra robot vacuum, but if you are, you can get the device for over half off. The discount drops the...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/huawei-atlas-950-superpod-vs-nvidia-dgx-superpod-vs-amd-instinct-mega-pod-how-do-they-compare" target="_blank" rel="noopener noreferrer">
+        Huawei Atlas 950 SuperPoD vs Nvidia DGX SuperPOD vs AMD Instinct Mega POD: How do they compare?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Huawei, Nvidia, and AMD clash over AI supercomputing dominance with radically different designs, performance philosophies, and rollout timelines.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/791574/best-switch-2-controllers" target="_blank" rel="noopener noreferrer">
+        I’ve tested the latest Switch 2 controllers, and this one is the best
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Editor’s note: Amazon’s fall Prime Day event kicks off on October 7th; however, if you want to shop ahead of the two-day sale, we’ve rounded up the best early Prime Day deals you can already get. If you choose to get an extra controller for your Nintendo Switch 2, you can spend a lot — [&amp;amp;#8230;]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/quordle-today-answers-clues-6-october-2025" target="_blank" rel="noopener noreferrer">
+        Quordle hints and answers for Monday, October 6 (game #1351)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for Quordle clues? We can help. Plus get the answers to Quordle today and past solutions.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/nyt-connections-today-answers-hints-6-october-2025" target="_blank" rel="noopener noreferrer">
+        NYT Connections hints and answers for Monday, October 6 (game #848)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Connections answers and hints? Here&#39;s all you need to know to solve today&#39;s game, plus my commentary on the puzzles.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/nyt-strands-today-answers-hints-6-october-2025" target="_blank" rel="noopener noreferrer">
+        NYT Strands hints and answers for Monday, October 6 (game #582)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Strands answers and hints? Here&#39;s all you need to know to solve today&#39;s game, including the spangram.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/laptops/huawei-matebook-fold-hands-on-review" target="_blank" rel="noopener noreferrer">
+        I went hands-on with Huawei&#39;s foldable laptop, and I&#39;m convinced it&#39;s the future of mobile computing
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After spending time with the Huawei MateBook Fold, I&#39;m sold on its foldable form factor.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-amazon-prime-day-deals-under-50-early-sales-on-tech-from-apple-anker-ring-jbl-roku-and-others-120531085.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Amazon Prime Day deals under $50: Early sales on tech from Apple, Anker, Ring, JBL, Roku and others
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This is technically the third Prime-related sale of the year, after March’s spring sale and the official Prime Day in July. Amazon calls this one Prime Big Deal Days, but to you, me and most everyone else, it’s the October Prime Day sale. The deals stretch across every department, but this guide cov...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/tech-industry/cryptocurrency/bitcoin-rockets-to-all-time-high-of-over-usd125-000-rise-fueled-by-increase-in-u-s-equities-and-interest-in-bitcoin-etfs" target="_blank" rel="noopener noreferrer">
+        Bitcoin rockets to all-time high of over $125,000 — rise fueled by increase in U.S. equities and interest in Bitcoin ETFs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Bitcoin just hit an all-time high of $125,000 due to a combination of investors seeking alternative assets and MegaWhales moving holdings to long-term storage.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 17:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-early-october-prime-day-deals-on-apple-devices-save-on-airtags-ipads-apple-watches-and-more-125644340.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best early October Prime Day deals on Apple devices: Save on AirTags, iPads, Apple Watches and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you’ve been waiting for a discount before grabbing a new iPad, MacBook or Apple Watch, Amazon’s October Prime Day sale might be worth checking out. Prime Big Deal Days, as it’s officially called, doesn’t technically begin until October 7, but we’re keeping an eye out for the best Apple deals that...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/prime-day-lego-deals-get-up-to-56-percent-off-star-wars-and-super-mario-sets-121513566.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Prime Day Lego deals: Get up to 56 percent off Star Wars and Super Mario sets
+      </a>
+    </h3>
+    
+    
+    <p class="summary">October Prime Day is nearly here, and new early deals are popping up every day. Amazon uses October Prime Day to kickstart the holiday shopping season — even if you haven&#39;t even thought about the holidays yet, you should give the latest Prime Day Lego deals a look. A number of Lego sets from the Sup...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-apple-watch-se-2-is-on-sale-for-a-record-low-price-in-this-prime-day-deal-162845820.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The Apple Watch SE 2 is on sale for a record-low price in this Prime Day deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If, like me, you&#39;re wondering how it could possibly be October already, perhaps you need a watch. Probably one with a calendar function. Strangely enough, there are some solid deals on several Apple Watch models right now ahead of&amp;amp;nbsp;Amazon&#39;s Prime Big Deal Days event. The second-gen Apple Watch S...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-amazon-prime-day-deals-get-up-to-57-percent-off-gear-from-apple-shark-anker-dyson-samsung-and-others-050801311.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Amazon Prime Day deals: Get up to 57 percent off gear from Apple, Shark, Anker, Dyson, Samsung and others
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon Prime Day has returned in the fall for the past few years, and 2025 is no exception. Prime Day will return on October 7 and 8, but really, you don&#39;t have to wait until the official start date to save. Amazon typically always has early Prime Day deals in the lead-up to the event, and this year...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-roku-streaming-stick-plus-drops-to-a-new-record-low-price-for-prime-day-134656750.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The Roku Streaming Stick Plus drops to a new record-low price for Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you&#39;re looking for a way to upgrade an old TV or add a more convenient smart interface to your main set, Roku devices are good ways to do that. Thanks to Prime Day deals that you can already get now, you can get one of our favorite Roku streaming devices for less than $30. The Roku Streaming Stic...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 16:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/gmktec-nucbox-m3-ultra-mini-pc-review" target="_blank" rel="noopener noreferrer">
+        I used the GMKtec M3 Ultra for work and editing - and it&#39;s near-perfect for the office
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Despite the compact size, the GMKtec M3 Ultra Intel Core i7‑12700H and Iris Xe graphics offer a powerful package, making this machine ideal for office tasks, Microsoft 365, and light creative work. There&#39;s also upgradable RAM and storage, giving it an element of future proofing.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/us-hyperscalers-set-to-spend-nearly-usd1-2-trillion-in-just-three-years-research-shows-but-i-dread-to-imagine-what-will-happen-once-the-global-data-market-cools-down" target="_blank" rel="noopener noreferrer">
+        US hyperscalers set to spend nearly $1.2 trillion in just three years, research shows - but I dread to imagine what will happen once the global data market cools down
+      </a>
+    </h3>
+    
+    
+    <p class="summary">US cloud giants projected to spend $1.15 trillion on data centers by 2027, but analysts warn of risks if global demand slows sharply.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/apples-airpods-4-drop-to-90-for-prime-day-130033169.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Apple&#39;s AirPods 4 drop to $90 for Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you prefer open-ear AirPods but still have an older model, this deal could be worth noting. Amazon&#39;s October Prime Day has the AirPods 4 on sale for $90, or 30 percent off their usual price. That&#39;s also the lowest we&#39;ve seen them. When Apple updated its standard AirPods in 2024, it released two m...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/entertainment/791353/sausage-legend-steam-launch-interview" target="_blank" rel="noopener noreferrer">
+        The developers behind a hit sausage-dueling game hope Steam launch will take it furter
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Life is a series of battles, and I just lost my last one against four gyoza on a skewer. It was an unexpected blow, because honestly, who could have expected me - a springy, respectably proportioned hot dog - to lose against a seemingly inflexible spear of small, unassuming dumplings? This is my str...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/disney-plus/wonder-man-hub" target="_blank" rel="noopener noreferrer">
+        Wonder Man: everything we know so far about the final Marvel TV show of 2025 on Disney+
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Wonder Man will be the final Marvel TV series of 2025 – here&#39;s what we know ahead of its Disney+ release.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/audible-deal-get-three-months-for-only-3-with-this-prime-day-discount-090052719.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Audible deal: Get three months for only $3 with this Prime Day discount
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The traditional Amazon Prime Day Audible sale has returned for October Prime Day. Audiobook fans can get three months of Audible for just $3, or $1 per month for the first three months. Once the three-month initial period is over, though, the subscription will auto-renew at $14.95 per month. Audible...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 16:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/intels-core-ultra-5-225f-is-at-an-all-time-low-usd170-making-arrow-lake-more-affordable-ahead-of-amazons-prime-day-sale" target="_blank" rel="noopener noreferrer">
+        Intel’s Core Ultra 5 225F is at an all-time low $170, making Arrow Lake more affordable ahead of Amazon&#39;s Prime Day sale
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Intel’s entry-level Core Ultra 5 225F processor is now available for under $170, offering 10-core performance, PCIe 5.0 support, and an onboard NPU at a wallet-friendly price.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 16:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/prime-day-apple-deals-include-25-percent-off-a-four-pack-of-airtags-143112286.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Prime Day Apple deals include 25 percent off a four-pack of AirTags
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Prime Day Apple deals can be hard to come by, but right now you can save on one of Apple&#39;s smallest (and arguably one if its most useful) gadgets. A four-pack of Apple AirTags is down to $75 right now, which is 24 percent off its usual price. That brings each AirTag in the bundle down to $18.75 each...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 16:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/tech-industry/semiconductors/the-age-of-silicon-and-software-began-75-years-ago-with-the-patenting-of-the-transistor" target="_blank" rel="noopener noreferrer">
+        The transistor was patented 75 years ago today — the age of silicon and software began with a three-electrode circuit element using semiconductor materials
+      </a>
+    </h3>
+    
+    
+    <p class="summary">75 years ago, the three Bell Labs scientists behind the invention of the transistor would, at last, have the U.S. Patent in their hands.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 16:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/podcast/792339/version-history-podcast-hoverboards" target="_blank" rel="noopener noreferrer">
+        Version History is live — here’s how to find it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;ve been working on a new show for the last few months, called Version History, and the first episode is now live! It&#39;s called &#34;Hoverboards: so hot right now,&#34; and it&#39;s an hour-long tour of the biggest rideable gadget of the 2010s. Hidden inside the history of this weird two-wheeled scooter is a c...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 16:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/parkmobile-pays-1-each-for-2021-data-breach-that-hit-22-million/" target="_blank" rel="noopener noreferrer">
+        ParkMobile pays... $1 each for 2021 data breach that hit 22 million
+      </a>
+    </h3>
+    
+    
+    <p class="summary">ParkMobile has finally wrapped up a class action lawsuit over the platform&#39;s 2021 data breach that hit 22 million users. But there&#39;s a catch: victims are receiving compensation in the form of a $1 in-app credit, which they must claim manually. And, it comes with an expiration date. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 15:46</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/computing/how-to-change-your-apple-account-password-120010992.html?src=rss" target="_blank" rel="noopener noreferrer">
+        How to change your Apple Account password
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Your Apple Account is the key to everything you do on your iPhone, iPad, MacBook, Apple Watch and Apple Vision Pro. It keeps your purchases, subscriptions and personal data secure. If you think your account has been hacked, if you’ve logged in on a shared device or if you haven’t updated your passwo...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/column/789127/tap-to-pay-public-transportation" target="_blank" rel="noopener noreferrer">
+        Can tap-to-pay save public transportation?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This is The Stepback, a weekly newsletter breaking down one essential story from the tech world. For more on the intersection of transportation and technology, follow Andrew J. Hawkins. The Stepback arrives in our subscribers&#39; inboxes at 8AM ET. Opt in for The Stepback here. How it started I vividly...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/791905/best-lists-apps-to-do-shopping-installer" target="_blank" rel="noopener noreferrer">
+        The best lists to keep — and the best ways to keep them
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Hi, friends! Welcome to Installer No. 100, your guide to the best and Verge-iest stuff in the world. (If you&#39;re new here, welcome, get ready for a big gadget week, and also you can read all the old editions at the Installer homepage.) This week, I&#39;ve been reading about Tim Berners-Lee and stain remo...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/i-test-tvs-for-a-living-and-these-are-the-5-oled-tv-deals-to-look-for-in-the-prime-day-sales" target="_blank" rel="noopener noreferrer">
+        I test TVs for a living, and these are the 5 OLED TV deals to look for in the Prime Day sales
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Prime Day means discounts on tons of OLED TVs, but these are the 5 that you should be keeping an eye on.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/best-tech-business-travelers/" target="_blank" rel="noopener noreferrer">
+        The Best Tech Gear for Work Trips (2025)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Global professionals can’t be stymied by dead batteries or flimsy gadgets. Here are WIRED and Condé Nast Traveler’s go-to essentials to help you survive any business trip.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/ninja-slushi-prime-day-deal-october-2025/" target="_blank" rel="noopener noreferrer">
+        Ninja Slushi Is the Cheapest It’s Been: Early Prime Day Deal 2025
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ninja’s slushie machine made me more popular, and more tipsy, this summer. This is the first real deal I’ve seen on it.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/the-best-space-heaters/" target="_blank" rel="noopener noreferrer">
+        8 Best Space Heaters (2025): Tested, Measured, and Mistreated
+      </a>
+    </h3>
+    
+    
+    <p class="summary">These portable heaters will heat a room quickly, quietly, and safely.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/the-best-ipad/" target="_blank" rel="noopener noreferrer">
+        Best iPad to Buy (and Some to Avoid) in 2025
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We break down the current iPad lineup to help you figure out which of Apple’s tablets is best for you.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/10/05/iphone-17-usb-c-port-accessories/" target="_blank" rel="noopener noreferrer">
+        What can I plug into my iPhone 17 USB-C port?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iPhone 17, iPhone 17 Pro and iPhone Air feature a USB-C port at the bottom of the phone. If you are upgrading from an older phone, this means your old Lightning accessories won’t work anymore. But the USB-C port is much more capable overall. With a USB-C cable and new charger, you can charge your iP...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 14:43</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2025-10-06 05:07 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
