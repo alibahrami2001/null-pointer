@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for October 08, 2025</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/792893/amazon-october-prime-big-deal-day-laptops-gaming-apple" target="_blank" rel="noopener noreferrer">
+        The best laptop deals you can get for Amazon’s October Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The second Amazon Prime Day sales event of the year is here, and once again it offers discounts on MacBooks, Windows laptops, and various PC accessories. Like previous Prime Big Deal Days, this sale runs for two days and requires a Prime membership to qualify for most discounts. Some sale prices are...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 06:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-amazon-deals-on-kindles-echo-speakers-fire-tv-devices-and-more-for-prime-day-081210730.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Amazon deals on Kindles, Echo speakers, Fire TV devices and more for Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you’re on the market for a Kindle, Fire TV device or Echo speaker, Amazon Prime Day is basically Black Friday for you. Prime Day deals on those devices are typically the same (or very close to) the prices we see at the end of the year near the holidays. That means now is a great time to pick up a...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 06:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/793567/robot-vacuum-mop-deals-amazon-october-prime-day-2025" target="_blank" rel="noopener noreferrer">
+        You can score up to $750 off robovacs from iRobot, Dreame, and Eufy right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Black Friday might bring some of the deepest discounts on tech like robot vacuums, but if you’d like to tidy up before Halloween parties and Thanksgiving guests arrive, Amazon’s fall Prime Day event features plenty of great robot vacuum deals, including discounts on products like Roborock’s S8 MaxV ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 06:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/792289/amazon-october-prime-day-apple-deals-ipad-airpods-sale-2025" target="_blank" rel="noopener noreferrer">
+        The 26 best fall Prime Day deals on AirPods, iPads, and other Apple gear
+      </a>
+    </h3>
+    
+    
+    <p class="summary">At long last, Amazon’s October Prime Day event has begun — and as expected, it’s packed with a slew of notable Apple deals. If you don’t want to wait until Black Friday to score a discount, the current promo is a great opportunity to save, as Amazon is offering steep discounts on a variety of [&amp;amp;#823...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 06:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/788328/amazon-october-prime-day-4k-tv-soundbar-streaming-deal-sale-2025" target="_blank" rel="noopener noreferrer">
+        The best October Prime Day deals on TVs, soundbars, and more — up to 50% off
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The day has finally come for a home theater overhaul. Perhaps you’re looking for a low-cost replacement that offers more features and a sharper design. Or maybe your gaze is set upon massive OLED TVs with all the fixings. Regardless, the Prime Big Deal Days sale is here, with deals from noteworthy T...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 06:09</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/788343/best-amazon-prime-day-tech-deals-october-2025-day-1" target="_blank" rel="noopener noreferrer">
+        The 200 best October Prime Day deals
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon’s October Prime Day sale (aka Prime Big Deal Days) is finally here, and we’ve collected the best deals we could find on everything from noise-canceling headphones and robot vacuums to 4K OLED TVs. The majority of our recommendations have been thoroughly tested by&amp;amp;#160;Verge&amp;amp;#160;writers and e...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 05:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/live/amazon-prime-day-deals-october-25/" target="_blank" rel="noopener noreferrer">
+        Prime Day 2025 - We’re Tracking Deals Live
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;re tracking Amazon Prime Day deals, trends, and the general state of American capitalism live throughout the Big Deal Days sale.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 05:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/793435/amazon-october-prime-day-best-cheap-tech-deals-under-50-2025" target="_blank" rel="noopener noreferrer">
+        We dug through thousands of Prime Day deals to find 60 standouts for $50 or less
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Big-ticket tech like Sony’s Bravia 8 4K TV and Bose’s QuietComfort Headphones might be some of the more marquee deals we’re seeing during Prime Big Deal Days, but you don’t need to spend hundreds of dollars to score something great for yourself or someone else. If you’re working with a shoestring bu...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 05:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/prime-day-lego-deals-get-up-to-30-percent-off-star-wars-and-super-mario-sets-121513345.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Prime Day Lego deals: Get up to 30 percent off Star Wars and Super Mario sets
+      </a>
+    </h3>
+    
+    
+    <p class="summary">October Prime Day is here, and Amazon is awash with discounts to consider. Amazon uses October Prime Day to kickstart the holiday shopping season — even if you haven&#39;t even thought about the holidays yet, you should give the latest Prime Day Lego deals a look. A number of Lego sets from the Super Ma...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/best-prime-day-budget-headphone-deals-october-2025/" target="_blank" rel="noopener noreferrer">
+        The Best Budget Headphone Deals on Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">These headphones are a great deal at full price, and a serious steal for Prime Day 2025.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 05:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-prime-day-ssd-deals-save-on-gear-from-samsung-sandisk-crucial-and-others-170039457.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Prime Day SSD deals: Save on gear from Samsung, SanDisk, Crucial and others
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A portable storage device can make a world of difference to intensive processing tasks, from running massive video games — which feels like all of them these days — to core operating system functions. A solid-state drive (SSD) gives your hard drive more bandwidth than it comes with by default, makin...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 05:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/amazon-prime-day-slashes-hundreds-off-2025-macbooks-these-are-the-deals-id-get-before-theyre-gone" target="_blank" rel="noopener noreferrer">
+        Amazon Prime Day slashes hundreds off 2025 MacBooks - these are the deals I&#39;d get before they&#39;re gone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for a new laptop? These are the best Prime Day MacBook discounts to come out of this year&#39;s Big Deal Days sale.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/gemini/the-nano-banana-camera-has-arrived-to-edit-reality-in-real-time" target="_blank" rel="noopener noreferrer">
+        The Nano Banana camera has arrived to edit reality in real time
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The new Caira device blends professional optics with Google’s Nano Banana AI image model for real-time generative editing right inside the camera.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:38</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/we-found-the-best-prime-day-anker-deals-on-power-banks-wireless-chargers-and-other-accessories-164536745.html?src=rss" target="_blank" rel="noopener noreferrer">
+        We found the best Prime Day Anker deals on power banks, wireless chargers and other accessories
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Maybe you’re not looking to snag an iPad, a robot vacuum or a VR headset this Amazon Prime Day because you’re set with what you already have. Instead, though, consider picking up a few discounted “essential” gadgets, or really, devices you don’t want to be left without in a pinch. Charging gear fall...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/792618/amazon-october-prime-day-hoto-electric-screwdriver-deal-tools-sale-2025" target="_blank" rel="noopener noreferrer">
+        The electric screwdriver I use for DIY projects is 40 percent off right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you have small devices that are on the fritz — or in need of a slight modification — Hoto’s Electric Precision Screwdriver ADV is great for DIY projects. Its size and power make it well suited for tinkering with phones, laptops, and handheld gaming consoles, with its pen-style grip, simple one-bu...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/i-test-soundbars-and-these-3-dolby-atmos-soundbars-are-getting-great-prime-day-deals" target="_blank" rel="noopener noreferrer">
+        I test soundbars, and these 3 Dolby Atmos soundbars are getting great Prime Day deals
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Prime Day is a perfect opportunity to get a big discount on a soundbar, and these three deals are among the best we&#39;ve seen in the Prime Day sales.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/phone-accessories/this-usd9-beats-usb-c-cable-is-the-underrated-amazon-prime-day-deal-you-shouldnt-miss" target="_blank" rel="noopener noreferrer">
+        This $9 Beats USB-C cable is the underrated Amazon Prime Day Deal you shouldn&#39;t miss
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A great deal on a sturdy cable</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-prime-day-vacuum-deals-save-on-machines-from-irobot-shark-dyson-and-others-151504087.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Prime Day vacuum deals: Save on machines from iRobot, Shark, Dyson and others
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This October Prime Day, we&#39;ve collected a list of the best Amazon Big Deal Days discounts on both traditional and robotic vacuums. We&#39;re hoping this article can do more than just save you money — it&#39;s also designed to help you with the fiddliest vacuum-related decisions. Should you go corded, cordle...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/salesforce-refuses-to-pay-ransom-over-widespread-data-theft-attacks/" target="_blank" rel="noopener noreferrer">
+        Salesforce refuses to pay ransom over widespread data theft attacks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Salesforce has confirmed that it will not negotiate with or pay a ransom to the threat actors behind a massive wave of data theft attacks that impacted the company&#39;s customers this year. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 03:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/amazon-prime-day-tech-deals-under-25-save-on-blink-anker-roku-and-fire-tv-084136589.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Amazon Prime Day tech deals under $25: Save on Blink, Anker, Roku and Fire TV
+      </a>
+    </h3>
+    
+    
+    <p class="summary">You don’t have to spend a lot of money to take part in Amazon’s latest Prime Day Sale. Everything listed here is currently going for less than $25 and includes tech like speakers, mice, smart plugs, cables, wall adapters and power banks that fall below that price point. And these aren’t just any pro...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-amazon-prime-day-deals-under-50-include-sales-from-anker-ring-lego-roku-and-others-120531317.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Amazon Prime Day deals under $50 include sales from Anker, Ring, Lego, Roku and others
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Prime Day sales are a great opportunity to nab an expensive bit of shiny new tech you’ve been eying — it’s also an excellent time to get a discount on smaller electronics and accessories. For this list, we compared what’s on sale right now with the stuff we recommend in our guides. For less than $50...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/prime-day-sonos-era-100-deal-october-25/" target="_blank" rel="noopener noreferrer">
+        Prime Day 2025 Gets A Hot Start With the Best Sonos Era 100 Deal Yet
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Save big on Sonos&#39; stout little smart speaker that ranks among the best we&#39;ve tested.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 03:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/prime-day-deals-october-2025/" target="_blank" rel="noopener noreferrer">
+        We Found the 283 Best Prime Day Deals of 2025: Up To 55% Off
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon&#39;s fall 2025 Prime Day sale has great deals on WIRED-tested favorites like Kindles, laptops, Apple Watches, robot vacs, and more.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 03:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/best-amazon-prime-day-laptop-deals-discounts-on-machines-from-apple-lenovo-dell-hp-and-more-130507738.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Best Amazon Prime Day laptop deals: Discounts on machines from Apple, Lenovo, Dell, HP and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">So you need a new laptop — now’s the time of year to look out for one on sale. October Prime Day, as has been in years past, offers a ton of laptop deals to consider. All kinds of devices are on sale this year for Big Deal Days, from refreshed MacBooks to high-end gaming machines to already affordab...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/10/07/apple-reportedly-hiring-nprs-podcasting-strategy-chief-with-spotify-background/" target="_blank" rel="noopener noreferrer">
+        Apple reportedly hiring NPR’s podcasting strategy chief with Spotify background
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It sounds like Apple will soon welcome a new hire in the podcast leadership department. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 03:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/monitors/gaming-monitors/one-of-our-favorite-34-inch-qd-oled-alienware-gaming-monitors-is-just-usd521-for-amazon-prime-day-qhd-165hz-monitor-hits-all-time-low-pricing" target="_blank" rel="noopener noreferrer">
+        One of our favorite 34-inch QD-OLED Alienware gaming monitors is just $521 for Amazon Prime Day – QHD 165Hz monitor hits all-time low pricing
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Alienware&#39;s AW3423DWF falls to just $521.99</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 03:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/prime-day-household-cold-weather-gear-2025/" target="_blank" rel="noopener noreferrer">
+        Our Favorite Prime Day Deals on Cold-Weather Home Essentials (2025)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Winter is coming—this is the perfect time to stock up on space heaters, electric blankets, flannel sheets, and all the things you need to stay cozy.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 03:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/794507/amazon-october-prime-day-deals-verge-favorites-2025" target="_blank" rel="noopener noreferrer">
+        Some of our favorite gadgets are cheaper than ever for fall Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">All of the deals we’ve recommended from Prime Big Deal Days are for products our team has tested and can personally vouch for, whether it be a streaming device, a laptop, or a pair of noise-canceling earbuds. However, there are also plenty of other gadgets that the&amp;amp;#160;Verge&amp;amp;#160;staff genuinely lo...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 03:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/audio/speakers/the-best-prime-day-speaker-deals-jbl-bose-ultimate-ears-and-more-070038290.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Prime Day speaker deals: JBL, Bose, Ultimate Ears and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;re always ready to argue that high-quality speakers are a worthwhile investment, adding new dimensions to music and dialogue that make any kind of entertainment more enjoyable. That said, they&#39;re not exactly cheap. That&#39;s why our staff audiophiles get so excited whenever Prime Day rolls around — ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/deepminds-latest-ai-tool-wants-to-detect-and-repair-software-vulnerabilities-before-they-get-attacked" target="_blank" rel="noopener noreferrer">
+        DeepMind&#39;s latest AI tool wants to detect and repair software vulnerabilities before they get attacked
+      </a>
+    </h3>
+    
+    
+    <p class="summary">CodeMender uses AI to automatically detect and fix software vulnerabilities across large open source projects, reducing developer workloads.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/795536/wordle-tv-game-show-jimmy-fallon-savannah-guthrie-nbc" target="_blank" rel="noopener noreferrer">
+        Jimmy Fallon wants to turn Wordle into a TV show
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Jimmy Fallon is helping make Wordle into a television series, Deadline reports. NBC is piloting the Wordle game show with the help of Fallon’s production company, and the show is currently filming in the UK. Savannah Guthrie will host.&amp;amp;#160; Around when Wordle really started to blow up, Jimmy Fallon...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-prime-day-kitchen-deals-include-up-to-50-percent-off-our-favorite-instant-pots-blenders-and-more-193009814.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Prime Day kitchen deals include up to 50 percent off our favorite Instant Pots, blenders and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Holiday cooking season is nearly upon us. Which is why it&#39;s great that Amazon’s October Prime Day sale is here. We&#39;re seeing discounts on lots of the kitchen appliances and gadgets that Engadget staffers have tested in our guides and reviews. We found deals on Ninja air fryers, Ooni Pizza ovens, Bre...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:46</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/ive-been-reviewing-gaming-laptops-for-half-a-decade-and-these-are-the-best-prime-day-gaming-laptop-deals-ive-seen-all-year" target="_blank" rel="noopener noreferrer">
+        I&#39;ve been reviewing gaming laptops for half a decade, and these are the best Prime Day gaming laptop deals I&#39;ve seen all year
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Gaming laptop deals are a great way to save big on the latest models, and these Prime Day gaming laptop deals are some of the best I&#39;ve seen in ages.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/prime-day-tv-deals-save-up-to-500-on-sets-from-samsung-lg-sony-and-more-180051945.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Prime Day TV deals: Save up to $500 on sets from Samsung, LG, Sony and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon’s latest October Prime Day sale is underway, and a selection of highly-rated TVs from LG, Samsung, Sony and others are discounted for the occasion. If you can’t wait until Black Friday to upgrade, we’re rounding up the best Prime Day TV deals on the sets worth your time below. We’ve also thro...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/792811/amazon-october-prime-day-philips-hue-festavia-string-lights-deal-sale" target="_blank" rel="noopener noreferrer">
+        Philips Hue customizable string lights are up to $125 off for October Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It may be October, but the holidays will be here before you know it. Amazon’s fall Prime Day event is here, offering Prime subscribers a great opportunity to save on holiday decorations before the holiday rush kicks off. Right now, you can pick up the Philips Hue Festavia string lights at one of the...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/wireless-headphones/sennheiser-hdb-630-reveal" target="_blank" rel="noopener noreferrer">
+        Sennheiser just revealed new wireless headphones that bundle a special transmitter for &#39;true audiophile sound&#39; on the go
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Sennheiser HDB 630 come with a USB-C dongle for ‘hi-res’ Bluetooth audio, but also set out to deliver great battery life and effective adaptive ANC</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/tablets/ipad-mini/this-is-the-one-prime-day-deal-that-i-recommend-to-all-my-family-and-friends-the-ipad-mini" target="_blank" rel="noopener noreferrer">
+        This is the one Prime Day deal that I recommend to all my family and friends - the iPad mini
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I&#39;m back once again asking you to grab this excellent iPad mini deal at Amazon&#39;s Prime Big Deal Days.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/10/07/you-cant-libel-the-dead-but-that-doesnt-mean-you-should-deepfake-them/" target="_blank" rel="noopener noreferrer">
+        You can’t libel the dead. But that doesn’t mean you should deepfake them.
+      </a>
+    </h3>
+    
+    
+    <p class="summary">&#34;Please, just stop sending me AI videos of Dad,&#34; the late Robin Williams&#39; daughter Zelda wrote on Instagram.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 02:19</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://krebsonsecurity.com/2025/10/shinyhunters-wage-broad-corporate-extortion-spree/" target="_blank" rel="noopener noreferrer">
+        ShinyHunters Wage Broad Corporate Extortion Spree
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A cybercriminal group that used voice phishing attacks to siphon more than a billion records from Salesforce customers earlier this year has launched a website that threatens to publish data stolen from dozens of Fortune 500 firms if they refuse to pay a ransom. The group also claimed responsibility...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Krebs on Security</span>
+      
+      
+      
+      <span class="time">🕒 02:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/this-deal-wont-last-long-lgs-c5-oled-tv-is-49-percent-off-for-prime-day-save-usd1-324" target="_blank" rel="noopener noreferrer">
+        This deal won&#39;t last long: LG&#39;s C5 OLED TV is 49% off for Prime Day – save $1,324
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The best Prime Day TV deal, hands down, is a massive 49% discount on LG&#39;s 65-inch C5 OLED TV, marking a new record-low price. Get it before it&#39;s gone.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/my-beloved-dyson-am09-heater-and-fan-is-40-percent-off-for-prime-day-223428328.html?src=rss" target="_blank" rel="noopener noreferrer">
+        My beloved Dyson AM09 heater and fan is 40 percent off for Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Believe it or not, October Prime Day is actually a good time to save on Dyson devices. Plenty of cordless vacuums are on sale this year, as well as a few viral hair stylers. But, none of those top my trusty AM09. Dyson’s Hot+Cool AM09 heater and fan is on sale for $300 right now — that’s 40 percent ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/cameras/the-best-prime-day-camera-and-drone-deals-get-up-to-41-percent-off-gear-from-dji-canon-sony-and-others-073852143.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Prime Day camera and drone deals: Get up to 41 percent off gear from DJI, Canon, Sony and others
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you’re in the market for a new camera, drone or accessories, Amazon’s October Prime Day is proving to be a particularly good time to shop. You can find deals from major brands including DJI, Canon, Sony, Panasonic, Nikon and others. You’ll also see discounts on important accessories like memory c...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/solawave-wand-deal-prime-day-october-2025/" target="_blank" rel="noopener noreferrer">
+        The Solawave Wand Is the Best LED Device Prime Day Deal Right Now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for the benefits of red light on a budget? Solawave&#39;s wand is the best option I&#39;ve tried, and now it&#39;s on sale for even cheaper.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/a-cpu-vendor-youve-never-heard-of-could-launch-a-96-core-x86-cpu-that-is-very-very-similar-to-amds-epyc-but-i-wonder-what-the-tdp-will-be-on-that-one" target="_blank" rel="noopener noreferrer">
+        A CPU vendor you&#39;ve never heard of could launch a 96-core x86 CPU that is very, very similar to AMD&#39;s EPYC - but I wonder what the TDP will be
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Zhaoxin KH-50000 server CPU mirrors AMD EPYC design, offering 96 cores and advanced memory, while efficiency remains undisclosed.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/cars/2025/10/teslas-new-cut-price-evs-a-39990-model-y-and-36990-model-3/" target="_blank" rel="noopener noreferrer">
+        Tesla’s standard-range Model 3, Model Y join the lineup
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A smaller battery and less standard equipment cuts prices, but not by enough.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/amazon-prime-day-kindle-deals-october-2025/" target="_blank" rel="noopener noreferrer">
+        Best Amazon Prime Day Kindle Deals (October 2025): Colorsoft, Scribe, Paperwhite
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There&#39;s no better time than one of Amazon&#39;s sale events to treat yourself to a new Kindle. Here&#39;s the best of the Kindle sales happening for Amazon Prime Big Deals Day.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/docker-makes-hardened-images-catalog-affordable-for-small-businesses/" target="_blank" rel="noopener noreferrer">
+        Docker makes Hardened Images Catalog affordable for small businesses
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Docker team has announced unlimited access to its Hardened Images catalog to make access to secure software bundles affordable for all development teams at startups and SMBs. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 01:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-october-prime-day-gaming-deals-save-on-ps5-games-headsets-controllers-and-more-082623558.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best October Prime Day gaming deals: Save on PS5 games, headsets, controllers and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Among the many tech discounts included in Amazon’s latest October Prime Day sale are several price drops on video games and other gaming gear. To make things a little less overwhelming, we&#39;ve cut through the noise and rounded up the best Prime Day gaming deals we could find below. Just remember that...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/audio/headphones/sennheisers-hdb-630-headphones-combine-wireless-convenience-with-wired-lossless-audio-220000711.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Sennheiser&#39;s HDB 630 headphones combine wireless convenience with wired lossless audio
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Sennheiser hasn’t debuted a premium set of wireless headphones since the Momentum 4 arrived in 2022. Sure, there were two sets of Accentum cans, but those offer more mid-range performance in the $180-$250 range. Instead of a Momentum 5 for its latest release, the company has revealed the HDB 630: a ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/best-prime-day-deals-under-100-october-2025/" target="_blank" rel="noopener noreferrer">
+        75 Best Prime Day Deals Under $100 (2025): Chargers, Earbuds, and More
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;ve scoured Amazon for the best deals under a Benjamin, from Roku to Instant Pot.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/tesla-model-y-and-model-3-standard-are-cheaper-but-still-not-cheap/" target="_blank" rel="noopener noreferrer">
+        The Tesla Model Y and Model 3 Standard Are Cheaper—but Still Not Cheap
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The electric vehicle tax credit is gone, and Tesla&#39;s new, more affordable models don&#39;t quite close the gap.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/best-prime-day-tech-deals-october-2025/" target="_blank" rel="noopener noreferrer">
+        26 Best Prime Day Tech Deals: Tablets, Accessories, and More
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Take advantage of these discounts, courtesy of Amazon’s latest sale event, and nab WIRED’s favorite tech gadgets.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/10/07/apple-watch-activity-challenge-october-2025/" target="_blank" rel="noopener noreferrer">
+        The next Apple Watch activity challenge is all about looking inward
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Once in a while, Apple promotes an Apple Watch activity challenge, which rewards users with a special trophy, as well as exclusive animated stickers. And if you collect those, you can mark your calendar for this Friday, October 10. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/health/2025/10/after-rfk-jr-s-shenanigans-covid-shot-access-will-be-a-lot-like-last-year/" target="_blank" rel="noopener noreferrer">
+        Despite RFK Jr.’s shenanigans, COVID shot access will be a lot like last year
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Most people can get vaccinated at their local pharmacy like normal.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:54</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/prime-day-beauty-deals-october-2025/" target="_blank" rel="noopener noreferrer">
+        Best Prime Day Beauty Deals 2025: Hair, Skin, and Deodorant
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon Prime Day’s a great time for beauty bargains. We tested the gadgets, tracked the prices, and scanned hundreds of deals to find what&#39;s worth it.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 00:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/samsung-will-launch-a-512tb-pcie-gen6-ssd-but-you-will-have-to-wait-till-2027-as-it-looks-set-to-compete-against-sandisk-solidigm-sk-hynix-and-kioxia-and-no-consumers-wont-even-get-a-whiff-of-it" target="_blank" rel="noopener noreferrer">
+        Samsung will launch a 512TB PCIe Gen6 SSD but you will have to wait till 2027 as it looks set to compete against Sandisk, Solidigm, SK Hynix and Kioxia - and no, consumers won&#39;t even get a whiff of it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Samsung plans 512TB PCIe Gen6 SSD launch in 2027, targeting enterprise and servers rather than consumer desktops or laptops.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/ted-cruz-targets-wikipedia-over-ideological-bias/" target="_blank" rel="noopener noreferrer">
+        Ted Cruz Targets Wikipedia Over ‘Ideological Bias’
+      </a>
+    </h3>
+    
+    
+    <p class="summary">In a letter to the Wikimedia Foundation CEO, Cruz accused the beloved online resource of being too liberal.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 00:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/10/07/trumps-doe-proposes-cutting-billions-in-grants-for-gm-ford-and-lots-of-startups/" target="_blank" rel="noopener noreferrer">
+        Trump’s DOE proposes cutting billions in grants for GM, Ford, and lots of startups
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Trump&#39;s Department of Energy wants to cancel billions more in awards that were granted by the Biden administration, and startups are in the crosshairs.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:41</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/anti-prime-day-small-business-sales-october-2025/" target="_blank" rel="noopener noreferrer">
+        The Best Anti-Prime Day Deals for Amazon Haters (2025): Sheets, Sex Tech, and Fire Pits
+      </a>
+    </h3>
+    
+    
+    <p class="summary">You don&#39;t have to shop Amazon Big Deal Days to save on WIRED-approved favorites.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 00:38</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/science/2025/10/2025-nobel-prize-in-physics-awarded-for-macroscale-quantum-tunneling/" target="_blank" rel="noopener noreferrer">
+        2025 Nobel Prize in Physics awarded for macroscale quantum tunneling
+      </a>
+    </h3>
+    
+    
+    <p class="summary">John Clarke, Michel H. Devoret, and John Martinis built an electrical circuit-based oscillator on a microchip.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/entertainment/theres-a-massive-lego-sale-at-amazon-this-prime-day-here-are-31-deals-id-buy-with-my-own-money" target="_blank" rel="noopener noreferrer">
+        There&#39;s a massive Lego sale at Amazon this Prime Day – here are 31 deals I&#39;d buy with my own money
+      </a>
+    </h3>
+    
+    
+    <p class="summary">For Prime Big Deal Days, Amazon has put together a massive Lego sale with Star Wars, Disney, Creator, Technic, Formula 1, and countless other sets seeing massive discounts. TechRadar&#39;s Lego expert picked his favorite, and the deals start at just $5.59.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/10/07/wall-street-analysts-explain-how-amds-own-stock-will-pay-for-openais-billions-in-chip-purchases/" target="_blank" rel="noopener noreferrer">
+        Wall Street analysts explain how AMD’s own stock will pay for OpenAI’s billions in chip purchases
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AMD&#39;s unusual deal to finance OpenAI&#39;s chip purchases could grant the AI model maker up to $100 billion, analyst estimates.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/teslas-stripped-back-standard-models-bring-the-model-3-and-y-back-under-40k-205012564.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Tesla&#39;s stripped-back standard models bring the Model 3 and Y back under $40,000
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tesla has been promising less expensive versions of its electric vehicles for several months, and today the company introduced two &#39;standard&#39; models. The Standard Model 3 sedan will retail starting at $36,990 and the Standard Model Y SUV will start at $39,990. While these price tags make Tesla EVs a...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/tech-policy/2025/10/wikipedia-rebuts-ted-cruz-attack-says-cruz-just-doesnt-understand-the-site/" target="_blank" rel="noopener noreferrer">
+        Ted Cruz doesn’t seem to understand Wikipedia, lawyer for Wikimedia says
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Wikipedia host&#39;s lawyer wants to help Ted Cruz understand how the platform works.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/10/07/whatsapp-for-iphone-adds-built-in-message-translation-in-21-languages/" target="_blank" rel="noopener noreferrer">
+        WhatsApp for iPhone adds built-in message translation in 21 languages
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After releasing it on Android a few weeks ago, WhatsApp is now rolling out its own translation tool on iOS. Here’s how it works. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/10/07/i-love-the-macbook-air-but-one-ipad-pro-feature-ruined-it-for-me/" target="_blank" rel="noopener noreferrer">
+        I love the MacBook Air, but one iPad Pro feature ruined it for me
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The MacBook Air used to be one of my favorite Apple devices. And the latest M4 model is especially impressive. But after using an M4 iPad Pro, there’s one feature that has made it hard to use a MacBook Air again: the iPad’s tandem OLED display. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/google-wont-fix-new-ascii-smuggling-attack-in-gemini/" target="_blank" rel="noopener noreferrer">
+        Google won’t fix new ASCII smuggling attack in Gemini
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Google has decided not to fix a new ASCII smuggling attack in Gemini that could be used to trick the AI assistant into providing users with fake information, alter the model&#39;s behavior, and silently poison its data. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 00:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/calm-down-everyone-unitrees-recently-discovered-exploit-will-absolutely-definitely-not-give-rise-to-the-first-robot-to-robot-viral-infection-using-bluetooth" target="_blank" rel="noopener noreferrer">
+        Calm down everyone - Unitree&#39;s recently discovered exploit will absolutely, definitely not give rise to the first robot-to-robot viral infection using Bluetooth
+      </a>
+    </h3>
+    
+    
+    <p class="summary">UniPwn exposes chain of Unitree robot vulnerabilities, allowing root-level command execution and potential wireless propagation between devices.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/website-hosting/nexcess-is-fully-absorbed-into-liquid-web" target="_blank" rel="noopener noreferrer">
+        Nexcess is fully absorbed into Liquid Web
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The web hosting brand Nexcess has been fully absorbed in to Liquid Web</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/best-dehumidifier/" target="_blank" rel="noopener noreferrer">
+        6 Best Dehumidifiers for Cool and Dry Home Air (2025)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you care about good air, it’s time for a dehumidifier. These are the best ones we&#39;ve tested for everything from basements to drying laundry.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 23:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/10/07/altstore-raises-6m-as-it-prepares-to-launch-in-these-three-new-countries/" target="_blank" rel="noopener noreferrer">
+        AltStore raises $6M as it prepares to launch in these three new countries
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AltStore, one of the first and most popular third-party app stores, has just announced a Series A funding round, a new board member, and plans to expand its platform to at least three new countries. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/live/news/cheap-prime-day-deals-2025-under-30" target="_blank" rel="noopener noreferrer">
+        I found the 101+ best cheap Prime Day deals that are actually worth buying – tech, gift ideas, and Lego from $5
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Prime Day deals don&#39;t have to be expensive: here are the 50+ best cheap Prime Day deals you can buy today, picked by an expert.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/10/07/google-launches-its-ai-vibe-coding-app-opal-in-15-more-countries/" target="_blank" rel="noopener noreferrer">
+        Google launches its AI vibe-coding app Opal in 15 more countries
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The app, which lets you create mini web apps using text prompts, is now available in Canada, India, Japan, South Korea, Vietnam, Indonesia, Brazil, Singapore, Colombia, El Salvador, Costa Rica, Panamá, Honduras, Argentina, and Pakistan.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gadgets/2025/10/microsoft-removes-even-more-microsoft-account-workarounds-from-windows-11-build/" target="_blank" rel="noopener noreferrer">
+        Microsoft removes even more Microsoft account workarounds from Windows 11 build
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft has locked down well-documented workarounds in recent test builds.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-beats-studio-pro-are-on-sale-for-170-this-prime-day-113043590.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The Beats Studio Pro are on sale for $170 this Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon Prime Day is usually a good time to think about upgrading your headphones, or picking up that pair you&#39;ve had your eye on for a while. Like in years past, this year&#39;s October Prime Day has brought discounts to big brands in the headphones space — including Beats. A solid deal right now is on ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/10/07/roborock-prime-day-deals-offer-up-to-900-off-award-winning-robot-vacuums-sponsored/" target="_blank" rel="noopener noreferrer">
+        Roborock Prime Day deals offer up to $900 off award-winning robot vacuums
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Prime Day has rolled around again, If you’re looking to see a robot vacuum cleaner rolling around your home, there’s no better time to buy. Roborock’s Prime Day deals let you save up to 45% from its range of award-winning robot vacuum cleaners for a limited time of just a few days. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/prime-day-kindle-deals-include-the-colorsoft-for-a-record-low-200-093010883.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Prime Day Kindle deals include the Colorsoft for a record-low $200
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Prime Day is a good time to consider picking up one of Amazon&#39;s own devices, particularly Kindle ereaders. Amazon typically saves the best discounts for its shopping events, and this year is no different. One of the standouts is the Kindle Colorsoft, which is on sale for $200. That&#39;s $50 off and a r...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/the-best-selling-ninja-luxe-cafe-is-gbp100-off-right-now-bringing-bean-to-cup-goodness-to-your-home-for-less" target="_blank" rel="noopener noreferrer">
+        The best-selling Ninja Luxe Café is £100 off right now, bringing bean-to-cup goodness to your home for less
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The ever-popular Ninja Luxe Café is back on sale for Prime Day, with $100 off.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-bose-quietcomfort-ultra-headphones-are-100-off-for-prime-day-123043790.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The Bose QuietComfort Ultra headphones are $100 off for Prime Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Noise-cancelling headphones are essential tech if you travel often or even have a lengthy commute. Bose is one of the top players in this space, and you can save on some of its high-end wireless headphones for Prime Day. The Bose QuietComfort Ultra headphones are $100 off right now and down to $329....</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/ssd-vendor-runs-out-of-ideas-to-improve-storage-device-so-transforms-an-external-bamboo-ssd-into-an-essential-oil-diffuser-just-be-careful-about-going-overboard-with-the-oil-as-it-may-damage-the-device" target="_blank" rel="noopener noreferrer">
+        SSD vendor runs out of ideas to improve storage device, so transforms an external bamboo SSD into an essential oil diffuser - just be careful about going overboard with the oil
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apacer AS712 portable SSD fuses bamboo design, essential oil diffusion, and high-speed 1TB storage for a lifestyle-tech hybrid.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:58</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2025-10-08 06:34 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
