@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for November 02, 2025</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/rugby/new-zealand-kiwis-vs-tonga-pacific-championships-free" target="_blank" rel="noopener noreferrer">
+        How to watch New Zealand Kiwis vs Tonga on 9Now — it&#39;s *FREE*
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We explain how to watch New Zealand Kiwis vs Tonga for free as they face each other in a key clash in the Pacific Championships 2025.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/01/macbook-air-15-deal-24gb-ram-why-you-should-upgrade/" target="_blank" rel="noopener noreferrer">
+        This 15-inch MacBook Air deal makes upgrading more tempting than ever
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With every new Apple product launch, deals slowly crop up over time – and the MacBook lineup is no exception. The best deals tend to come after a model is no longer the latest and greatest, and there’s currently an unbeatable 15-inch M3 MacBook Air deal that’s hard to pass up on, and once it sells o...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 05:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/entertainment/streaming/dodgers-vs-blue-jays-game-7-tonight-how-to-watch-the-2025-mlb-world-series-without-cable-102530975.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Dodgers vs. Blue Jays, Game 7 tonight: How to watch the 2025 MLB World Series without cable
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The World Series is headed to a Game 7 after the Los Angeles Dodgers tied up the series against the Toronto Blue Jays last night, 3-3. The Fall Classic remains on Toronto&#39;s home turf for Game 7 tonight — Saturday, Nov. 1 — at 8PM ET/5PM PT. The World Series odds still favor the Dodgers. The final 20...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/china-smashes-drone-display-world-record-nearly-16-000-drones-take-to-the-sky-in-incredible-display" target="_blank" rel="noopener noreferrer">
+        China smashes drone display world record - nearly 16,000 drones take to the sky in incredible display
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Liuyang’s record-breaking 16,000-drone show blended art, software, and precision engineering while highlighting both technical risks and military potential.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/minisforums-new-super-mini-pc-is-anything-but-small-but-what-it-does-with-that-extra-space-should-win-it-a-lot-of-friends" target="_blank" rel="noopener noreferrer">
+        Minisforum&#39;s new super &#34;mini pc&#34; is anything but small - but what it does with that extra space should win it a lot of friends
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Minisforum MS-02 Ultra blends desktop-level hardware, extensive upgrade options, and fast networking in a larger mini PC design.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/science/space/pentagon-will-reportedly-award-spacex-a-2-billion-contract-to-help-develop-the-golden-dome-210019325.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Pentagon will reportedly award SpaceX a $2 billion contract to help develop the &#39;Golden Dome&#39;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">SpaceX will reportedly receive a $2 billion contract to develop satellites for the US government, according to the Wall Street Journal. The WSJ&#39;s report detailed that SpaceX will be tasked with developing up to 600 satellites that can track missiles and aircraft and will be used for President Trump&#39;...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/semrush-has-a-new-tool-to-help-marketers-win-in-the-ai-age-make-sure-your-business-doesnt-get-hidden" target="_blank" rel="noopener noreferrer">
+        Semrush has a new tool to help marketers win in the AI age - make sure your business doesn&#39;t get hidden
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Semrush One merges SEO and AI visibility analytics, offering brands new insights while raising questions about affordability and long-term effectiveness.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/entertainment/what-to-read-this-weekend-a-deep-dive-into-humankinds-search-for-alien-life-201422007.html?src=rss" target="_blank" rel="noopener noreferrer">
+        What to read this weekend: A deep dive into humankind&#39;s search for alien life
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Here are some recently released titles to add to your reading list. This week, we read First Contact: The Story of Our Obsession with Aliens, plus James Tynion IV and Martin Simmonds&#39; take on Dracula — now in black and white for extra creep-factor. This article originally appeared on Engadget at htt...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/01/elon-musk-wants-you-to-know-that-sam-altman-got-a-refund-for-his-tesla-roadster/" target="_blank" rel="noopener noreferrer">
+        Elon Musk wants you to know that Sam Altman got a refund for his Tesla Roadster
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Elon Musk and Sam Altman are still taking swipes at each other on Musk’s social media platform X.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/hbo-max/there-are-over-70-new-hbo-max-movies-in-november-2025-here-are-3-sci-fi-hits-with-over-80-percent-on-rotten-tomatoes" target="_blank" rel="noopener noreferrer">
+        There are over 70 new HBO Max movies in November 2025 – here are 3 sci-fi hits with over 80% on Rotten Tomatoes
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From apes to demons, there&#39;s some great sci-fi hitting HBO Max this November.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/creality-falcon-a1-pro-laser-engraver-review" target="_blank" rel="noopener noreferrer">
+        I reviewed the Falcon A1 Pro and this impressive desktop laser engraver is perfect for small businesses
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Falcon A1 Pro is one of the smallest laser engravers of its type, offering both the 20W blue laser for cutting and an optional 2W IR laser for fine detail. Features include auto-focus, camera-assisted positioning, and CoreXY mechanics for speed, making it a perfect fit if you&#39;re a small business...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/01/indie-app-spotlight-dropla-file-managing-tool-kanban-boards-for-ipad/" target="_blank" rel="noopener noreferrer">
+        Indie App Spotlight: ‘Dropla’ is a nifty tool that keeps your files organized across apps
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Welcome to Indie App Spotlight. This is a weekly 9to5Mac series where we showcase the latest apps in the indie app world. If you’re a developer and would like your app featured, get in contact. Dropla is an iPad app that serves as a shelf of sorts for your files. You can also think of it as a univer...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/paramount-plus/3-new-paramount-action-movies-with-over-90-percent-on-rotten-tomatoes-you-should-stream-in-november-2025" target="_blank" rel="noopener noreferrer">
+        3 new Paramount+ action movies with over 90% on Rotten Tomatoes you should stream in November 2025
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From Spielberg&#39;s best to Vietnam classics, here&#39;s three great action movies to stream on Paramount+ in November.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/ayaneos-first-smartphone-could-have-physical-shoulder-buttons-182033773.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Ayaneo&#39;s first smartphone could have physical shoulder buttons
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ayaneo is breaking into the competitive smartphone market with its latest offering, but it&#39;s hoping to attract the mobile gamers out there. In a teaser posted to its YouTube, the gaming handheld maker offered its first look at the Ayaneo Phone. As vague as the trailer is, Ayaneo clearly has a target...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 21:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/dont-wait-for-black-friday-grab-the-cheapest-15k-class-gen5-1tb-ssd-on-the-market-today" target="_blank" rel="noopener noreferrer">
+        Don’t wait for Black Friday — grab the cheapest 15K-class Gen5 1TB SSD on the market today
+      </a>
+    </h3>
+    
+    
+    <p class="summary">You don’t need to wait for Black Friday to upgrade - this 1TB Gen5 SSD from PNY offers incredible speed and value.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/coffee-machines/i-tried-nespressos-festive-edition-double-espresso-and-it-gave-me-the-energy-to-finish-my-christmas-shopping-a-month-early" target="_blank" rel="noopener noreferrer">
+        I tried Nespresso&#39;s Festive Edition Double Espresso, and it gave me the energy to finish my Christmas shopping a month early
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A toasty and fruity espresso that tastes festive but doesn&#39;t rely on added flavors.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/rugby/ireland-vs-new-zealand-autumn-nations-series-2025-free" target="_blank" rel="noopener noreferrer">
+        How to watch Ireland vs New Zealand for *FREE* on Virgin Media Play — Stream Autumn Nations Series 2025
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ireland kickstart their Autumn Nations Series with a tough test against New Zealand — here&#39;s how you can watch the game from anywhere in the world for free.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/01/iphone-crossbody-straps-are-cooler-than-you-might-believe/" target="_blank" rel="noopener noreferrer">
+        Despite their unpopularity, iPhone crossbody straps aren’t as useless as they may seem
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With the launch of the iPhone 17 lineup this fall, Apple debuted a new accessory – the crossbody strap. It certainly received lukewarm reception, but after trying one out, I actually think it’s a rather nifty concept. At least, if you’re the right person for it. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/samsung-galaxy-phones/a-major-telephoto-camera-upgrade-is-rumored-for-all-the-samsung-galaxy-s26-models" target="_blank" rel="noopener noreferrer">
+        A major telephoto camera upgrade is rumored for all the Samsung Galaxy S26 models
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We have some more rumored details about what to expect from the Galaxy S26 phones arriving next year.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/wireless-headphones/save-big-on-these-top-rated-bose-headphones-ahead-of-black-friday" target="_blank" rel="noopener noreferrer">
+        Save big on these top-rated Bose headphones ahead of Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon is running a sale on Bose&#39;s most popular headphones ahead of Black Friday, and these are the two models I&#39;d buy.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/811879/google-pixel-watch-3-anker-140w-usb-c-cable-deal-sale" target="_blank" rel="noopener noreferrer">
+        Google’s Pixel Watch 3 and Anker’s two-headed USB-C cable are our favorite deals this week
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There are plenty of good smartwatches out there, and Google’s last-gen Pixel Watch 3 is one of them. Right now, the 45mm / Wi-Fi model is available at Amazon, Walmart, and Target for $199.99 ($100 off), which is a new low price and $150 less than the Pixel Watch 4. In her review, our own [&amp;amp;#8230;]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 20:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/cybersecurity/italy-will-be-the-latest-country-to-require-age-verification-for-porn-sites-170913842.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Italy will be the latest country to require age verification for porn sites
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Later this month, Italian citizens will have one extra step to go through before getting on porn sites. On Friday, Italy&#39;s regulatory agency for communications, known as AGCOM, announced an age verification system that&#39;s meant to prevent minors from accessing websites with pornographic content. The ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 20:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/football/liverpool-vs-aston-villa-premier-league-2025-26" target="_blank" rel="noopener noreferrer">
+        Liverpool vs Aston Villa live stream: How to watch Premier League 2025/26, TV channels, broadcasters
+      </a>
+    </h3>
+    
+    
+    <p class="summary">All the ways to watch Liverpool vs Aston Villa live streams online and from anywhere as the Reds welcome Unai Emery&#39;s side to Anfield.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/xiaomi-phones/xiaomi-will-straight-up-give-you-a-tv-if-you-buy-this-phone-and-thats-worth-keeping-in-mind-this-black-friday" target="_blank" rel="noopener noreferrer">
+        Xiaomi will straight-up give you a free TV if you buy this phone – and that’s worth keeping in mind this Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The world’s third-biggest phone brand isn’t one for big discounts, but its free gifts and bundle offers are pretty wild.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/01/coinbase-ceo-brian-armstrong-trolls-the-prediction-markets/" target="_blank" rel="noopener noreferrer">
+        Coinbase CEO Brian Armstrong trolls the prediction markets
+      </a>
+    </h3>
+    
+    
+    <p class="summary">While Armstrong may have helped some Kalshi and Polymarket users make a little money, he was also illustrating how easily these markets can be manipulated.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 20:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/google/google-confirms-ai-search-will-have-ads-but-they-may-look-different/" target="_blank" rel="noopener noreferrer">
+        Google confirms AI search will have ads, but they may look different
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Google Ads are not going anywhere. Eventually, AI Search results on Google and likely other properties will have ads. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 20:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/812084/ayaneo-phone-confirmed-in-a-teaser-featuring-retro-remake-branding" target="_blank" rel="noopener noreferrer">
+        Ayaneo Phone confirmed in a teaser featuring retro Remake branding
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ayaneo is best known for its retro gaming handhelds, but the company has now confirmed its first phone will be coming soon. Ayaneo briefly teased that it was working on a phone back in August during the event where it unveiled the dual-screen Pocket DS. Of course, many of the company’s gaming handhe...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 20:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/science/2025/11/research-roundup-6-cool-science-stories-we-almost-missed-3/" target="_blank" rel="noopener noreferrer">
+        Research roundup: 6 cool science stories we almost missed
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Also: the science of regular vs. gluten-free spaghetti, catching high-speed snake bites in action, etc.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 20:08</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/another-major-wordpress-add-on-security-flaw-could-affect-10-000-sites-find-out-if-youre-affected" target="_blank" rel="noopener noreferrer">
+        Another major WordPress add-on security flaw could affect 10,000 sites - find out if you&#39;re affected
+      </a>
+    </h3>
+    
+    
+    <p class="summary">King Addons for Elementor allowed full WordPress website takeover through two critical-level vulnerabilities.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/verys-black-friday-sale-starts-early-here-are-the-12-best-deals-on-tvs-appliances-laptops-games-consoles-and-more" target="_blank" rel="noopener noreferrer">
+        Very&#39;s Black Friday sale starts early – here are the 12 best deals on TVs, appliances, laptops, games consoles, and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Very is yet another retailer that&#39;s kicked off its Black Friday sale early, so I&#39;ve searched through and picked out all of the top offers I&#39;d buy now.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 19:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/microsoft/windows-11-build-262207051-released-with-ask-copilot-feature/" target="_blank" rel="noopener noreferrer">
+        Windows 11 Build 26220.7051 released with “Ask Copilot” feature
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Windows 11 Build 26220.7051 is now rolling out to testers in the Windows Insider Program, and there are at least three new features, including Ask Copilot in the taskbar. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 19:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/01/rising-energy-prices-put-ai-and-data-centers-in-the-crosshairs/" target="_blank" rel="noopener noreferrer">
+        Rising energy prices put AI and data centers in the crosshairs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A majority of consumers say they’re worried about data centers driving up electricity costs. Is the industry prepared for a possible backlash?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 19:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/black-friday-tv-sales-are-live-here-are-the-early-deals-id-buy-from-samsung-lg-and-sony" target="_blank" rel="noopener noreferrer">
+        Black Friday TV sales are live – here are 19 early deals I&#39;d buy from Samsung, LG, and TCL
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Early Black Friday TV deals are live, and I&#39;m rounding up today&#39;s top offers worth buying right now from Samsung, TCL, LG, and more.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 19:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/gaming-accessories/i-compared-the-steelseries-alias-and-alias-pro-side-by-side-and-it-goes-to-show-that-sometimes-more-expensive-doesnt-mean-better" target="_blank" rel="noopener noreferrer">
+        I compared the SteelSeries Alias and Alias Pro side by side and it goes to show that sometimes more expensive doesn&#39;t mean better
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We break down the key differences between the SteelSeries Alias and Alias Pro and explain which is the better value option.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 19:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/small-appliances/the-color-changing-russell-hobbs-calm-kettle-is-giving-me-a-moment-of-peace-in-the-morning-and-its-perfect-for-christmas" target="_blank" rel="noopener noreferrer">
+        The color-changing Russell Hobbs Calm Kettle is giving me a moment of peace in the morning, and it&#39;s perfect for Christmas
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Turn your first brew of the day into a minute of mindfulness with soothing sounds and shifting light effects.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 19:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/newegg-black-november-doorbuster-deals-kick-off-the-black-friday-countdown-new-deals-are-unlocked-every-day" target="_blank" rel="noopener noreferrer">
+        Newegg Black November Doorbuster Deals are available now, kicking off the Black Friday countdown — new deals are unlocked every day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">In the lead-up to Black Friday, Newegg is releasing daily Doorbuster deals in its Black November deals event.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 19:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/self-assembling-data-centers-in-space-are-becoming-reality-as-rendezvous-robotics-partners-with-starcloud-elon-musk-chimes-in-that-spacex-will-be-doing-this" target="_blank" rel="noopener noreferrer">
+        Self-assembling data centers in space are becoming reality as Rendezvous Robotics partners with Starcloud — Elon Musk chimes in that &#39;SpaceX will be doing this&#39;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Rendezvous Robotics&#39; autonomous tile-based modules, built using Project TESSERAE tech, will potentially power Starcloud&#39;s plans to build massive data centers in space. The company is partnering with Nvidia to build a 5-gigawatt facility in orbit, and Rendezvous can help make that distant future a re...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 19:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/gpus/grab-a-radeon-rx-9070-xt-at-msrp-before-it-sells-out-asrock-challenger-radeon-rx-9070-xt-drops-to-usd599" target="_blank" rel="noopener noreferrer">
+        Grab a Radeon RX 9070 XT at MSRP before it sells out — ASRock Challenger Radeon RX 9070 XT drops to $599
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you’ve been holding out for a price drop, now’s your chance as this Radeon RX 9070 XT is finally available at its original MSRP of $599 on Newegg.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 19:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/desktops/mini-pcs/apple-mac-pro-and-mac-mini-clones-launch-with-amd-ryzen-cpus-perfect-mini-pcs-for-those-who-love-apples-aesthetics-but-still-need-windows-or-linux" target="_blank" rel="noopener noreferrer">
+        Apple Mac Pro and Mac Mini clones launch with AMD Ryzen CPUs — perfect mini-PCs for those who love Apple&#39;s aesthetics but still need Windows or Linux
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A tech company specializing in storage solutions is venturing into the mini PC space with its Apple Mac clones.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 19:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/football/tottenham-hotspur-vs-chelsea-premier-league-2025-26" target="_blank" rel="noopener noreferrer">
+        Tottenham vs Chelsea Live Stream: How to watch Premier League 2025/26 London Derby on TV and online
+      </a>
+    </h3>
+    
+    
+    <p class="summary">All the ways to watch the London derby between Tottenham and Chelsea as they face each other in the 2025/26 Premier League.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/health-fitness/smartwatches/i-was-ready-to-buy-an-apple-watch-ultra-3-heres-why-im-getting-a-series-11-instead-for-a-fraction-of-the-cost" target="_blank" rel="noopener noreferrer">
+        I was ready to buy an Apple Watch Ultra 3 – here’s why I’m getting a Series 11 instead, for a fraction of the cost
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I&#39;m going to save myself hundreds by downgrading to an Apple Watch Series 11 instead of upgrading to an Apple Watch Ultra 3 this year</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/tablets/ipad/with-the-rumored-oled-upgrade-for-the-ipad-air-apple-has-the-chance-to-make-the-best-general-purpose-tablet-ever" target="_blank" rel="noopener noreferrer">
+        With the rumored OLED upgrade for the iPad Air, Apple has the chance to make the best general-purpose tablet ever
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The iPad Air has been tipped for a major display upgrade – and I think Apple has the chance to do something incredible with it.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/nyt-strands-today-answers-hints-2-november-2025" target="_blank" rel="noopener noreferrer">
+        NYT Strands hints and answers for Sunday, November 2 (game #609)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Strands answers and hints? Here&#39;s all you need to know to solve today&#39;s game, including the spangram.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/quordle-today-answers-clues-2-november-2025" target="_blank" rel="noopener noreferrer">
+        Quordle hints and answers for Sunday, November 2 (game #1378)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for Quordle clues? We can help. Plus get the answers to Quordle today and past solutions.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/nyt-connections-today-answers-hints-2-november-2025" target="_blank" rel="noopener noreferrer">
+        NYT Connections hints and answers for Sunday, November 2 (game #875)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Connections answers and hints? Here&#39;s all you need to know to solve today&#39;s game, plus my commentary on the puzzles.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/01/ai-researchers-embodied-an-llm-into-a-robot-and-it-started-channeling-robin-williams/" target="_blank" rel="noopener noreferrer">
+        AI researchers ’embodied’ an LLM into a robot – and it started channeling Robin Williams
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AI researchers at Andon Labs embedded various LLMs in a vacuum robot to test how ready they were to be embodied. And hilarity ensued.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/sandisks-microsd-express-card-for-the-switch-2-is-cheaper-than-ever-thanks-to-this-early-black-friday-deal-151331021.html?src=rss" target="_blank" rel="noopener noreferrer">
+        SanDisk&#39;s microSD Express card for the Switch 2 is cheaper than ever thanks to this early Black Friday deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you already picked up a Switch 2, you&#39;re probably looking for deals that can help you kit out your new console without spending too much money. While maybe not the most exciting thing, a microSD Express card will be a key component for long-term gaming bliss. SanDisk&#39;s 256GB microSD Express Card ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 18:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/dyson-black-friday-deals-early-sales-include-more-than-290-off-cordless-vacuums-173533605.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Dyson Black Friday deals: Early sales include more than $290 off cordless vacuums
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Early Black Friday deals are starting to pop up across the web, and a great one to check out is at Dyson. While we still think you have the best shot to get the steepest discounts the closer to Black Friday we get, some of the discounts on Dyson&#39;s site right now are some of the best we&#39;ve seen. One ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/china-linked-hackers-exploited-lanscope-flaw-as-a-zero-day-in-attacks/" target="_blank" rel="noopener noreferrer">
+        China-linked hackers exploited Lanscope flaw as a zero-day in attacks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">China-linked cyber-espionage actors tracked as &#39;Bronze Butler&#39; (Tick) exploited a Motex Lanscope Endpoint Manager vulnerability as a zero-day to deploy an updated version of their Gokcpdoor malware. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 17:46</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/video-games/retro-gaming/atari-2600-pac-man-edition-released-at-usd169-bright-yellow-console-comes-with-pac-man-double-feature-2-in-1-game-cartridge" target="_blank" rel="noopener noreferrer">
+        Atari 2600+ Pac-Man Edition released at $169 — bright yellow console comes with Pac-Man: Double Feature 2-in-1 game cartridge
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Atari 2600+ Pac-Man Edition games console released in striking, vivid yellow livery.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 17:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/811935/lg-b5-oled-tv-black-friday-doorbuster-deal-sale" target="_blank" rel="noopener noreferrer">
+        LG’s brilliant B5 OLED TV is already down to just $530 for Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Best Buy’s early Black Friday deals are already live, with discounts to be had on everything from smartphones and gaming PCs to wireless headphones. If you’re in the market for a new 4K TV, Best Buy is also offering an exclusive doorbuster deal on LG’s 48-inch B5 OLED, bringing the price of the 4K T...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/disney-plus/everything-new-on-disney-in-november-2025-the-fantastic-four-first-steps-alls-fair-and-more" target="_blank" rel="noopener noreferrer">
+        Everything new on Disney+ in November 2025: The Fantastic Four: First Steps, All&#39;s Fair, and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From The Fantastic Four&#39;s latest big-screen adventure to Kim Kardashian&#39;s new TV show, here&#39;s what&#39;s coming to Disney+ this month.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/rugby/scotland-vs-usa-autumn-nations-series-2025-rugby" target="_blank" rel="noopener noreferrer">
+        How to watch Scotland vs USA: live stream Autumn Nations Series 2025 rugby from anywhere
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As the Eagles land at Murrayfield for the first time in 25 years, here&#39;s how you can watch Scotland vs USA live streams from wherever you are in the world.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/best-family-board-games/" target="_blank" rel="noopener noreferrer">
+        35 Best Family Board Games (2025): Catan, Ticket to Ride, Codenames
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From monsters to kittens to strategy games, these sets will liven things up on nights when everyone is tired of screens.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/tech-industry/semiconductors/nexperia-allowed-to-resume-exports-from-china-following-trump-xi-talks-companies-may-seek-exemptions-from-the-ministry-of-commerce-to-restart-international-deliveries" target="_blank" rel="noopener noreferrer">
+        Nexperia allowed to resume exports from China following Trump-Xi talks — companies may seek exemptions from the Ministry of Commerce to restart international deliveries
+      </a>
+    </h3>
+    
+    
+    <p class="summary">International automakers can now apply for licenses to resume chip deliveries from Nexperia China.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 17:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://thehackernews.com/2025/11/asd-warns-of-ongoing-badcandy-attacks.html" target="_blank" rel="noopener noreferrer">
+        ASD Warns of Ongoing BADCANDY Attacks Exploiting Cisco IOS XE Vulnerability
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Australian Signals Directorate (ASD) has issued a bulletin about ongoing cyber attacks targeting unpatched Cisco IOS XE devices in the country with a previously undocumented implant known as BADCANDY. The activity, per the intelligence agency, involves the exploitation of CVE-2023-20198 (CVSS sc...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Hacker News</span>
+      
+      
+      
+      <span class="time">🕒 17:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/iphone/3-new-colors-are-rumored-for-the-iphone-18-pro-next-year-and-theyre-not-apples-usual-choices" target="_blank" rel="noopener noreferrer">
+        3 new colors are rumored for the iPhone 18 Pro next year – and they&#39;re not Apple&#39;s usual choices
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple is apparently thinking about new colors for its flagship phones, and we haven&#39;t seen two of them before.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/best-rain-jackets/" target="_blank" rel="noopener noreferrer">
+        9 Best Rain Jackets (2025): Cheap, Eco-Friendly, Hiking, and Running
+      </a>
+    </h3>
+    
+    
+    <p class="summary">When it rains, it pours. Here are our picks for cold, wet days—plus expert tips on deciphering product specs.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 17:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/stop-should-you-upgrade-your-m1-max-apple-mac-to-the-m5-gpu-and-memory-bandwidth-data-reveal-the-surprising-answer" target="_blank" rel="noopener noreferrer">
+        Stop! Should you upgrade your M1 Max Apple Mac to the M5? GPU and memory bandwidth data reveal the surprising answer
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Before upgrading from an M1 Max Mac to an M5 model, read how GPU count memory speed and AI processing shape real world results.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/808067/oppo-find-x9-pro-review" target="_blank" rel="noopener noreferrer">
+        You wish your phone had the Oppo Find X9 Pro&amp;amp;#8217;s battery life
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Whenever I review a phone, one of the first things I do after setting it up is charge it to full and then just… let it run, using it as my only phone for as long as I can, resisting every urge to charge it along the way. The Oppo Find X9 Pro lasted for [&amp;amp;#8230;]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/games/811497/playdate-puzzle-game-reviews-lexgrid-togglebot-what-time-is-it" target="_blank" rel="noopener noreferrer">
+        The Playdate is a great indie puzzle machine
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;re living in a wonderful period for puzzle games. Seemingly everyone, from The New York Times to Linkedin, has fun puzzles to play, so every morning I have plenty of options to accompany my first coffee of the day. Lately, though, much of my daily puzzle time has come from an unlikely source: the...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/football/brighton-vs-leeds-premier-league-2025-26" target="_blank" rel="noopener noreferrer">
+        How to watch Brighton vs Leeds: Premier League 2025/26 streams, TV channels, kick-off time
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;ll show you all the ways you can watch Brighton vs Leeds in the 2025/26 Premier League as Georginio Rutter faces his former club for the first time since departing last season.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/hisenses-new-rgb-mini-led-tvs-tease-what-to-expect-from-affordable-versions-of-the-next-gen-screen-tech-but-will-they-fix-our-biggest-issue-with-it" target="_blank" rel="noopener noreferrer">
+        Hisense’s new RGB mini-LED TVs tease what to expect from affordable versions of the next-gen screen tech – but will they fix our biggest issue with it?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;re hoping these new TVs cope better with dark movies</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/man-jailed-over-trump-meme-after-charlie-kirks-shooting-has-finally-been-released/" target="_blank" rel="noopener noreferrer">
+        Man Jailed Over Trump Meme After Charlie Kirk&#39;s Shooting Has Finally Been Released
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Larry Bushart was charged with threatening a school after reposting a Facebook meme about Trump. A Tennessee sheriff, who mourned Kirk online, demanded authorities track him down.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/cpus/amd-ryzen-9-9900x3d-vs-intel-core-i9-14900k-faceoff" target="_blank" rel="noopener noreferrer">
+        AMD Ryzen 9 9900X3D vs Intel Core i9-14900K Faceoff — Intel&#39;s old-school flagship chip versus AMD&#39;s bleeding-edge tech
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We will put the AMD Ryzen 9 9900X3D vs Intel Core i9-14900K CPUs through a rigorous six-round gauntlet to determine which CPU is truly the best in its class, and which one you should spend your money on.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/01/chromes-new-extensible-single-sign-on-support-makes-it-a-better-mac-citizen-for-it-teams/" target="_blank" rel="noopener noreferrer">
+        Apple @ Work: Chrome’s new Extensible Single Sign-On support makes it a better Mac citizen for IT teams
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple @ Work is exclusively brought to you by Mosyle, the only Apple Unified Platform. Mosyle is the only solution that integrates in a single professional grade platform all the solutions necessary to seamlessly and automatically deploy, manage and protect Apple devices at work. Over 45,000 organiz...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/gpu-drivers/amds-latest-adrenalin-driver-update-drops-windows-10-from-release-notes-but-the-company-says-support-continues" target="_blank" rel="noopener noreferrer">
+        AMD’s latest Adrenalin driver update drops Windows 10 from release notes, but the company says support continues
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The company says Windows 10 users can still install the Adrenalin Edition 25.10.2 drivers via the Windows 11 installer, even as Microsoft’s older OS officially moves into end-of-life status.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 15:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/transportation/elon-musk-teases-a-flying-car-on-joe-rogans-show-120022824.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Elon Musk teases a flying car on Joe Rogan&#39;s show
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Elon Musk has told Joe Rogan that he hopes to unveil a flying car &amp;amp;quot;before the end of the year.&amp;amp;quot; As Gizmodo has reported, Rogan asked Musk about about the long-delayed second-gen Tesla Roadster in his show, when the Tesla CEO suddenly started talking about wanting the vehicle to fly. If you...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/windows-laptops/looking-for-a-new-laptop-this-black-friday-here-are-25-expert-picks-that-can-save-you-up-to-usd500-right-now" target="_blank" rel="noopener noreferrer">
+        Looking for a new laptop this Black Friday? Here are 25 expert picks that can save you up to $500 right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Dell, Best Buy, and many other leading retailers have excellent early laptop deals that you can already shop well ahead of Black Friday today.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/rugby/england-vs-australia-autumn-nations-series-2025-26-rugby-union" target="_blank" rel="noopener noreferrer">
+        How to watch England vs Australia: Live stream Autumn Nations Series 2025/26 rugby union game online, TV channels, preview, team news
+      </a>
+    </h3>
+    
+    
+    <p class="summary">All the ways to watch England vs Australia live streams online from anywhere as the Autumn Nations Series 2025 kicks off in style at Twickenham.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/engadget-review-recap-an-apple-duo-sennheiser-hdb-630-lenovo-legion-go-2-and-more-120000983.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Engadget review recap: An Apple duo, Sennheiser HDB 630, Lenovo Legion Go 2 and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Techtober may have come to an end, but our reviews team is still hard at work with this fall’s haul of new devices. Over the last two weeks, we’ve tested two new Apple products, a powerful gaming handheld, some seriously impressive headphones and Meta’s sporty smart glasses — and that’s just the sta...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/best-golf-rangefinders/" target="_blank" rel="noopener noreferrer">
+        The Best Golf Rangefinders (2025)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Unlock the course and raise your game with the best golf rangefinders you can buy.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/climate-change-made-hurricane-melissa-four-times-more-likely-study-suggests/" target="_blank" rel="noopener noreferrer">
+        Climate Change Made Hurricane Melissa 4 Times More Likely, Study Suggests
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Unusually warm ocean temperatures fueled one of the worst hurricanes on record. New research finds climate change increased the storm’s likelihood.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/video-games/xbox/modders-recreate-original-xbox-prototype-with-a-solid-block-of-metal-in-ambitious-project-modern-makeover-features-real-xbox-hardware-and-hdmi-upgrades" target="_blank" rel="noopener noreferrer">
+        Mad modders recreate exotic 25-year-old Xbox prototype with a solid block of metal — modern $6,000 makeover combines real Xbox hardware with an HDMI upgrade
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The original Xbox prototype shown off in the year 2000 was just brought back to life in an epic project. Machined out of a single block of metal, featuring real Xbox hardware, and upgrades like a screen in the middle in place of the orb light, this Xbox prototype redux is a testament to the world of...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/desktops/pc-building/microwave-repurposed-into-slick-custom-all-in-one-pc-door-serves-as-display-motherboard-rotates-on-the-turntable-and-stream-deck-used-for-keypad" target="_blank" rel="noopener noreferrer">
+        Microwave repurposed into slick custom All-in-One PC — door serves as display, motherboard rotates on the turntable, and Stream Deck used for keypad
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This awesome custom gaming PC built into a microwave might be our favorite-ever kitchen gadget.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 15:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/video-games/doom-can-run-just-about-anywhere-including-space-hacker-recounts-tale-of-running-the-game-on-an-orbiting-satellite" target="_blank" rel="noopener noreferrer">
+        Programmer installed and ran Doom on an orbiting European Space Agency satellite
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Doom once ran in an ESA space satellite, as recounted by one of the hackers</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 15:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/review/lectric-xp4-750-electric-bike/" target="_blank" rel="noopener noreferrer">
+        Lectric XP4 750 Electric Bike Review: The Best, Cheapest Ebike
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lectric upgraded its most popular bike with greater range, a new color display, and a better torque sensor.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/health/2025/11/inside-the-marketplace-for-vaccine-medical-exemptions/" target="_blank" rel="noopener noreferrer">
+        Inside the marketplace for vaccine medical exemptions
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Frontline Health Advocates provides medical exemption notes—for a fee. What exactly are they selling?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 14:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/the-wired-guide-to-portland-for-business-travelers/" target="_blank" rel="noopener noreferrer">
+        What to Do in Portland, Oregon If You&#39;re Here for Business (2025)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Where to lock in, power down, and actually enjoy your business trip to Portland.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 14:38</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/how-to-make-your-lock-screen-background-holographic-in-ios-26-110049999.html?src=rss" target="_blank" rel="noopener noreferrer">
+        How to make your lock screen background holographic in iOS 26
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple continues to refine the look and feel of the iPhone with each major iOS release, and iOS 26 places more emphasis than ever on personalization. The one big change is the introduction of Spatial Scenes, a feature that allows you to create what Apple calls “holographic” lock screens. Instead of b...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 14:30</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2025-11-02 05:30 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
