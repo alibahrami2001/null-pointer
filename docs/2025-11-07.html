@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for November 07, 2025</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/apple-tv-plus/pluribus-the-joining-explained-what-is-it-why-is-carol-spoiler-and-more-on-the-apple-tv-shows-big-mystery" target="_blank" rel="noopener noreferrer">
+        Pluribus&#39; The Joining explained: what is it, why is Carol [spoiler], and more on the Apple TV show&#39;s big mystery
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple&#39;s new sci-fi drama has already lifted the veil on its first big mystery.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 06:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/apple-tv-pluribus-watch-now-streaming/" target="_blank" rel="noopener noreferrer">
+        The new sci-fi series from the creator of Breaking Bad premieres today on Apple TV
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Vince Gilligan, the creator of Breaking Bad, returns to television with a highly-anticipated new series premiering on Apple TV today. Pluribus is a new sci-fi drama starring Rhea Seehorn as the most miserable person in the world who must save the world from happiness. The first two episodes of seaso...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 05:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/entertainment/815745/pluribus-review-apple-tv" target="_blank" rel="noopener noreferrer">
+        Apple’s latest sci-fi series Pluribus luxuriates in its mystery
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Toward the end of the first episode of Pluribus, Carol (Rhea Seehorn), a woman put in a bizarre and impossible scenario, asks a very straightforward question: &#34;What the fuck is happening?&#34; It&#39;s something you&#39;ll likely be asking yourself a lot while watching. I certainly did. But that ongoing sense o...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/645217/best-apple-airpods-pro" target="_blank" rel="noopener noreferrer">
+        The best AirPods to buy
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Whether you’re buying your first pair of AirPods or replacing a well-used older pair, it’s easy to understand why so many iPhone owners prefer Apple’s earbuds and headphones over other options. Apple has spent years gradually adding new features that work best — and sometimes only work at all — with...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 05:09</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/have-your-say-which-smartphone-feature-do-you-think-is-most-important-and-why" target="_blank" rel="noopener noreferrer">
+        Have your say: which smartphone feature do you think is most important, and why?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">What&#39;s the one phone feature to rule them all?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/apple-trade-in-values-2025/" target="_blank" rel="noopener noreferrer">
+        Apple lowers maximum trade-in values across its entire product line
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has updated its trade-in value table for iPhones, iPads, Macs, and Apple Watches, with maximum payouts dropping by up to $145. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 04:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/us-congressional-budget-office-hit-by-suspected-foreign-cyberattack/" target="_blank" rel="noopener noreferrer">
+        U.S. Congressional Budget Office hit by suspected foreign cyberattack
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The U.S. Congressional Budget Office (CBO) confirms it suffered a cybersecurity incident after a suspected foreign hacker breached its network, potentially exposing sensitive data. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 03:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/marvel-1943-rise-of-hydra-has-been-delayed-with-no-new-release-window-000121455.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Marvel 1943: Rise of Hydra has been delayed with no new release window
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Marvel 1943: Rise of Hydra has been delayed again. The project had already been pushed back in May from a planned 2025 release date to a rough early 2026 window. In a post on X today, Skydance Games said the title won&#39;t be ready for even longer. &amp;amp;quot;We&#39;ve made the decision to shift our release win...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/windows/fed-up-with-windows-11s-clunky-right-click-menu-microsoft-just-dropped-a-hint-that-it-could-become-more-streamlined" target="_blank" rel="noopener noreferrer">
+        Fed up with Windows 11&#39;s clunky right-click menu? Microsoft just dropped a hint that it could become more streamlined
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Is Microsoft planning to cut the bloat of Windows 11&#39;s right-click menu? There&#39;s a suggestion this could happen.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/tesla-delays-reveal-of-production-roadster-2-to-april-fools-day/" target="_blank" rel="noopener noreferrer">
+        Tesla delays reveal of production Roadster 2 to April Fools’ Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Musk said he picked the date so he &#34;could say I was just kidding&#34; if it changes again. He had spent months teasing a reveal by the end of this year.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 03:27</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/chris-saccas-vc-firm-is-raising-a-second-nuclear-fusion-fund/" target="_blank" rel="noopener noreferrer">
+        Chris Sacca’s VC firm is raising a second nuclear fusion fund
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With fusion advances showing real promise, Lowercarbon Capital plans to double down.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 03:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/acers-new-workstation-brings-a-frankly-ridiculous-1-petaflop-ai-performance-to-your-desktop-get-an-nvidia-grace-blackwell-in-your-business-device-now" target="_blank" rel="noopener noreferrer">
+        Acer&#39;s new workstation brings a frankly ridiculous 1 petaflop AI performance to your desktop - Get an Nvidia Grace Blackwell in your business device now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Acer Veriton GN100 mini workstation delivers one petaflop AI performance with Nvidia’s Grace Blackwell chip and full enterprise connectivity.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/tesla-shareholders-approve-elon-musks-1-trillion-compensation-package-233217531.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Tesla shareholders approve Elon Musk&#39;s $1 trillion compensation package
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tesla’s shareholders have voted in favor of a compensation plan that could see CEO Elon Musk become the world&#39;s first trillionaire. The potential incentives were laid out in September, and the company&#39;s shareholders have agreed to allow this all-or-nothing package for its chief exec, who spent the f...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/815946/samsung-p9-microsd-express-card-nintendo-switch-2-deal-sale" target="_blank" rel="noopener noreferrer">
+        Samsung’s new Switch 2-compatible microSD Express card is already on sale
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Nintendo Switch 2 is backward compatible with most original Switch games, which is a great feature to tide early adopters (like me!) over until more Switch 2 exclusives launch. The console comes with 256GB of internal storage, but that probably won’t be enough room for your entire digital game l...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:57</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/tesla-to-begin-cybercab-production-in-april-musk-claims/" target="_blank" rel="noopener noreferrer">
+        Tesla to begin Cybercab production in April, Musk claims
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Elon Musk said he expects Tesla to be able to put all the Cybercabs it builds on the road, and thanked Waymo for &#34;paving the path.&#34;</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 02:41</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/apple-tv-plus/apple-tvs-new-logo-could-be-hiding-a-big-clue-about-its-movie-strategy-and-i-think-i-know-what-its-hinting-at" target="_blank" rel="noopener noreferrer">
+        Apple TV’s new logo could be hiding a big clue about its movie strategy, and I think I know what it’s hinting at
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple TV’s movie strategy could be evolving, if its new logo is anything to go by.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/grand-theft-auto-6-delayed-again-but-itll-still-ship-in-2026" target="_blank" rel="noopener noreferrer">
+        Grand Theft Auto 6 delayed again, but it&#39;ll still ship in 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The wait for the next Grand Theft Auto is now even longer as Rockstar Games – and its parent company, Take-Two Interactive – have announced GTA 6 will now release on November 19, 2026.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/23987993/gta-6-news-trailers-rockstar-games" target="_blank" rel="noopener noreferrer">
+        GTA VI: all the news on Rockstar’s next entry in the Grand Theft Auto series
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It’s been over a decade and two console generations since GTA V came out, and its sequel is still a work in progress. GTA VI has faced multiple delays, with developer Rockstar Games bumping back its predicted release date twice, first to May 26th, 2026, then again to November 19th, 2026, a full year...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/science/2025/11/imaging-black-holes-may-help-us-rule-out-some-models-of-gravity/" target="_blank" rel="noopener noreferrer">
+        Next-generation black hole imaging may help us understand gravity better
+      </a>
+    </h3>
+    
+    
+    <p class="summary">But the differences are likely to be subtle, so it won&#39;t be easy.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 02:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/625409/best-robot-vacuum-mops" target="_blank" rel="noopener noreferrer">
+        The best robot vacuum and mop to buy right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Robot vacuums that can both mop and sweep your floors have improved significantly in recent years. While they are still not as effective as good ol’ manual labor, if you run them regularly, they will help keep your floors cleaner with much less effort on your part. The difference is that newer “comb...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/tesla-shareholders-approve-musk-1-trillion-dollar-pay-package/" target="_blank" rel="noopener noreferrer">
+        Tesla Shareholders Approve Elon Musk’s $1 Trillion Pay Package
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The unprecedented payday will go into full effect by 2035—as long as Tesla hits ambitious financial and production targets.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 02:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/apple-arcade-new-games-november-2025/" target="_blank" rel="noopener noreferrer">
+        Apple Arcade adds three new games, including MySims and Toca Boca Jr Classics
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Following the release of Football Manager 26 Touch a couple of days ago, Apple Arcade got another three titles today. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 02:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/turntables/majority-folio-review" target="_blank" rel="noopener noreferrer">
+        High price of a vinyl collection putting you off? Follow my lead and get this new one-stop-shop turntable
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Majority Folio turntable review: a simple and easy-to-use record player that won&#39;t break the bank.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/a-new-mac-killer-or-the-end-for-windows-in-china-huawei-reveals-china-only-desktop-pcs-with-its-own-office-software-and-cpus" target="_blank" rel="noopener noreferrer">
+        A new Mac killer, or the end for Windows in China? Huawei reveals China-only desktop PCs with its own office software and CPUs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Huawei launches two Kirin 9000X-powered desktops using fully Chinese operating systems, signaling deeper efforts toward technological self-reliance.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:54</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/transportation/evs/ford-may-not-resume-production-of-the-f-150-lightning-221903848.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Ford may not resume production of the F-150 Lightning
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Wall Street Journal reported today that Ford may be on the verge of sunsetting the F-150 Lightning truck. The model is an electric pick-up truck, and the best-selling one in the US, but the publication cited Ford execs who said the company would consider halting production completely on the F-15...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:49</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/security/2025/11/wipers-from-russias-most-cut-throat-hackers-rain-destruction-on-ukraine/" target="_blank" rel="noopener noreferrer">
+        Wipers from Russia’s most cut-throat hackers rain destruction on Ukraine
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Sandworm and other Russian-state hackers unleash data-destroying payloads on their neighbors.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/accel-backs-uber-rival-rapido-as-prosus-boosts-stake/" target="_blank" rel="noopener noreferrer">
+        Accel backs Uber rival Rapido as Prosus boosts stake
+      </a>
+    </h3>
+    
+    
+    <p class="summary">TVS Motor booked a 152% return as it sold its Rapido stake to Accel and Prosus. Founded in 2015, Rapido has grown into a major player in India&#39;s ride-hailing market, competing with Uber, Ola, and inDrive.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/tech-policy/2025/11/elon-musk-wins-tesla-pay-vote-that-could-make-him-a-1-trillion-man/" target="_blank" rel="noopener noreferrer">
+        Elon Musk wins $1 trillion Tesla pay vote despite “part-time CEO” criticism
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tesla investors back Musk pay despite his busy schedule running other companies.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/grand-theft-auto-vi-is-delayed-again/" target="_blank" rel="noopener noreferrer">
+        Grand Theft Auto VI is delayed — again
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Perhaps one of the most anticipated video games of all time, GTA VI is now slated for a November 19, 2026, release.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/apple-tv-just-dropped-trailers-for-two-upcoming-series-premieres/" target="_blank" rel="noopener noreferrer">
+        Apple TV just dropped trailers for two upcoming series premieres
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple TV is close to wrapping up its most successful year ever, and today the streamer debuted trailers for two of its final premieres of 2025: docuseries Prehistoric Planet: Ice Age and thriller The Hunt. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/tesla-shareholders-approve-elon-musks-1t-pay-package/" target="_blank" rel="noopener noreferrer">
+        Tesla shareholders approve Elon Musk’s $1T pay package
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The proposal received more than 75% approval. Musk can earn the $1 trillion in shares over the next 10 years if Tesla hits a number of milestones.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:28</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/815892/tesla-shareholder-vote-elon-musk-pay-trillion-robot" target="_blank" rel="noopener noreferrer">
+        Tesla shareholders approve Elon Musk’s $1 trillion pay package
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tesla shareholders voted Thursday to approve Elon Musk’s staggering new pay package, in a move aimed at retaining the controversial CEO’s leadership during a time of great upheaval for the automaker. Over 75 percent of shares voted in favor of the proposal. The vote gives Musk enormous sway over his...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 01:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/laude-institute-announces-first-batch-of-slingshots-ai-grants/" target="_blank" rel="noopener noreferrer">
+        Laude Institute announces first batch of ‘Slingshots’ AI grants
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Slingshots AI grants provide resources that would be unavailable in most academic settings. Its debut program has 15 startups focused on AI evaluation.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/apple-forbes-americas-best-employers-for-veterans-2025/" target="_blank" rel="noopener noreferrer">
+        Apple among Forbes’ 2025 list of America’s Best Employers For Veterans
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Each year, Forbes and Statista ask nearly 20,000 veterans working at large U.S. companies to rate their employers. The 2025 rankings were released today, with Apple climbing quite significantly compared to last year. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/ai-slop-ransomware-test-sneaks-on-to-vs-code-marketplace/" target="_blank" rel="noopener noreferrer">
+        AI-Slop ransomware test sneaks on to VS Code marketplace
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A malicious extension with basic ransomware capabilities seemingly created with the help of AI, has been published on Microsoft&#39;s official VS Code marketplace. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 01:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/video-games/gta-6-delayed-again-this-time-to-november-2026-rockstar-says-extra-time-needed-to-deliver-quality-that-players-have-come-to-expect-and-deserve" target="_blank" rel="noopener noreferrer">
+        GTA 6 delayed again, this time to November 2026 — Rockstar says extra time needed to deliver quality that players have &#39;come to expect and deserve&#39;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Rockstar has just announced that perhaps the most highly anticipated game in history has been delayed once again. Originally set to release on May 26, 2026, GTA VI will now hit consoles on November 19, 2026 — marking a six-month delay, similar to initial pushback from Fall 2025.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 01:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/grand-theft-auto-vi-is-delayed-to-november-19-2026-211848530.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Grand Theft Auto VI is delayed to November 19, 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Fans will have to wait a bit longer to return to Vice City. Rockstar Games has announced that Grand Theft Auto VI has been delayed once again to November 19, 2026. The open world game was previously delayed from its 2025 launch window to May 26, 2026 earlier this year.“We are sorry for adding additi...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/entertainment/streaming/the-youtube-tv-disney-blackout-continues-how-to-watch-college-football-on-espn-abc-and-more-173330237.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The YouTube TV Disney blackout continues: How to watch college football on ESPN, ABC and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Engadget It doesn&#39;t look like Disney-owned channels including ABC and ESPN will be returning to YouTube TV anytime soon. The Walt Disney Co. pulled its channels from YouTube TV as of midnight on Oct. 30 after the two companies failed to reach new terms on their latest carriage agreement and the spat...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:08</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/apple-spotlights-third-party-apps-adopting-liquid-glass-in-ios-26-and-more/" target="_blank" rel="noopener noreferrer">
+        Apple spotlights third-party apps adopting Liquid Glass in iOS 26 and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple launched iOS 26 with its new Liquid Glass design language in September. Since then, third-party developers have been hard at work rolling out new Liquid Glass versions of their apps. Now, Apple has debuted a new page on the Apple Developer website offering a visual gallery of how developers ar...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/wearables/metas-smart-glasses-have-a-new-shortcut-to-call-and-text-without-saying-hey-meta-213303178.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Meta&#39;s smart glasses have a new shortcut to call and text without saying &#39;hey Meta&#39;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">One of the things that&#39;s long irked me about Meta&#39;s smart glasses is how often you have to say &amp;amp;quot;hey Meta.&amp;amp;quot; Even though the company&#39;s AI assistant has gotten significantly more capable, there&#39;s something a little cringey about using its voice commands in public spaces.&amp;amp;nbsp;Now, the company...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/googles-next-moonshot-wants-to-shoot-ai-data-centers-into-space-orbiting-suncatcher-facilities-will-be-equipped-with-ai-tpus" target="_blank" rel="noopener noreferrer">
+        Google&#39;s next moonshot wants to shoot AI data centers into space - orbiting Suncatcher facilities will be equipped with AI TPUs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Google’s Project Suncatcher aims to build orbital AI data centers powered by sunlight, testing TPUs, optical links, and economic sustainability.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/816005/grand-theft-auto-vi-gta-g-delayed-november-2026" target="_blank" rel="noopener noreferrer">
+        Grand Theft Auto VI launch delayed until November 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Grand Theft Auto VI is being delayed again: it will now launch on November 19th, 2026. “We are sorry for adding additional time to what we realize has been a long wait, but these extra months will allow us to finish the game with the level of polish you have come to expect and deserve,” [&amp;amp;#8230;]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:54</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/meta-estimates-that-it-earns-10-of-its-revenue-from-scams-report-says/" target="_blank" rel="noopener noreferrer">
+        Meta estimates that it earns 10% of its revenue from scams, report says
+      </a>
+    </h3>
+    
+    
+    <p class="summary">These fraudulent ads purport to offer a product or service that isn&#39;t actually real, and may be intended to solicit payments from less savvy users.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/sam-altman-says-openai-has-20b-arr-and-about-1-4-trillion-in-data-center-commitments/" target="_blank" rel="noopener noreferrer">
+        Sam Altman says OpenAI has $20B ARR and about $1.4 trillion in data center commitments
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Altman named a long list of upcoming business he thinks will generate significant revenue.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/815987/amazon-kindle-translate-ai-ebook-translation" target="_blank" rel="noopener noreferrer">
+        Amazon offers AI translation for self-published Kindle books
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon is making it easier for self-published authors to release their ebooks in multiple languages with Kindle Translate, a new AI translation tool that launched in beta on Thursday to a limited number of Kindle Direct Publishing (KDP) authors. In its early form, it can translate between English an...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/iphone-air-2-with-two-cameras-sounds-like-the-best-possible-upgrade/" target="_blank" rel="noopener noreferrer">
+        iPhone Air 2 with two cameras sounds like the best possible upgrade
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The iPhone 17 lineup is still fresh, but leaks indicate Apple is working to finalize designs for next year’s iPhone models, and a new rumor about the iPhone Air 2 sounds it could get the upgrade many users have asked for: two rear cameras. Here’s why I think that’s the best possible second-gen upgra...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:46</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/apple-expands-environmental-initiatives-in-australia-and-new-zealand/" target="_blank" rel="noopener noreferrer">
+        Apple expands environmental initiatives in Australia and New Zealand
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Alongside the expansion of its renewable energy portfolio in Australia, Apple has announced a new Restore Fund investment in New Zealand. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/daily-november-6-2025/" target="_blank" rel="noopener noreferrer">
+        9to5Mac Daily: November 6, 2025 – iPhone Air 2 rumors, more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Listen to a recap of the top stories of the day from 9to5Mac. 9to5Mac Daily is available on iTunes and Apple’s Podcasts app, Stitcher, TuneIn, Google Play, or through our dedicated RSS feed for Overcast and other podcast players. Sponsored by Backblaze: Never lose a file again. Use code “9to5daily” ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/google/2025/11/gemini-deep-research-comes-to-google-finance-backed-by-prediction-market-data/" target="_blank" rel="noopener noreferrer">
+        Gemini Deep Research comes to Google Finance, backed by prediction market data
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Deep Research and predictions based on Kalshi and Polymarket data are coming soon to Google Finance.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:09</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/google-to-buy-carbon-credits-from-massive-amazonian-reforestation-project/" target="_blank" rel="noopener noreferrer">
+        Google to buy carbon credits from massive Amazonian reforestation project
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The deal is the first selected by the Symbiosis Coalition, an advance market commitment founded to seed the market for nature-based carbon removal.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/researchers-claim-chatgpt-has-a-whole-host-of-worrying-security-flaws-heres-what-they-found" target="_blank" rel="noopener noreferrer">
+        Researchers claim ChatGPT has a whole host of worrying security flaws - here&#39;s what they found
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Some of the flaws were fixed but not all - leaving the door open for attacks.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:56</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/amazon-launches-an-ai-powered-kindle-translate-service-for-ebook-authors/" target="_blank" rel="noopener noreferrer">
+        Amazon launches an AI-powered Kindle Translate service for e-book authors
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Kindle Translate, an AI-powered translation service, is designed to broaden the reach of e-book authors.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/square-enix-is-laying-off-more-developers-in-the-uk-and-us-as-it-refocuses-on-japan-201907305.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Square Enix is laying off more developers in the UK and US as it refocuses on Japan
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Square Enix is laying off developers in the UK and US as it reworks its game development structure to focus on its studios in Japan, Video Games Chronicle reports. The mass restructuring follows the publishers&#39; 2024 announcement that it planned to &amp;amp;quot;aggressively&amp;amp;quot; apply AI to its development...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:49</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/rumor-replay-iphone-18-pro-colors-ios-27-iphone-air-2-more/" target="_blank" rel="noopener noreferrer">
+        Rumor Replay: iPhone 18 Pro colors, iOS 27, iPhone Air 2, more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This is Rumor Replay, a weekly column at 9to5Mac offering a quick rundown of the most recent Apple product rumors, with analysis and commentary. Today: iPhone 18 Pro color rumors, iOS 27, iPhone Air 2 camera upgrade, M5 Macs, and more. Here are this week’s Apple rumors. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/21420196/best-budget-smartphone-cheap" target="_blank" rel="noopener noreferrer">
+        The best budget smartphone you can buy
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Some of us take a kind of “I eat to live” rather than an “I live to eat” approach to gadgets. They’re tools that help you get things done, not something you want to invest a lot of time or money in. If that’s you — and there’s no judgment here from a certifiable gadget [&amp;amp;#8230;]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/sam-altman-says-he-doesnt-want-the-government-to-bail-out-openai-if-it-fails/" target="_blank" rel="noopener noreferrer">
+        Sam Altman says he doesn’t want the government to bail out OpenAI if it fails
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The furor over Sarah Friar&#39;s comments grew so loud that Trump&#39;s AI czar David Sacks weighed in.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/ford-execs-reportedly-discuss-ending-the-f-150-lightning/" target="_blank" rel="noopener noreferrer">
+        Ford execs reportedly discuss ending the F-150 Lightning
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Production was already paused as Ford prioritizes gas and hybrid versions of the truck. The Lightning has been on the market for three years.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/815806/senate-resolution-trump-us-ai-technology-china" target="_blank" rel="noopener noreferrer">
+        Senators call on Trump to continue banning Nvidia from selling its best chips in China
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A group of senators is urging President Donald Trump to preserve the US’s edge in AI development by denying China access to its most advanced chips and models. The bipartisan resolution, submitted by Sens. Chris Coons (D-DE) and Tom Cotton (R-AR), comes just days after Trump walked back a statement ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/best-movies-disney-plus/" target="_blank" rel="noopener noreferrer">
+        The 65 Best Movies on Disney+ Right Now (November 2025)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Fantastic Four: First Steps, Thunderbolts*, and Something Wicked This Way Comes are just a few of the movies you should be watching on Disney+ this month.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/sora-for-android-saw-nearly-half-a-million-installs-on-its-first-day/" target="_blank" rel="noopener noreferrer">
+        Sora for Android saw nearly half a million installs on its first day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This makes the Android launch more than 4x the size of the iOS launch, with 327% more installs (360,000) — but the firm notes that&#39;s not an apples-to-apples comparison.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/tech-policy/2025/11/att-falsely-promised-everyone-a-free-iphone-ad-industry-board-rules/" target="_blank" rel="noopener noreferrer">
+        AT&amp;amp;T falsely promised “everyone” a free iPhone, ad-industry board rules
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AT&amp;amp;#038;T loses another ad-board ruling just a week after suing the organization.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/gaming-pcs/the-worlds-first-glasses-free-3d-pc-handheld-looks-a-little-ridiculous-especially-at-usd1-799-and-honestly-id-rather-have-a-steam-deck" target="_blank" rel="noopener noreferrer">
+        The &#39;world&#39;s first&#39; glasses-free 3D PC handheld looks a little ridiculous, especially at $1,799 – and honestly, I&#39;d rather have a Steam Deck
+      </a>
+    </h3>
+    
+    
+    <p class="summary">What are we even doing at this point?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/whatsapp-username-support-timeline/" target="_blank" rel="noopener noreferrer">
+        Meta shares first timeline details for WhatsApp username support
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Starting next year, WhatsApp will finally add support for usernames, rather than relying exclusively on phone numbers. In a new update shared with businesses, Meta has detailed the rollout schedule and technical transition plan. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/tech-policy/2025/11/bombshell-report-exposes-how-meta-relied-on-scam-ad-profits-to-fund-ai/" target="_blank" rel="noopener noreferrer">
+        Bombshell report exposes how Meta relied on scam ad profits to fund AI
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta goosed its revenue by targeting users likely to click on scam ads, docs show.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 22:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/macbook-air-15-deal-1125/" target="_blank" rel="noopener noreferrer">
+        The 15-Inch MacBook Air Is $200 Off
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Save hundreds on our preferred MacBook for most people.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 22:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/how-a-ransomware-gang-encrypted-nevada-governments-systems/" target="_blank" rel="noopener noreferrer">
+        How a ransomware gang encrypted Nevada government&#39;s systems
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The State of Nevada has completed its recovery from a ransomware attack it suffered on August 24, 2025, which impacted 60 state agencies, disrupting critical services related to health and public safety. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 22:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/crkd-is-making-a-drum-controller-for-rhythm-games-190154673.html?src=rss" target="_blank" rel="noopener noreferrer">
+        CRKD is making a drum controller for rhythm games
+      </a>
+    </h3>
+    
+    
+    <p class="summary">CRKD is expanding its lineup of rhythm game controllers. The gaming accessory maker previously released guitar controllers that are compatible with games like Fortnite Festival and open-source projects like Clone Hero, and based on a recent teaser video, it looks like it&#39;s doing a drum kit controlle...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/the-new-york-times-is-letting-you-create-your-own-wordle-puzzles-185429249.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The New York Times is letting you create your own Wordle puzzles
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Games section is one of the highlights of reading The New York Times, and Wordle has been one of the crowning successes for the team since acquiring it in 2022. Now, fans of the popular word game can create their own custom puzzles. The publication announced today that its All Access and Games s...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/happy-hour-563/" target="_blank" rel="noopener noreferrer">
+        iOS 26.2 new features, App Store on web, Gemini Siri deal confirmed
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Benjamin and Chance discuss all the new features in iOS 26.2, including some fancy Podcast AI updates and a puzzling decision to remove Apple Watch Wi-Fi syncing in the EU. Also, Apple launches a browsable App Store on the web, and is set to pay $1bn annually to Google to use Gemini models as the un...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:19</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/social-media/meta-is-making-billions-of-dollars-from-scam-ads-on-facebook-instagram-and-whatsapp-report-says-184128645.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Meta is making billions of dollars from scam ads on Facebook, Instagram and WhatsApp, report says
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta is making billions of dollars every year from ads marketing scams and illegal products on its platform, according to a new report from Reuters. The report details the staggering numbers behind scam ads on Meta&#39;s platform, and raises fresh questions about why the company has failed to get the pr...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/spacexs-starlink-secures-more-spectrum-and-airlines-as-it-passes-8-million-customers/" target="_blank" rel="noopener noreferrer">
+        SpaceX’s Starlink secures more spectrum and airlines as it passes 8 million customers
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The internet provider has bought more &#39;direct to cell&#39; spectrum licenses from EchoStar and struck a deal with the owner of British Airways.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 22:08</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/apps/notebooklm-can-now-test-your-knowledge-with-flashcards-and-quizzes-183351007.html?src=rss" target="_blank" rel="noopener noreferrer">
+        NotebookLM can now test your knowledge with flashcards and quizzes
+      </a>
+    </h3>
+    
+    
+    <p class="summary">NotebookLM, the one AI tool from Google everyone loves, is about to become more useful for studying. Google has begun rolling out an update that allows people to use the app to create flashcards and personalized quizzes. When you use NotebookLM in this way, you&#39;ll be able to set the difficulty of th...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/new-us-senate-bill-calls-for-agencies-and-companies-to-report-ai-related-job-cuts" target="_blank" rel="noopener noreferrer">
+        New US Senate bill calls for agencies and companies to be forced to report AI-related job cuts
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Proposal would require companies and federal agencies to disclose AI-related workforce impacts.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ai/amazon-is-testing-an-ai-tool-that-automatically-translates-books-into-other-languages-183056809.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Amazon is testing an AI tool that automatically translates books into other languages
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon just introduced an AI tool that will automatically translate books into other languages. The appropriately-named Kindle Translate is being advertised as a resource for authors that self publish on the platform. The company says the tool can translate entire books between English and Spanish a...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/06/meta-brings-its-short-form-video-feed-of-ai-slop-to-europe/" target="_blank" rel="noopener noreferrer">
+        Meta brings its short-form video feed of AI slop to Europe
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta says that since the launch of Vibes, media generation in the Meta AI app has jumped more than tenfold.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 21:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/macos-tahoe-26-1-beta-1/" target="_blank" rel="noopener noreferrer">
+        Apple releases macOS Tahoe 26.2 beta 1 for developers
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A few days after its counterparts, Apple today released macOS Tahoe 26.2 developer beta 1. Here’s what to expect. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/apple-releases-first-ios-26-2-public-beta-heres-whats-new/" target="_blank" rel="noopener noreferrer">
+        Apple releases first iOS 26.2 public beta, here’s what’s new
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ready to try Apple’s upcoming iPhone features and don’t want to wait? Apple just dropped the first iOS 26.2 public beta, and it has a ton of new features. Here’s everything new. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/public-beta-for-tvos-26-2-watchos-26-2-and-more-now-available/" target="_blank" rel="noopener noreferrer">
+        Public beta for tvOS 26.2, watchOS 26.2, and more now available
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Members of Apple’s public beta program have a host of new updates to install today. Apple has just released public beta 1 for tvOS 26.2, watchOS 26.2, and more. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/06/ipados-26-2-public-beta-is-available-now-heres-everything-new/" target="_blank" rel="noopener noreferrer">
+        iPadOS 26.2 public beta is available now, here’s everything new
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple kicked off a new round of 26.2 beta releases for developers earlier this week, and now the first public betas are here too, including iPadOS 26.2. Here’s everything new. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:46</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/lego-uss-enterprise-2025/" target="_blank" rel="noopener noreferrer">
+        Lego’s 3,600-Piece Star Trek Enterprise Is the Holiday Gift to Buy This Year
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This $400 set comes with minifigures of the complete Next Gen crew, including Picard, Riker, and Wesley Crusher’s portable tractor beam.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 21:36</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2025-11-07 06:30 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
