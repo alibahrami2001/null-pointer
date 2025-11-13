@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for November 13, 2025</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/windows/windows-11-users-rebel-as-top-microsoft-exec-says-operating-system-is-evolving-into-an-agentic-os" target="_blank" rel="noopener noreferrer">
+        Windows 11 users rebel as top Microsoft exec says operating system is &#39;evolving into an agentic OS&#39;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Windows 11 is going &#39;agentic&#39; and &#39;AI-native&#39; and a whole heap of other buzzwords that most consumers really don&#39;t care for.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 06:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/ios-26-6-liquid-glass-tweaks/" target="_blank" rel="noopener noreferrer">
+        iOS 26.2 shows Apple is still tweaking the Liquid Glass look and feel
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The iOS 26.6 developer beta released earlier today brings a few animation and interface tweaks, indicating that Apple is still working on the balance between practical usability and its original vision for Liquid Glass. Here’s what’s changed. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 05:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/paramount-plus/what-is-the-release-date-for-landman-season-2-episode-1-on-paramount" target="_blank" rel="noopener noreferrer">
+        What is the release date for Landman season 2 episode 1 on Paramount+?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;re all ready to see Tommy wage war on the world in Landman season 2 – but when is episode 1 released?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/your-samsung-tv-just-got-a-personality-and-it-knows-what-youre-watching-what-you-need-and-when-to-talk" target="_blank" rel="noopener noreferrer">
+        Your Samsung TV just got a personality – and it knows what you’re watching, what you need, and when to talk
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Samsung&#39;s new smart TVs include the Vision AI Companion, a voice-activated AI assistant powered by Bixby, Microsoft Copilot, and Perplexity.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/12/jack-dorsey-funds-divine-a-vine-reboot-that-includes-vines-video-archive/" target="_blank" rel="noopener noreferrer">
+        Jack Dorsey funds diVine, a Vine reboot that includes Vine’s video archive
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Jack Dorsey backs diVine, a Vine reboot that includes Vine&#39;s video archive of 6-second, looping videos.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/golf/dp-world-tour-championship-2025" target="_blank" rel="noopener noreferrer">
+        DP World Tour Championship 2025 live stream: how to watch golf online for FREE, Round 1 tee times
+      </a>
+    </h3>
+    
+    
+    <p class="summary">All the ways to watch DP World Tour Championship 2025 live streams online from anywhere for FREE, as Rory McIlroy looks to end the season top of the rankings.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/819657/horizon-steel-frontiers-mmo-sony-ncsoft-playstation" target="_blank" rel="noopener noreferrer">
+        Sony is making a Horizon MMO — here’s the video and details
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The rumored MMO set in Sony’s post-apocalyptic Horizon universe is real — and we’ve seen a video spilling details about the game before it’s been announced.&amp;amp;#160; The new game is called Horizon Steel Frontiers, and Sony and the Korean video game company NCSoft are working on it together. Based on a ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/12/chad-the-brainrot-ide-is-a-new-y-combinator-backed-product-so-wild-people-thought-it-was-fake/" target="_blank" rel="noopener noreferrer">
+        ‘Chad: The Brainrot IDE’ is a new Y Combinator-backed product so wild, people thought it was fake
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Chad: The Brainrot IDE is an actual product that pairs vibe coding with brainrot activities like gambling, Tinder and games.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 03:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/optus-black-friday-deals-include-half-price-iphone-16e-and-aud180-off-nbn" target="_blank" rel="noopener noreferrer">
+        Optus Black Friday deals include half price iPhone 16e and AU$180 off NBN
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Optus Black Friday sale is now live with up to 50% off selected phones, 30% off selected SIM plans and AU$180 in savings on NBN plans.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/live/news/early-black-friday-deals-australia-2025-live" target="_blank" rel="noopener noreferrer">
+        I&#39;ve covered Black Friday sales for 9 years – these are the 35+ early deals I recommend right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Black Friday 2025 isn&#39;t officially here yet, you can already shop early deals on headphones, laptops, cameras, smartphones and a lot more.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/computing/the-next-macos-update-can-turn-your-screen-into-a-ring-light-234410504.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The next macOS update can turn your screen into a ring light
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Sometimes, the best features in a new operating system aren&#39;t the flashy ones that get broadcast during a keynote. They&#39;re subtle improvements that naturally fit into how you use your device and just make the experience better. One of those appears to be coming in the next macOS update. The dev beta...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/wondla-season-3-trailer-apple-tv/" target="_blank" rel="noopener noreferrer">
+        The final chapter of Apple TV’s WondLa just got its first trailer
+      </a>
+    </h3>
+    
+    
+    <p class="summary">WondLa, Apple’s animated adventure trilogy, returns on November 26 for a final run of six episodes. Watch the trailer below. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 03:09</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/samsung-galaxy-phones/5-things-we-want-from-the-samsung-galaxy-s26-and-galaxy-s26-ultra" target="_blank" rel="noopener noreferrer">
+        5 things we want from the Samsung Galaxy S26 and Galaxy S26 Ultra
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Samsung Galaxy S26 series could launch early next year, and we hope it will have some of these features.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/ai/2025/11/openai-walks-a-tricky-tightrope-with-gpt-5-1s-eight-new-personalities/" target="_blank" rel="noopener noreferrer">
+        OpenAI walks a tricky tightrope with GPT-5.1’s eight new personalities
+      </a>
+    </h3>
+    
+    
+    <p class="summary">New controls attempt to please critics on both sides with a balance between bland and habit-forming.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 02:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/1password-auto-unlock-vault-mac/" target="_blank" rel="noopener noreferrer">
+        1Password now lets you auto-unlock your vault when you unlock your Mac
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Today, 1Password announced a new “unlock with device” setting that auto-unlocks the app when you unlock your Mac. Here’s how it works. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 02:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/23846479/best-budget-robot-vacuum-robot-mop" target="_blank" rel="noopener noreferrer">
+        The best budget robot vacuums
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Editor’s note: Black Friday doesn’t officially take place until Friday, November 28th; however, if you want to shop ahead of time, we’ve rounded up the best early Black Friday deals you can already get. Today’s robot vacuums are becoming a bit like cars: with all the features, upgrades, and fancy tr...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/turntables/technics-sl-1300g-turntable-review" target="_blank" rel="noopener noreferrer">
+        This superb turntable is so poised and revealing, but its hefty price and lack of a basic ingredient won&#39;t please everyone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Technics SL-1300G turntable is the latest example of the premium brand delivering a premium product a decade into its second coming...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/this-arm-based-mini-pc-sports-a-full-x16-pcie-slot-for-discrete-gpus-minisforum-says-desktop-arm-starts-now-but-can-it-live-up-to-the-hype" target="_blank" rel="noopener noreferrer">
+        This ARM-based mini PC sports a full x16 PCIe slot for discrete GPUs - Minisforum says &#34;desktop ARM&#34; starts now, but can it live up to the hype?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Minisforum MS-R1 ARM mini PC offers discrete GPU support, expandable storage, UEFI boot, and 45 TOPS AI performance in compact form.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/everything-new-in-ios-26-2-beta-2/" target="_blank" rel="noopener noreferrer">
+        Everything new in iOS 26.2 beta 2
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple continues to test the next iPhone software update with iOS 26.2 beta 2 released today. The pre-release iPhone software update includes a surprising amount of changes and refinements. Here’s everything new so far: more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/software/intel-software-fixes-stamp-down-privilege-escalation-vulnerabilities-while-microcode-updates-clean-up-cpu-messes-chipmaker-has-its-own-patch-tuesday-as-it-stomps-down-30-bugs" target="_blank" rel="noopener noreferrer">
+        Intel software fixes stamp down privilege escalation vulnerabilities, while microcode updates clean up CPU messes — chipmaker has its own Patch Tuesday as it stomps down 30 bugs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Intel stomps down 30 bugs including privilege escalation vulnerabilities</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 01:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/space/2025/11/with-another-record-broken-the-worlds-busiest-spaceport-keeps-getting-busier/" target="_blank" rel="noopener noreferrer">
+        With another record broken, the world’s busiest spaceport keeps getting busier
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It&#39;s not just the number of rocket launches, but how much stuff they&#39;re carrying into orbit.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/dhs-kept-chicago-police-records-for-months-in-violation-of-domestic-espionage-rules/" target="_blank" rel="noopener noreferrer">
+        DHS Kept Chicago Police Records for Months in Violation of Domestic Espionage Rules
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Department of Homeland Security collected data on Chicago residents accused of gang ties to test if police files could feed an FBI watchlist. Months passed before anyone noticed it wasn’t deleted.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/ios-26-2-lets-you-disable-new-carplay-feature-in-messages/" target="_blank" rel="noopener noreferrer">
+        iOS 26.2 lets you disable new CarPlay feature in Messages
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iOS 26 brought major changes to CarPlay, including a new Liquid Glass design, widgets, Live Activities, and more. The Messages app also added new features like Tapbacks and pinned conversations. With today’s release of iOS 26.2, Apple has added a new toggle that lets you simplify the Messages app … ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/ios-26-2-adds-a-cool-liquid-glass-effect-to-the-native-level-tool/" target="_blank" rel="noopener noreferrer">
+        iOS 26.2 adds a cool Liquid Glass effect to the native Level tool
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple released iOS 26.2 beta 2 earlier today, and it continued its system-wide overhaul of the Liquid Glass visual concept with a nice interface update to the Level tool inside the Measure app. Here’s what it looks like. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/ios-26-2s-apple-games-app-has-three-new-improvements/" target="_blank" rel="noopener noreferrer">
+        iOS 26.2’s Apple Games app has three new improvements
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iOS 26.2 is coming next month, and developer beta 2 just arrived today, highlighting three new improvements for Apple’s Games app. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/science/ibm-announces-nighthawk-and-loon-quantum-chips-213603769.html?src=rss" target="_blank" rel="noopener noreferrer">
+        IBM announces Nighthawk and Loon quantum chips
+      </a>
+    </h3>
+    
+    
+    <p class="summary">IBM has introduced two different quantum chips that it believes could help demonstrate &amp;amp;quot;quantum advantage,&amp;amp;quot; or the ability for a quantum computer to solve a problem faster than a classical computer, by the end of 2026. The new chips, Nighthawk and Loon, should help do that by taking differ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/new-nvidia-dgx-spark-competitor-shows-strong-benchmark-performance-and-at-half-the-price-could-it-be-enough-to-convince-some-users-to-switch" target="_blank" rel="noopener noreferrer">
+        New Nvidia DGX Spark competitor shows strong benchmark performance - and at half the price, could it be enough to convince some users to switch?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">GMKtec EVO-X2 delivers AI workstation performance at half the cost of the DGX Spark.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/iphone/you-have-spoken-iphones-are-overrated-but-not-as-much-as-you-might-think" target="_blank" rel="noopener noreferrer">
+        You have spoken: iPhones are overrated… but not as much as you might think
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iPhones get too much hype and are now overrated, according to TechRadar readers, but not as much as you might think.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/proposed-federal-thc-ban-would-wipe-out-hemp-products-that-get-people-high/" target="_blank" rel="noopener noreferrer">
+        A Proposed Federal THC Ban Would ‘Wipe Out’ Hemp Products That Get People High
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The provision, tucked into the spending bill that could end the US government shutdown, would ban intoxicating hemp-derived THC products, including gummies and drinks.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 00:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/beta-2-for-tvos-26-2-homepod-26-2-and-more-now-available/" target="_blank" rel="noopener noreferrer">
+        Beta 2 for tvOS 26.2, watchOS 26.2, and more now available
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has released a new wave of beta updates, with developer beta 2 rolling out for tvOS 26.2, watchOS 26.2, visionOS 26.2, and more. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/macos-tahoe-26-2-beta-2-now-available/" target="_blank" rel="noopener noreferrer">
+        macOS Tahoe 26.2 beta 2 now available
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Less than a week after releasing beta 1, Apple is now rolling out macOS Tahoe 26.2 developer beta 2. Here’s what to expect, including a new feature for video calls. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/ipados-26-2-beta-2-available-now-heres-what-to-expect/" target="_blank" rel="noopener noreferrer">
+        iPadOS 26.2 beta 2 available now, here’s what to expect
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has just released iPadOS 26.2 developer beta 2, which arrives about one week after developers received access to the first beta version. Here’s what’s new so far. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/apple-releases-ios-26-2-beta-2-for-iphone/" target="_blank" rel="noopener noreferrer">
+        Apple releases iOS 26.2 beta 2 for iPhone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has released the second iOS 26.2 beta for iPhone. The developer beta version is available as an over-the-air update starting today. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/macos-26-2-adds-new-edge-light-feature/" target="_blank" rel="noopener noreferrer">
+        macOS 26.2 adds new ‘Edge Light’ feature for better video calls
+      </a>
+    </h3>
+    
+    
+    <p class="summary">macOS Tahoe 26.2 is adding a a fun and useful new feature for video conferencing. The update introduces a feature Apple is calling Edge Light, which aims to improve your video quality in low lighting conditions by adding a virtual ring light around the edge of your Mac’s display. Here’s how it works...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/818599/valve-steam-frame-headset-speakers-head-strap-vibration-cancellation" target="_blank" rel="noopener noreferrer">
+        The Steam Frame has two speakers on each side of your face for vibration cancellation
+      </a>
+    </h3>
+    
+    
+    <p class="summary">In its new Steam Frame VR headset, Valve put dual audio drivers on each side in the included head strap. That puts the audio near your ears while you’re wearing it, and in my brief time trying the device at Valve’s headquarters recently, I thought the sound was just fine. But the choice to have [&amp;amp;#8...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/macbooks/the-latest-macos-beta-can-turn-your-macbook-screen-into-a-workable-ring-light" target="_blank" rel="noopener noreferrer">
+        The latest macOS dev beta can turn your MacBook screen into a workable ring light
+      </a>
+    </h3>
+    
+    
+    <p class="summary">New macOS dev beta introduces edge Light, a MacBook screen-based ring light for video calls.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/google-sues-to-dismantle-chinese-phishing-platform-behind-us-toll-scams/" target="_blank" rel="noopener noreferrer">
+        Google sues to dismantle Chinese phishing platform behind US toll scams
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Google has filed a lawsuit to dismantle the &#34;Lighthouse&#34; phishing-as-a-service platform used by cybercriminals worldwide to steal credit card information through SMS phishing attacks impersonating the U.S. Postal Service and E-ZPass toll systems. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 00:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/819192/united-nations-climate-change-conference-brazil-updates" target="_blank" rel="noopener noreferrer">
+        Energy and tech news at UN climate negotiations in Brazil
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The most high-stakes United Nations climate change conference in years is taking place this November in Belém, Brazil. It’s the 10th anniversary of the landmark Paris agreement, which committed nearly every country on Earth to working together to limit global warming. They’re off track, making this ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:27</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/huckberry-sitewide-sale-2025/" target="_blank" rel="noopener noreferrer">
+        Our Favorite Travel and Outdoor Gear Is on Sale at Huckberry
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Huckberry’s eclectic curation of travel clothing, coffee gear, and backpacks are all on sale right now.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 00:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gadgets/2025/11/microsoft-releases-update-fixing-update-for-update-eligible-windows-10-pcs/" target="_blank" rel="noopener noreferrer">
+        Microsoft releases update-fixing update for update-eligible Windows 10 PCs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A bug was keeping Windows 10 PCs from enrolling in Microsoft&#39;s ESU program.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:08</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/one-of-our-favorite-budgeting-apps-is-half-off-before-black-friday-174011108.html?src=rss" target="_blank" rel="noopener noreferrer">
+        One of our favorite budgeting apps is half off before Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Monarch Money is one of our favorite budgeting apps and, fittingly enough, there&#39;s a way for newcomers to save money on a subscription right now. If you use the code MONARCHVIP at checkout, you can get an annual plan for 50 percent off. It typically costs $100, but you can get 12 months of access fo...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/21539047/best-amazon-kindle-deals" target="_blank" rel="noopener noreferrer">
+        Here are the best Kindle deals right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Editor’s note: Black Friday doesn’t officially take place until Friday, November 28th; however, if you want to shop ahead of time, we’ve rounded up the best early Black Friday deals you can already get. When it comes to finding a device to read ebooks, you have a few options to choose from. You can ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/space/2025/11/an-explosion-92-million-miles-away-just-grounded-jeff-bezos-new-glenn-rocket/" target="_blank" rel="noopener noreferrer">
+        An explosion 92 million miles away just grounded Jeff Bezos’ New Glenn rocket
+      </a>
+    </h3>
+    
+    
+    <p class="summary">&#34;NASA is postponing launch until space weather conditions improve.&#34;</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/data-breach-at-mysterious-chinese-firm-reveals-state-owned-cyber-weapons-and-even-a-list-of-targets" target="_blank" rel="noopener noreferrer">
+        Data breach at mysterious Chinese firm reveals state-owned cyber weapons and even a list of targets
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Leak at Knownsec exposes over 12,000 files detailing cyber weapons, espionage tools, and international data theft.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:56</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/nothing-phones/amazon-beats-nothing-at-its-own-game-with-this-brilliant-early-black-friday-nothing-phone-3-deal" target="_blank" rel="noopener noreferrer">
+        Amazon beats Nothing at its own game with this brilliant early Black Friday Nothing Phone 3 deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Nothing Phone 3 is one of the best value phones on the market, and perhaps the most unique-looking; the company has put it on sale for Black Friday, but Amazon’s offer is better.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/817993/valve-vr-steam-frame-foveated-streaming-rendering-link" target="_blank" rel="noopener noreferrer">
+        Valve’s new VR streaming trick won’t just work with its own headset
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve’s new streaming-first VR headset&amp;amp;#160;—&amp;amp;#160;the Steam Frame — employs a clever trick to help make game streaming feel as low-latency as possible. It’s called foveated streaming, and it means the headset requests a higher-quality image for the content that’s right in front of your eyes while l...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/surface-laptop-deal-1125/" target="_blank" rel="noopener noreferrer">
+        Microsoft’s Surface Laptop Is Marked Down by $350
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Scoop this excellent Windows laptop for a fraction of its usual price.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 23:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/this-single-step-apple-shortcut-might-quickly-become-your-new-favorite/" target="_blank" rel="noopener noreferrer">
+        This single-step Apple Shortcut might quickly become your new favorite
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple’s Shortcuts app offers tremendous power, especially with new iOS 26 additions. But my own most-used shortcuts tend to be extremely simple, including one recently shared by Quinn Nelson for opening an app’s settings. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/12/cybersecurity-firm-deepwatch-lays-off-dozens-citing-move-to-accelerate-ai-investment/" target="_blank" rel="noopener noreferrer">
+        Cybersecurity firm Deepwatch lays off dozens, citing move to ‘accelerate’ AI investment
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Deepwatch’s CEO told TechCrunch that the layoffs allow the company to accelerate investments in “AI and automation.”</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/computing/accessories/the-best-stocking-stuffers-you-can-get-for-50-or-less-130049325.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best stocking stuffers you can get for $50 or less
+      </a>
+    </h3>
+    
+    
+    <p class="summary">While it’s probably tempting to go all-out and give a loved one their most desired gadget this year, doing so could put a big dent in your budget. And it would be wrong to assume that you have to spend hundreds to get a good tech gift that anyone will appreciate. There are plenty of gadgets and acce...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/games/818113/valve-steam-frame-machine-controller-vr-headset-pc-ask-us-anything-ama" target="_blank" rel="noopener noreferrer">
+        We tried Valve’s new VR headset, PC, and controller — ask us anything!
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Hi! I&#39;m Jay Peters, a senior reporter here at The Verge. I&#39;m perhaps the site&#39;s second-biggest Steam Deck fan, surpassed only by Sean Hollister, our unofficial handheld gaming PC reviewer. So you can imagine how excited we were to visit Valve&#39;s headquarters to try the company&#39;s three new hardware pr...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/apple-tv-plus/apple-tvs-most-underrated-mystery-drama-is-back-with-a-glitzy-first-episode-that-pays-homage-to-60s-hollywood-icons" target="_blank" rel="noopener noreferrer">
+        Apple TV’s most underrated mystery drama is back with a glitzy first episode that pays homage to ’60s Hollywood icons
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Palm Royale creator, Abe Sylvia, reveals how two 60s stars inspired the mystery series’ dazzling season 2 opener.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/soundbars/this-home-theater-newcomer-just-released-a-serious-sonos-beam-rival-heres-why-i-love-this-small-dolby-atmos-soundbar" target="_blank" rel="noopener noreferrer">
+        This home theater newcomer just released a serious Sonos Beam rival – here’s why I love this small Dolby Atmos soundbar
+      </a>
+    </h3>
+    
+    
+    <p class="summary">My expectations for the Marshall Heston 60 were already sky-high, but it still met them – Sonos has some serious competition.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/watch-this-the-latest-humanoid-robots-are-both-unnervingly-sassy-and-comfortingly-error-prone" target="_blank" rel="noopener noreferrer">
+        Watch this – the latest humanoid robots are both unnervingly sassy and comfortingly error-prone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">New robots from China and Russia raise serious questions about the difficulty of creating humanoid robots and what these companies should be building.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/12/elevenlabs-strike-deals-with-celebs-to-create-ai-audio/" target="_blank" rel="noopener noreferrer">
+        ElevenLabs strike deals with celebs to create AI audio
+      </a>
+    </h3>
+    
+    
+    <p class="summary">ElevenLabs struck a deal with actors Michael Caine and Matthew McConaughey to AI-generate their voices.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/culture/2025/11/alien-earth-and-series-creator-noah-hawley-will-return-for-season-2/" target="_blank" rel="noopener noreferrer">
+        Well-received big-budget Alien Earth TV series gets a second season
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Production will move from Thailand to London, suggesting a new setting.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/nintendo/the-rogue-prince-of-persia-hits-switch-and-switch-2-on-december-16-194828522.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The Rogue Prince of Persia hits Switch and Switch 2 on December 16
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Rogue Prince of Persia is coming to Switch and Switch 2 consoles on December 16. The game was in early access for around a year before being officially released for PC and consoles back in August. This version has been &amp;amp;quot;optimized for handheld and hybrid play&amp;amp;quot; and includes all content f...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/iphone-17-pro-max-internals-wallpapers-basic-apple-guy/" target="_blank" rel="noopener noreferrer">
+        You should get these gorgeous iPhone 17 Pro and iPhone 17 Pro Max internals wallpapers
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Following two months of meticulous work, Basic Apple Guy has released the much-anticipated iPhone 17 Pro and iPhone 17 Pro Max Internals Wallpapers. Here’s how to get them. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/playstation/ps-plus-game-catalog-additions-for-november-include-gta-5-pacific-drive-and-still-wakes-the-deep-194029093.html?src=rss" target="_blank" rel="noopener noreferrer">
+        PS Plus Game Catalog additions for November include GTA 5, Pacific Drive and Still Wakes the Deep
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Sony has revealed the list of November additions to its PlayStation Plus Game Catalog for those on the Extra and Premium tiers of the subscription service. It’s a pretty darn good slate of games this time around, headlined by the return of the PS4 and PS5 versions of Grand Theft Auto V to the servic...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/12/elon-musks-x-botched-its-security-key-switchover-locking-users-out/" target="_blank" rel="noopener noreferrer">
+        Elon Musk’s X botched its security key switchover, locking users out
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As part of an effort to retire the old Twitter.com domain, X is requiring passkey and security key users to re-enroll — but are getting stuck in endless loops and unable to finish.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/818041/valve-steam-frame-vr-headsets-comparison" target="_blank" rel="noopener noreferrer">
+        How the Steam Frame compares to other VR headsets
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve just announced the Steam Frame, a new standalone VR headset that can both stream games from a PC and play games locally thanks to an onboard Arm chip. The headset is quite a bit different from Valve’s previous model, the Index, which had to be tethered to a gaming computer with a physical wire...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/openai-releases-warmer-more-intelligent-gpt-5-1-for-chatgpt/" target="_blank" rel="noopener noreferrer">
+        OpenAI releases ‘warmer, more intelligent’ GPT-5.1 for ChatGPT
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Back in August, OpenAI unveiled GPT-5, a major frontier model update to ChatGPT. Three months later, OpenAI is back with GPT-5.1, which it says is “now warmer, more intelligent, and better at following your instructions.” more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/pc/valve-announces-new-steam-machine-and-steam-controller-182836847.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Valve announces new Steam Machine and Steam Controller
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve is making another run at offering a console-style experience in your living room. The company has announced a new Steam Machine and Steam Controller that let you play PC games on your TV in the same way the Steam Deck lets you play them on the go. Better yet, it’s planning to release them both...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ar-vr/valves-steam-frame-vr-headset-is-finally-official-and-its-coming-in-2026-181909387.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Valve’s Steam Frame VR headset is finally official and it&#39;s coming in 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve made a triumphant return to the hardware market with the Steam Deck and its OLED-toting counterpart, and now it’s having another crack at virtual reality with the Steam Frame. The Steam Frame is the long-rumored headset from Valve that had previously been codenamed &amp;amp;quot;Deckard.&amp;amp;quot;&amp;amp;nbsp; T...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:56</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/818698/valve-steamos-arm-potential-handhelds-laptops" target="_blank" rel="noopener noreferrer">
+        Valve thinks Arm has ‘potential’ for SteamOS handhelds, laptops, and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve won’t talk about a Steam Deck 2. It probably wants to keep the attention on its just-announced living room console, comfy new controller, and Arm-based headset instead. But now that the company is preparing to sell an Arm headset, one that can even run Android apps, there’s an obvious question...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 22:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/12/court-rules-that-openai-violated-german-copyright-law-ordered-it-to-pay-damages/" target="_blank" rel="noopener noreferrer">
+        Court rules that OpenAI violated German copyright law; orders it to pay damages
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A German court ruled that OpenAI’s ChatGPT violated the nation’s copyright laws by training its language models on licensed musical work without permission.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 22:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/cars/2025/11/audi-goes-full-minimalism-for-its-first-ever-formula-1-livery/" target="_blank" rel="noopener noreferrer">
+        Audi goes full minimalism for its first-ever Formula 1 livery
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Audi says it wants to be an F1 title contender by 2030.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 22:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/apple-arcade-is-adding-powerwash-simulator-and-cult-of-the-lamb-next-month-190647480.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Apple Arcade is adding PowerWash Simulator and Cult of the Lamb next month
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple Arcade has a fairly stacked winter, as the platform is adding some standout titles on December 4. Arcade titles are playable on iPhone, iPad, Mac, Apple TV and Apple Vision Pro. First up, there&#39;s Cult of the Lamb Arcade Edition. This is a port of the incredibly addictive roguelike/town sim hyb...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/802653/openai-gpt-5-1-upgrade-personality-presets" target="_blank" rel="noopener noreferrer">
+        OpenAI says the brand-new GPT-5.1 is &amp;amp;#8216;warmer&amp;amp;#8217; and has more &amp;amp;#8216;personality&amp;amp;#8217; options
+      </a>
+    </h3>
+    
+    
+    <p class="summary">OpenAI is releasing GPT-5.1 today, an update to the flagship model it released in August. OpenAI calls it an “upgrade” to GPT-5 that “makes ChatGPT smarter and more enjoyable to talk to.” The new models include GPT-5.1 Instant and GPT-5.1 Thinking. The former is “warmer, more intelligent, and better...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/anthropic-claude-takes-control-robot-dog/" target="_blank" rel="noopener noreferrer">
+        Anthropic’s Claude Takes Control of a Robot Dog
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Anthropic believes AI models will increasingly reach into the physical world. To understand where things are headed, it asked Claude to program a quadruped.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/science/2025/11/quantum-roundup-lots-of-companies-announcing-new-tech/" target="_blank" rel="noopener noreferrer">
+        Quantum computing tech keeps edging forward
+      </a>
+    </h3>
+    
+    
+    <p class="summary">IBM follows through on its June promises, plus more trapped ion news.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 22:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-vpn-deals-88-percent-discounts-on-protonvpn-surfshark-expressvpn-nordvpn-and-more-120056913.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best VPN deals: 88 percent discounts on ProtonVPN, Surfshark, ExpressVPN, NordVPN and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A virtual private network (VPN) is useful in several ways — a good one can stream foreign TV shows and events, protect your information from cybercrime and thwart those online trackers that show you creepily invasive ads. Although we strongly recommend using a VPN, a bit of comparison shopping goes ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/apple-tv-has-another-big-jason-momoa-series-coming-per-report/" target="_blank" rel="noopener noreferrer">
+        Apple TV has another big Jason Momoa series coming, per report
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Jason Momoa is fast becoming an Apple TV fixture, with reports emerging of a third major series coming from Apple with Momoa in the starring role: Nomad. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/virtual-reality-augmented-reality/steam-frame-vs-meta-quest-3" target="_blank" rel="noopener noreferrer">
+        Steam Frame vs Meta Quest 3: Valve&#39;s VR headset swings at the king, but we&#39;re missing one key detail
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve&#39;s new Steam Frame headset is here to take on the Meta Quest 3, but which one should you buy? Here&#39;s how the two VR titans compare.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/consoles-pc/steam-machine-vs-steam-deck-the-4-biggest-differences-explained" target="_blank" rel="noopener noreferrer">
+        Steam Machine vs Steam Deck: the 4 biggest differences explained
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve has just surprised us all with its new gaming Steam Machine, but how exactly does it fare against the Steam Deck?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/12/ios-26-2-beta-adds-new-liquid-glass-customization-alarms-in-the-reminders-app-and-more/" target="_blank" rel="noopener noreferrer">
+        iOS 26.2 beta adds new Liquid Glass customization, alarms in the Reminders app, and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple released the iOS 26.2 beta 1 last week, introducing the option to adjust the Liquid Glass appearance of the lock screen clock, and more.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 22:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/culture/2025/11/nintendo-drops-official-trailer-for-super-mario-galaxy-movie/" target="_blank" rel="noopener noreferrer">
+        Super Mario Galaxy Movie trailer introduces Princess Rosalina
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It&#39;s a sequel to 2023&#39;s Super Mario Bros. Movie, which racked up $1.36 billion at the box office.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 22:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/gaming-accessories/valve-has-just-unveiled-a-new-steam-controller-and-it-seems-like-a-massive-upgrade-compared-to-its-predecessor" target="_blank" rel="noopener noreferrer">
+        Valve has just unveiled a weird new Steam controller, and it seems like a massive upgrade compared to its predecessor
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve has just unveiled a new controller.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/12/watchos-26-has-three-big-new-updates-for-apple-watch-faces/" target="_blank" rel="noopener noreferrer">
+        watchOS 26 has three big new updates for Apple Watch faces
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The watch face is easily among Apple Watch’s most important features, and watchOS 26 offers big improvements to watch faces in three main ways. Here’s what’s new. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/tech/steam-frame-official-7-things-you-need-to-know-about-valves-quest-3-rival" target="_blank" rel="noopener noreferrer">
+        Steam Frame official – 7 things you need to know about Valve&#39;s Quest 3 rival
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve has officially revealed its long-awaited Steam Frame headset – here&#39;s everything you need to know about the Meta Quest 3 rival.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:00</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2025-11-13 06:30 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
