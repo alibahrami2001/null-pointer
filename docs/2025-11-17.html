@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for November 17, 2025</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/samsung-kicks-off-its-aussie-black-friday-sales-early-with-up-to-au-usd4-000-off-its-premium-8k-tvs" target="_blank" rel="noopener noreferrer">
+        Samsung kicks off its Aussie Black Friday sales early with up to AU$4,000 off its premium 8K TVs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Samsung QN800D is a formidable TV for upscaling content to 8K-like quality. And now it&#39;s had up to AU$4,000 slashed from its price for Black Friday.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 07:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/best-dyson-black-friday-deals-in-australia" target="_blank" rel="noopener noreferrer">
+        Best Dyson Black Friday 2025 deals in Australia: save on vacuums, hair tools, purifiers and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you’re after one of Dyson’s many top-rated products, Black Friday and Cyber Monday is when you can score those big discounts.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/821807/sky-sports-halo-women-tiktok" target="_blank" rel="noopener noreferrer">
+        Sky Sports killed off its female-focused Halo brand after just three days
+      </a>
+    </h3>
+    
+    
+    <p class="summary">That Sky Sports felt the need to launch a TikTok channel specifically marketed towards women and billed as its “lil sis” was questionable enough. But once people got a taste of the content on Halo, it was clear the company had absolutely no idea what it was doing. Halo didn’t focus on women&amp;amp;#8217;s ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/wireless-bluetooth-speakers/dont-wait-for-black-friday-our-favourite-jbl-bluetooth-speakers-are-already-at-all-time-australian-low-prices" target="_blank" rel="noopener noreferrer">
+        Don&#39;t wait for Black Friday – our favourite JBL Bluetooth speakers are already at all-time Australian low prices
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The 5-star JBL Charge 6 and Flip 7 Bluetooth speakers are already at Australian all-time low prices ahead of Black Friday, thanks to our exclusive coupon.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/hackers-spin-a-tedious-yarn-fabric-supplier-behind-h-and-m-adidas-and-more-hit-by-worrying-cyber-breach" target="_blank" rel="noopener noreferrer">
+        Hackers spin a tedious yarn - fabric supplier behind H&amp;amp;M, Adidas, and more hit by worrying cyber breach
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Fulgar suffers ransomware attack by RansomHouse, leaking financial and operational data to the dark web.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/entertainment/821782/you-need-to-listen-to-the-searing-noise-pop-album-forever-in-your-heart" target="_blank" rel="noopener noreferrer">
+        You need to listen to the searing noise pop album Forever in Your Heart
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There&#39;s something irresistible about music that sounds as if it&#39;s coming apart at the seams. The Black Dresses are masters of barely contained chaos. All of their records feel as if they&#39;re in danger of collapsing into pure noise at any moment. But never have they so expertly woven the various threa...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/16/beloved-sf-cats-death-fuels-waymo-criticism/" target="_blank" rel="noopener noreferrer">
+        Beloved SF cat’s death fuels Waymo criticism
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The death of a neighborhood bodega cat named Kit Kat has shaken San Francisco’s Mission District and prompted new debates about robotaxi safety.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://krebsonsecurity.com/2025/11/microsoft-patch-tuesday-november-2025-edition/" target="_blank" rel="noopener noreferrer">
+        Microsoft Patch Tuesday, November 2025 Edition
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft this week pushed security updates to fix more than 60 vulnerabilities in its Windows operating systems and supported software, including at least one zero-day bug that is already being exploited. Microsoft also fixed a glitch that prevented some Windows 10 users from taking advantage of an...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Krebs on Security</span>
+      
+      
+      
+      <span class="time">🕒 01:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/can-top-ai-tools-be-bullied-into-malicious-work-chatgpt-gemini-and-more-are-put-to-the-test-and-the-results-are-actually-genuinely-surprising" target="_blank" rel="noopener noreferrer">
+        Can top AI tools be bullied into malicious work? ChatGPT, Gemini, and more are put to the test, and the results are actually genuinely surprising
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Adversarial testing of top AI models revealed vulnerabilities, showing some could be manipulated into unsafe responses despite safety measures.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/walmarts-first-round-of-black-friday-deals-ends-tonight-50-percent-off-airpods-cheap-tvs-air-fryers-toys-and-more" target="_blank" rel="noopener noreferrer">
+        Walmart&#39;s first round of Black Friday deals ends tonight – 50% off AirPods, cheap TVs, air fryers, toys, and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Walmart&#39;s first round of early Black Friday deals ends tonight, and I&#39;m rounding up today&#39;s best deals you won&#39;t want to miss on AirPods, TVs, appliances, toys, and more.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:19</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/hackers-your-game-is-over-us-government-announces-strike-force-to-stamp-out-southeast-asian-cyber-scams" target="_blank" rel="noopener noreferrer">
+        Hackers, your game is over - US government announces ‘strike force’ to stamp out Southeast Asian cyber scams
+      </a>
+    </h3>
+    
+    
+    <p class="summary">US Strike Force disrupts Southeast Asian scam centers, seizing cryptocurrency and targeting DKBA and Chinese criminal networks.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/get-one-year-of-headspace-for-only-35-in-this-black-friday-deal-163051844.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Get one year of Headspace for only $35 in this Black Friday deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meditation app Headspace is bringing back one of its biggest annual deals this Black Friday. Through December 4, you’ll be able to get 50 percent off the regular annual subscription price, bringing a full year of guided meditations, sleep sounds and mindfulness tools down to $35 per year. If you’ve ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/gaming-pcs/valve-could-shake-up-the-console-gaming-space-but-for-now-here-are-4-things-the-steam-machine-means-for-pc-gamers" target="_blank" rel="noopener noreferrer">
+        Valve could shake up the console gaming space, but for now, here are 4 things the Steam Machine means for PC gamers
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve&#39;s new Steam Machine has the potential to reshape console gaming, and I&#39;m confident it will, but it also spells good news for the impact on PC gamers.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/american-football/watch-grey-cup-2025-saskatchewan-roughriders-montreal-alouettes-free" target="_blank" rel="noopener noreferrer">
+        How to watch Grey Cup 2025 on CFL+ — it&#39;s *FREE*
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Here&#39;s our guide on how to watch the Grey Cup 2025 for free as Saskatchewan Roughriders take on the Montreal Alouettes.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/16/bnpl-is-expanding-fast-and-that-should-worry-everyone/" target="_blank" rel="noopener noreferrer">
+        ‘Buy Now, Pay Later’ is expanding fast, and that should worry everyone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As Morris watches his BNPL investments from the other side of the table, he seems to understand the warning signs better than most.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/transportation/rivian-spinoff-reveals-a-3500-starting-price-for-its-first-e-bike-195949124.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Rivian spinoff reveals a $3,500 starting price for its first e-bike
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Rivian&#39;s electric mobility spinoff Also announced a $3,500 starting price for its first e-bike called the TM-B. The startup unveiled the shapeshifting e-bike last month, with options for a limited Launch edition, a Performance version or a base model. During the reveal, Also said both the Launch and...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/16/are-we-nearing-the-end-of-apples-tim-cook-era/" target="_blank" rel="noopener noreferrer">
+        Are we nearing the end of Apple’s Tim Cook era?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple is getting serious about succession planning, according to a new report.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/entertainment/821767/stereogum-scott-lapatine-independent-music-media-streaming-ai" target="_blank" rel="noopener noreferrer">
+        Stereogum soldiers on in the era of streaming and AI
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you&#39;re an indie rock fan of a certain age, the name Stereogum will probably conjure strong feelings. The site was launched &#34;January 1st, 2002, on a whim,&#34; founder Scott Lapatine told The Verge. Originally, this early staple of the music blog era was focused almost entirely on music discovery and ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/trimbox" target="_blank" rel="noopener noreferrer">
+        Drowning in emails? Meet the app that&#39;s cleaned over a billion
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Drowning in emails? Meet the app that&#39;s cleaned over a billion</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/smart-home/early-black-friday-deal-buy-the-blink-video-doorbell-for-less-than-usd29-99" target="_blank" rel="noopener noreferrer">
+        Early Black Friday deal at Amazon drops the Blink Video Doorbell to $29.99
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Early Black Friday deals are available now at Amazon, including this record-low price for the Blink Video Doorbell.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/16/amazon-satellite-network-gets-a-rebrand-and-drops-its-affordability-pitch/" target="_blank" rel="noopener noreferrer">
+        Amazon satellite network gets a rebrand — and drops its affordability pitch
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The company has been quietly changing how it talks about who its internet customers will be before it announced a big name change last week.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 22:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/big-tech/google-plans-to-invest-40-billion-towards-building-data-centers-in-texas-183056066.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Google plans to invest $40 billion towards building data centers in Texas
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Google is getting ready to spend $40 billion to increase its data center footprint in Texas. In an announcement posted on its website, Google said it&#39;s planning to build more infrastructure for its cloud and artificial intelligence operations in the state. The plans call for three new data centers, ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-meta-quest-3s-vr-headset-drops-to-a-record-low-price-for-black-friday-180911805.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The Meta Quest 3S VR headset drops to a record-low price for Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta&#39;s entry-level VR headset, the Quest 3S, is down to an even more budget-friendly price than usual in a deal on Amazon right now. The 128GB Meta Quest 3S is 17 percent off in an early Black Friday deal, bringing it to a record-low price of $250. It normally goes for $300. With the purchase, you a...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 21:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/samsung-galaxy-phones/the-latest-samsung-galaxy-tri-fold-leaks-suggest-a-launch-is-imminent-and-that-it-will-be-available-in-the-us" target="_blank" rel="noopener noreferrer">
+        The latest Samsung Galaxy tri-fold leaks suggest a launch is imminent, and that it will be available in the US
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Samsung has promised that its first tri-fold will be out before the end of the year, and here&#39;s another hint.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/16/techcrunch-mobility-the-robotaxi-expansion-that-really-matters/" target="_blank" rel="noopener noreferrer">
+        TechCrunch Mobility: The robotaxi expansion that really matters
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Welcome back to TechCrunch Mobility — your central hub for news and insights on the future of transportation.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 20:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/7-superb-samsung-storage-deals-that-ill-be-checking-on-this-black-friday" target="_blank" rel="noopener noreferrer">
+        7 superb Samsung storage deals that I&#39;ll be checking on this Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Black Friday is nearly here and these are the Samsung SSDs I&#39;m keeping the closest eye on.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/my-favorite-way-to-play-the-new-league-of-legends-game-is-sold-out-everywhere-but-riot-just-dropped-some-great-news" target="_blank" rel="noopener noreferrer">
+        My favorite way to play the new League of Legends game is sold out everywhere, but Riot just dropped some great news
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Riftbound&#39;s Proving Grounds is the best way to play the game. It&#39;s sold out, but will hopefully come back soon (maybe for Black Friday).</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/computing/the-mac-pro-could-be-the-latest-addition-to-apples-product-purgatory-165609102.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The Mac Pro could be the latest addition to Apple&#39;s product purgatory
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The wait for a new Mac Pro may take a lot longer, according to the latest Power On newsletter. Bloomberg&#39;s Mark Gurman reported that the Mac Pro has an uncertain future within Apple&#39;s desktop strategy and isn&#39;t likely to see a refresh in 2026. According to Gurman, Apple is no longer working on the M...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 20:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/16/how-much-of-the-ai-data-center-boom-will-be-powered-by-renewable-energy/" target="_blank" rel="noopener noreferrer">
+        How much of the AI data center boom will be powered by renewable energy?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">According to a new report from the International Energy Agency, the world will spend $580 billion on data centers this year — $40 billion more than will be spent finding new oil supplies.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 20:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/nvidias-excellent-rtx-5070-is-selling-for-an-all-time-low-price-of-just-usd489-on-walmart-get-pnys-overclocked-variant-with-a-solid-triple-fan-cooler-on-sale-right-now" target="_blank" rel="noopener noreferrer">
+        Nvidia&#39;s excellent RTX 5070 is selling for an all-time low price of just $489 on Walmart — Get PNY&#39;s overclocked variant with a solid, triple-fan cooler on sale right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The RTX 5070 is one of the best midrange GPUs you can buy but it&#39;s often been overshadowed by the more competitive RX 9070 from AMD due to the latter&#39;s memory pool. Now, at its lowest price ever, the RTX 5070 has just become a lot more exciting, especially with Nvidia&#39;s superior driver suite and fea...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 20:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/nvidias-new-ai-app-could-be-the-productivity-tool-youve-always-needed-hyperlink-agent-brings-private-ai-powered-search-for-your-pc" target="_blank" rel="noopener noreferrer">
+        Nvidia&#39;s new AI app could be the productivity tool you&#39;ve always needed - &#34;Hyperlink&#34; agent brings private AI-powered search for your PC
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Hyperlink uses local AI acceleration to deliver private, lightning-fast file searches powered by LLM reasoning and contextual understanding.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 19:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/gadgets/780847/best-dad-gift-ideas" target="_blank" rel="noopener noreferrer">
+        The best gifts for dads that have everything (but deserve more)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">What do you get the man who says he has everything? It&#39;s a tough question - and one you have a limited amount of time to answer, given the holidays are nearly upon us. You could try dropping subtle hints or asking friends and family for suggestions, but they might save their best ideas for [&amp;amp;#8230;]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 19:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/best-organic-mattresses/" target="_blank" rel="noopener noreferrer">
+        Best Organic Mattresses (2025): Birch, Avocado, Naturepedic, More
+      </a>
+    </h3>
+    
+    
+    <p class="summary">These natural, organic mattresses are eco-friendly alternatives to conventional models and just as comfortable.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 19:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/black-friday-deals-for-2025-the-best-tech-sales-from-amazon-apple-lego-ninja-and-more-100052984.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Black Friday deals for 2025: The best tech sales from Amazon, Apple, Lego, Ninja and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">November has turned into Black Friday and vice versa. What was once a one-day shopping sprint has turned into a month-long marathon, with retailers rolling out discounts week after week. Thanks to this, it can be easy to get deal fatigue after a while — but no one wants to miss out on a good discoun...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 19:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/football/italy-vs-norway-world-cup-2026-qualifier-free" target="_blank" rel="noopener noreferrer">
+        Italy vs Norway free streams: How to watch World Cup 2026 Qualifier, TV Schedule, Preview
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;ll show you all the ways you can watch Italy vs Norway as Erling Haaland&#39;s team look destined for a spot at the 2026 World Cup.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 19:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/podcast/820818/limewire-music-piracy-version-history" target="_blank" rel="noopener noreferrer">
+        How LimeWire ended the Napster music revolution
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Quick: tell me how old you are by telling me which app you used to download free music. Was it Napster? Kazaa? Usenet? Gnutella? WinMX? Morpheus? The Pirate Bay? Were you, I don&#39;t know, sending your friends songs on AIM or BBM? The possibilities are endless. For a decade or so, if you were online, [...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 19:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/dram/asus-msi-other-manufacturers-panic-buying-ram-stocks-while-major-memory-chipmakers-rake-in-profits-massive-demand-for-hbm-and-rdimm-for-data-centers-driving-shortage" target="_blank" rel="noopener noreferrer">
+        Asus, MSI, other manufacturers panic-buying RAM stocks, while major memory chipmakers rake in profits — massive demand for HBM and RDIMM for data centers driving shortage
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Asus, MSI, and other PC manufacturers are now purchasing memory chips from the spot market to shore up their inventories as memory supplies tighten.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 19:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-gopro-hero-13-black-action-camera-is-cheaper-than-ever-for-black-friday-160154726.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The GoPro Hero 13 Black action camera is cheaper than ever for Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Action cams make great gifts, or if you&#39;re a photographer, a solid addition to your kit. Black Friday deals usually mean you can pick up new cameras and accessories for less, and this year is no different. One of the best deals we&#39;ve found is on the GoPro Hero 13 Black action cam, which is down to $...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 19:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/ssds/the-nvme-destroyinator-can-wipe-16-nvme-drives-simultaneously-at-speeds-up-to-64-gb-s-it-could-be-the-data-shredder-of-your-dreams-or-nightmares" target="_blank" rel="noopener noreferrer">
+        The NVMe Destroyinator can wipe 16 NVMe drives simultaneously at speeds up to 64 GB/s — it could be the data shredder of your dreams, or nightmares
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The NVMe Destroyinator can securely wipe up to 16 NVMe drives at once at 64 GB/sec.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 18:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/google-to-flag-android-apps-with-excessive-battery-use-on-the-play-store/" target="_blank" rel="noopener noreferrer">
+        Google to flag Android apps with excessive battery use on the Play Store
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Google will start taking action on Android apps in the official Google Play store that have high background activity and cause excessive battery draining. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 18:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/black-friday-deals-include-the-mac-mini-m4-for-100-off-150749079.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Black Friday deals include the Mac mini M4 for $100 off
+      </a>
+    </h3>
+    
+    
+    <p class="summary">While there are lots of great Black Friday sales on cheaper devices, it&#39;s the big ticket items that really make a world of difference. Take Apple&#39;s 2024 Mac mini M4, which has dropped to $499 from $599 as part of early Black Friday deals. The 17 percent discount brings Apple&#39;s mini desktop computer ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 18:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/amazon-uks-black-friday-sale-starts-november-20-here-are-the-39-best-early-deals-id-buy-now" target="_blank" rel="noopener noreferrer">
+        Amazon UK&#39;s Black Friday sale starts November 20 – here are the 39 best early deals I&#39;d buy now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon has confirmed the start date for its mega Black Friday sale, but dozens of deals are already live, so I&#39;ve hand-picked the 39 best offers.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/software/windows/windows-boss-posts-lacklustre-response-to-agentic-os-backlash" target="_blank" rel="noopener noreferrer">
+        Microsoft Windows boss posts lackluster response to ‘agentic OS’ backlash — Microsoft is working to address broad problems with the OS
+      </a>
+    </h3>
+    
+    
+    <p class="summary">For both your everyday and power users alike, the gap between messaging and actual, measurable action in response to criticism remains stark.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 18:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/821355/asus-falcata-review-hall-effect-switches-split-ergo-gaming-keyboard" target="_blank" rel="noopener noreferrer">
+        The Asus Falcata is an ambitious split ergo gaming keyboard that falls short
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Hall effect gaming keyboards aren&#39;t uncommon. But Asus&#39; ROG Falcata is the only one that&#39;s also a split ergonomic keyboard, aimed at alleviating wrist, hand, or arm pain. For the luxury of having it all, you&#39;ll pay $419.99, enough to buy a nice Hall effect keyboard and a split ergonomic one. It&#39;d be...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/motorola-phones/motorola-edge-70-review" target="_blank" rel="noopener noreferrer">
+        I tested Motorola&#39;s cheaper iPhone Air alternative, but it still didn&#39;t win me over to team thin-phone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Motorola Edge 70 is a surprisingly expensive thin-body Android, which doesn&#39;t live up to the expectations past generations have set.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/quordle-today-answers-clues-17-november-2025" target="_blank" rel="noopener noreferrer">
+        Quordle hints and answers for Monday, November 17 (game #1393)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for Quordle clues? We can help. Plus get the answers to Quordle today and past solutions.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/nyt-connections-today-answers-hints-17-november-2025" target="_blank" rel="noopener noreferrer">
+        NYT Connections hints and answers for Monday, November 17 (game #890)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Connections answers and hints? Here&#39;s all you need to know to solve today&#39;s game, plus my commentary on the puzzles.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/nyt-strands-today-answers-hints-17-november-2025" target="_blank" rel="noopener noreferrer">
+        NYT Strands hints and answers for Monday, November 17 (game #624)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Strands answers and hints? Here&#39;s all you need to know to solve today&#39;s game, including the spangram.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/best-action-cameras/" target="_blank" rel="noopener noreferrer">
+        Best Action Cameras (2025), Tested and Reviewed
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Gearing up to shred the slopes or dive into the seas? These photography tools are made for danger.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/cpus/intels-upcoming-arrow-lake-desktop-refresh-detailed-in-new-leak-core-ultra-290k-plus-270k-plus-and-250k-plus-will-ship-with-improved-clocks-and-more-e-cores-along-with-ddr5-7200-support" target="_blank" rel="noopener noreferrer">
+        Intel&#39;s upcoming Arrow Lake desktop refresh detailed in new leak — Core Ultra 290K Plus, 270K Plus, &amp;amp; 250K Plus will ship with improved clocks and more E-cores, along with DDR5-7200 support
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;re expecting at least three new SKUs in the Arrow Lake refresh that Intel is cooking up behind the scenes, with decent improvements across the board in terms of better memory support and higher clock speeds. The Core Ultra 7 270K Plus, in particular, looks to be almost on par with a current-gen 2...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 18:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/sundays-100-best-early-black-friday-deals-sales-im-shopping-today-from-walmart-amazon-target-and-more" target="_blank" rel="noopener noreferrer">
+        Sunday&#39;s 100 best early Black Friday deals – sales I&#39;m shopping today from Walmart, Amazon, Target, and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I&#39;m rounding up Sunday&#39;s 100 best Black Friday deals that I&#39;ve hand-picked from early sales at Walmart, Amazon, Target, Best Buy, and more.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/this-is-the-ninja-air-fryer-to-buy-on-sale-ahead-of-black-friday-170959924.html?src=rss" target="_blank" rel="noopener noreferrer">
+        This is the Ninja air fryer to buy on sale ahead of Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Black Friday might still be a few weeks away, but there’s no need to wait if you’re in the market for a new air fryer, as one of our longtime favorite models is currently $50 off. The Ninja DZ401 is $180 right now, which is a saving of 22 percent on its usual price. Admittedly, we have seen this mod...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 18:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/16/iphone-air-to-features-release-date-latest/" target="_blank" rel="noopener noreferrer">
+        Bloomberg: Here’s what’s actually going on with the iPhone Air 2
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It’s been a whirlwind of a week for iPhone Air fans. First, The Information reported that Apple had indefinitely delayed the iPhone Air 2 due to lower-than-expected sales. The next day, a separate report said the iPhone Air 2 had actually just been delayed six months, with Apple targeting a spring 2...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 17:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/peripherals/mice/elecom-releases-huge-plus-trackball-mouse-with-massive-52mm-ball-and-10-programmable-buttons-now-comes-with-wireless-connectivity" target="_blank" rel="noopener noreferrer">
+        Elecom releases Huge Plus trackball mouse with massive 52mm ball and 10 programmable buttons — now comes with wireless connectivity
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Elecom just upgraded its top-of-the-line 7.2-inch long trackball mouse.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 17:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/apple-black-friday-deals-include-a-four-pack-of-airtags-for-65-161756634.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Apple Black Friday deals include a four-pack of AirTags for $65
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Whether you or someone on your gift list has trouble keeping track of their stuff, you can&#39;t go wrong by picking up an AirTag for assistance. For Black Friday, you can save on Apple&#39;s Bluetooth trackers — a four-pack is on sale for $65 right now, which is just about the lowest price we&#39;ve seen. Bear...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/this-is-the-worst-selling-microsoft-product-of-all-time-and-theres-a-good-reason-youve-probably-never-heard-of-it" target="_blank" rel="noopener noreferrer">
+        This is the &#34;worst-selling Microsoft product of all time&#34; - and there&#39;s a good reason you&#39;ve probably never heard of it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft’s OS/2 for Mach 20 sold just eleven copies, revealing how innovation without practical value can lead to total market failure.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/computing/the-best-tech-gifts-and-cool-gadgets-for-2025-140052697.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best tech gifts and cool gadgets for 2025
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It can be tough to find a good gift for tech obsessives. Since they keep up with the latest releases, they probably already have the new high-profile gadgets out there. Luckily, Engadget staffers keep their eyes peeled all year long for the truly unique stuff. We travel to CES, attend product launch...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/health-fitness/5-ways-to-manage-hypertension-or-high-blood-pressure-according-to-science" target="_blank" rel="noopener noreferrer">
+        5 ways to manage hypertension or high blood pressure, according to science
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Getting a hypertension notification from your Apple Watch is just the start – now you need to change these 5 key habits.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/entertainment/amazon-mgm-wanted-more-personal-and-believable-merry-men-in-robin-hood-episode-4-but-you-wont-see-the-biggest-change-coming" target="_blank" rel="noopener noreferrer">
+        Amazon MGM+ wanted more ‘personal’ and ‘believable’ Merry Men in Robin Hood episode 4, but you won’t see the biggest change coming
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I can’t get enough of the gender-swapped Merry Men in Robin Hood episode 4, and that’s part of the MGM+ show’s creators ‘plan’.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/why-ai-pilots-fail-and-how-manufacturers-can-break-the-cycle" target="_blank" rel="noopener noreferrer">
+        Why AI pilots fail - and how manufacturers can break the cycle
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Too many AI projects stall because organizations fall in love with the technology, not the outcome.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/review/marshall-heston-120/" target="_blank" rel="noopener noreferrer">
+        Marshall Heston 120 Review: Premium Style, Restrained Sound
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Marshall’s first soundbar offers premium sound and style, but misses one crucial element.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/you-need-a-fabric-shaver--my-favorite-is-on-sale-for-only-13-thanks-to-black-friday-163402621.html?src=rss" target="_blank" rel="noopener noreferrer">
+        You need a fabric shaver — my favorite is on sale for only $13 thanks to Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you, like me a few months ago, didn&#39;t know fabric shavers existed, I&#39;m willing to bet you&#39;re not alone. Not too long ago, I went looking for something, anything, that could help get rid of the pilling on some of my most loved pieces of clothing. I stumbled upon the Philips Fabric Shaver in my sea...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/16/apple-has-no-plans-for-a-new-mac-pro-anytime-soon-report-says/" target="_blank" rel="noopener noreferrer">
+        Apple has no plans to release a new Mac Pro anytime soon, report says
+      </a>
+    </h3>
+    
+    
+    <p class="summary">In the latest edition of his Power On newsletter, Bloomberg’s Mark Gurman reports that Apple has “largely written off the Mac Pro.” The Mac Pro was last updated in 2023 with the M2 Ultra chip, and there are no plans for a new update anytime soon. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 17:19</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/tablets/ereaders/amazon-slashes-the-price-of-this-kindle-colorsoft-bundle-in-an-early-black-friday-deal" target="_blank" rel="noopener noreferrer">
+        Amazon slashes the price of this Kindle Colorsoft bundle in an early Black Friday deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon slashes the price of the Kindle Colorsoft bundle by £90 in an early Black Friday deal.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/samsung-galaxy-phones/new-samsung-galaxy-s26-leak-may-have-revealed-weights-and-sizes-and-how-they-compare-to-the-iphone-17" target="_blank" rel="noopener noreferrer">
+        New Samsung Galaxy S26 leak may have revealed weights and sizes – and how they compare to the iPhone 17
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;re gradually learning more about what to expect from Samsung&#39;s flagship phones in 2026.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/airpods-4-are-on-sale-for-a-record-low-price-in-this-black-friday-deal-162917137.html?src=rss" target="_blank" rel="noopener noreferrer">
+        AirPods 4 are on sale for a record-low price in this Black Friday deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Black Friday Apple deals are already trickling in, and one of the best we&#39;re tracking is on the AirPods 4. They&#39;re down to $85 right now, which is a new record low. While these buds don&#39;t provide active noise cancellation, they&#39;re still a great option for those who want all of the conveniences of a ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 16:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/pc-cases/silverstone-takes-the-wraps-off-the-flp03-its-latest-homage-to-beige-1980s-pc-design-retro-micro-atx-case-has-modern-amenities" target="_blank" rel="noopener noreferrer">
+        SilverStone takes the wraps off the FLP03, its latest homage to beige 1980s PC design — retro micro-ATX case has modern amenities
+      </a>
+    </h3>
+    
+    
+    <p class="summary">SilverStone surprises EXPO 2025 Japan attendees with an early appearance of the unannounced FLP03 PC case.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 16:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/best-subscription-boxes-for-kids/" target="_blank" rel="noopener noreferrer">
+        16 Best Subscription Boxes for Kids (2025): STEM, Books, Clothes, Snacks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">These monthly deliveries get kids coding and cooking while encouraging them to learn science and read about the world.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 16:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/this-hack-can-get-you-one-year-of-peacock-for-49-before-black-friday-192739978.html?src=rss" target="_blank" rel="noopener noreferrer">
+        This hack can get you one year of Peacock for $49 before Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Walmart is offering its Walmart+ subscription at half off for new sign-ups, and it includes a choice of either Peacock Premium or Paramount+ Essential. The deal for new subscribers is just $49 for the first year, marked down from $98. The real value is in selecting Peacock Premium, which would norma...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/column/821345/micro-dramas-how-hollywood" target="_blank" rel="noopener noreferrer">
+        How soapy micro dramas became Hollywood&amp;amp;#8217;s next big bet
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This is The Stepback, a weekly newsletter breaking down one essential story from the tech world. For more on Hollywood trends and streaming culture, follow Charles Pulliam-Moore. The Stepback arrives in our subscribers&#39; inboxes at 8AM ET. Opt in for The Stepback here. How it started Once upon a time...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/coffee-machines/lavazza-assoluta-machine-review" target="_blank" rel="noopener noreferrer">
+        The Lavazza Assoluta is a quirky coffee machine that adjusts its own settings to suit your beans – provided you buy the right ones
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you don&#39;t mind sticking with Lavazza&#39;s own beans, the Assoluta will deliver consistently well-extracted coffee every morning.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/shadow-ai-the-next-frontier-of-unseen-risk" target="_blank" rel="noopener noreferrer">
+        Shadow AI: the next frontier of unseen risk
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Organizations lack visibility into how employees use AI, introducing significant risks that must be addressed.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/cpus/intels-next-gen-granite-rapids-ws-server-cpu-lineup-leaked-xeon-654-18-core-chip-posts-solid-numbers-in-early-geekbench-listing" target="_blank" rel="noopener noreferrer">
+        Intel&#39;s next-gen Granite Rapids-WS server CPU lineup leaked — Xeon 654 18-core chip posts solid numbers in early Geekbench listing
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Heating up the HEDT/wokstation market, SKUs from Intel&#39;s Granite Rapids-WS lineup have reportedly leaked, with the top-end Xeon 698X model likely to feature 128 cores, beating AMD&#39;s 96-core flagship Threadripper 9995WX. Intel&#39;s &#34;extreme&#34; tier Xeon CPUs are gunning for the top spot after years of sta...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/cpus/the-mp944-was-the-real-worlds-first-microprocessor-and-key-to-the-flight-of-the-f-14-tomcat-but-it-lived-in-the-shadow-of-the-intel-4004-for-nearly-30-years" target="_blank" rel="noopener noreferrer">
+        The MP944 was the ‘real’ world’s first microprocessor, but it was top secret for nearly 30 years — F-14 Tomcat&#39;s chip lived in the shadow of the Intel 4004, but was eight times faster
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The real &#39;world&#39;s first microprocessor&#39; was a classified military secret for nearly 30 years.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 16:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/nintendo-black-friday-deals-switch-2-bundles-switch-game-deals-discounted-accessories-and-more-holiday-offers-available-now-155223935.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Nintendo Black Friday deals: Switch 2 bundles, Switch game deals, discounted accessories and more holiday offers available now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">When it comes to holiday video game gifts, Nintendo gear is often at the top of the list for kids and adults like. This year likely more so than ever thanks to the launch of the Switch 2 back in the spring. But fi you were hoping to save money on the console with Black Friday deals, you may be disap...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 15:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/science/2025/11/the-evolution-of-rationality-how-chimps-process-conflicting-evidence/" target="_blank" rel="noopener noreferrer">
+        The evolution of rationality: How chimps process conflicting evidence
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Chimps can take in new evidence, evaluate its strength, and change their minds.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/tv-shows/im-a-celebrity-2025-free" target="_blank" rel="noopener noreferrer">
+        How to watch I&#39;m a Celebrity 2025 — free streams from anywhere
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ant and Dec torture 12 celebrities in the Aussie outback, including Kelly Brook, Aitch and Martin Kemp. Here&#39;s how to watch I&#39;m a Celebrity 2025 online.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/which-of-these-affordable-hisense-and-tcl-mini-led-tvs-should-you-buy-this-black-friday-weve-tested-both-and-i-know-which-one-id-pick" target="_blank" rel="noopener noreferrer">
+        Which of these affordable Hisense and TCL mini-LED TVs should you buy this Black Friday? We’ve tested both, and I know which one I’d pick
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Hisense and TCL&#39;s mid-range mini-LED TVs are superb value for money and are sure to get great deals on Black Friday, but which one should you buy?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/how-genes-have-harnessed-physics-to-grow-living-things/" target="_blank" rel="noopener noreferrer">
+        How Genes Have Harnessed Physics to Grow Living Things
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The same pulling force that causes “tears” in a glass of wine also shapes embryos. It’s another example of how genes exploit mechanical forces for growth and development.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/review/nordvpn-review-2025/" target="_blank" rel="noopener noreferrer">
+        NordVPN Review (2025): Living Up to Its Name
+      </a>
+    </h3>
+    
+    
+    <p class="summary">NordVPN has a storied history with no shortage of controversy, but it still stands as one of the best VPNs on the market.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2025-11-17 07:10 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
