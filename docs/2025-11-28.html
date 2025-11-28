@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for November 28, 2025</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/stranger-things-s5-can-wait-im-grabbing-these-3-black-friday-streaming-deals-instead-save-big-on-binge-apple-tv-and-disney" target="_blank" rel="noopener noreferrer">
+        Stranger Things S5 can wait: I&#39;m grabbing these 3 Black Friday streaming deals instead – save big on Binge, Apple TV and Disney+
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Black Friday deals are everywhere, but I think the hottest category is streaming. Right now you can get Apple TV, Binge and Disney+ for a monthly cost that&#39;s cheaper than Netflix&#39;s standard tier.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 06:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/paramount-plus/landman-season-2-episode-3-release-date-time" target="_blank" rel="noopener noreferrer">
+        What is the release date for Landman season 2 episode 3 on Paramount+?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After Tommy and Cooper&#39;s emotional moment, I cannot wait for Landman season 2 episode 3. But when can we stream it?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/grab-a-stellar-new-tablet-this-black-friday-with-these-great-samsung-galaxy-tab-deals" target="_blank" rel="noopener noreferrer">
+        Grab a stellar new tablet this Black Friday with these great Samsung Galaxy Tab deals
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Samsung Galaxy Tab tablets are some of the best Android tablets around – and I’ve found some great Black Friday discounts</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/health-fitness/ive-tried-all-the-best-loop-earplugs-and-now-theyre-on-sale-for-black-friday" target="_blank" rel="noopener noreferrer">
+        I’ve tried all the best Loop earplugs, and now they’re on sale – discover your perfect fit with my top recommendations
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Which of these incredible Loop deals should you go for? Gain some clarity with my personal recommendations.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:56</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/my-16-favorite-black-friday-3d-printers-based-on-comprehensive-testing-get-these-great-deals-on-my-top-performing-3d-printers" target="_blank" rel="noopener noreferrer">
+        My 16 favorite Black Friday 3D printers based on comprehensive testing - get these great deals on my top-performing 3D printers
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From prototyping to miniatures, now&#39;s the time to grab my favorite 3D printing deals for Black Friday.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/live/news/apple-black-friday-deals-2025-australia-live" target="_blank" rel="noopener noreferrer">
+        I&#39;ve been monitoring Apple Black Friday deals all month – and the big discounts on AirPods, iPhones, iPads and MacBooks are finally arriving
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Black Friday is here – marking the best time of the year to snag premium Apple products at a rare discount. We&#39;re covering every deal live in this guide to make your shopping experience even easier.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/looking-for-a-big-screen-this-black-friday-these-are-the-best-75-inch-black-friday-tv-deals-ive-found-so-far" target="_blank" rel="noopener noreferrer">
+        Looking for a big screen this Black Friday? These are the best 75-inch Black Friday TV deals I’ve found so far
+      </a>
+    </h3>
+    
+    
+    <p class="summary">75-inch TVs are becoming increasingly popular in Australia for a reason – they offer a cinema-like experience and they don&#39;t cost a fortune, as these 3 Black Friday deals prove.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/the-samsung-galaxy-s25-ultra-is-somehow-still-usd560-off-this-black-friday-heres-how-to-save-on-the-best-android-camera-phone" target="_blank" rel="noopener noreferrer">
+        The Samsung Galaxy S25 Ultra is somehow still $560 off this Black Friday – here’s how to save on the best Android camera phone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Samsung keeps swinging for the fences with its latest madcap Black Friday deal, this time for the flagship Galaxy S25 Ultra</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/tablets/ereaders/the-best-black-friday-kindle-deal-surprisingly-isnt-from-amazon-heres-how-to-nab-an-extra-aud40-off-the-paperwhite" target="_blank" rel="noopener noreferrer">
+        Surprise! The best Kindle deal this Black Friday isn&#39;t from Amazon – here&#39;s how to score an extra AU$40 off the Paperwhite
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The standard 16GB edition of the Kindle Paperwhite is already at an all-time low price on Amazon, but an another Aussie retailer is price beating by a significant margin.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/want-a-cheap-but-reliable-tablet-this-black-friday-look-no-further-than-this-samsung-galaxy-tab-a9-plus-deal" target="_blank" rel="noopener noreferrer">
+        Want a cheap but reliable tablet this Black Friday? Look no further than this Samsung Galaxy Tab A9 Plus deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Samsung Galaxy A9 Plus is just $149.99 this Black Friday, and it’s my top pick for a super-cheap tablet that’ll still offer a quality experience</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/robot-vacuums/theres-a-massive-discount-on-my-compact-robot-vac-get-it-for-half-price-at-amazon-this-black-friday" target="_blank" rel="noopener noreferrer">
+        There’s a massive discount on my compact robot vac – get it for half price at Amazon this Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There&#39;s a lot to love about the SwitchBot K11+, so don&#39;t miss this huge Black Friday saving.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-best-thanksgiving-black-friday-deals-for-2025-save-on-airpods-ps5-consoles-disney-and-more-090905438.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best Thanksgiving Black Friday deals for 2025: Save on AirPods, PS5 consoles, Disney+ and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The food coma may be strong right now, but it’s wise to check out the internet for the best Thanksgiving Black Friday deals you can get this year. With Black Friday no longer being a one-day affair, that means you can find excellent discounts online even on Thanksgiving when all brick-and-mortar loc...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/vpn/vpn-services/were-vpn-experts-and-these-are-our-favorite-black-friday-vpn-deals-of-2025" target="_blank" rel="noopener noreferrer">
+        We&#39;re VPN experts and these are our favorite Black Friday VPN deals of 2025
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;ve spent 15+ years testing VPNs, but these deals are the ones that excite us the most</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/black-friday-ps5-deals-sony-takes-100-off-consoles-plus-sales-on-other-playstation-games-and-accessories-145622844.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Black Friday PS5 deals: Sony takes $100 off consoles, plus sales on other PlayStation games and accessories
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you’ve been waiting to grab a PlayStation 5, this Black Friday deal is worth noting. Sony’s latest consoles are getting a $100 discount across the board, dropping the PS5 Digital Edition to $399, the standard PS5 to $449 and the PS5 Pro to $649. That’s one of the best prices we’ve seen on Sony’s ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/these-15-black-friday-board-game-deals-will-save-you-from-boredom-this-winter" target="_blank" rel="noopener noreferrer">
+        These 15 Black Friday board game deals will save you from boredom this winter
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It’s too late for this year, but these 15 Black Friday board game deals will save you from boredom at Thanksgiving in 2026.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/nintendo-switch-2-black-friday-deals-are-live-savings-on-switch-games-and-accessories-plus-the-best-switch-2-console-bundles-for-the-holiday-shopping-season-155223443.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Nintendo Switch 2 Black Friday deals are live: Savings on Switch games and accessories, plus the best Switch 2 console bundles for the holiday shopping season
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nintendo gear is always sought after during the holiday shopping season, but this year likely more so than others. The Nintendo Switch 2 is the console launch of 2025 and it will undoubtedly be at the top of many wish lists for both kids and adults alike. If you were hoping to save a bit on the cons...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/gaming-industry/ive-found-8-must-have-black-friday-boardgame-deals-perfect-for-testing-your-wits-and-relationships-this-coming-holiday-season" target="_blank" rel="noopener noreferrer">
+        I&#39;ve found 8 must-have Black Friday boardgame deals – perfect for testing your wits (and relationships) this coming holiday season
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From the classics like Monopoly and Catan to those inspired by video games and TV shows – these board games are crowdpleasers with prices starting at just AU$11.99.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/asus-warns-of-new-security-flaw-affecting-aicloud-routers-heres-what-we-know" target="_blank" rel="noopener noreferrer">
+        Asus warns of new security flaw affecting AiCloud routers - here&#39;s what we know
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Asus fixes critical-severity flaw affecting multiple firmware versions.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/gadgets/822252/sony-dualsense-edge-controller-black-friday-deal-sale-2025" target="_blank" rel="noopener noreferrer">
+        The DualSense Edge has fallen to one of the lowest we’ve seen for Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We’ve seen Sony’s DualSense Edge discounted on a few occasions this year, and now it’s back on sale ahead of Black Friday as part of Sony’s ongoing holiday promo. Right now, you can snag the pro-style gamepad in either black or white at Amazon, Walmart, and Best Buy for around $169 ($30 off), which ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ai/google-limits-free-nano-banana-pro-image-generation-usage-due-to-high-demand-223442929.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Google limits free Nano Banana Pro image generation usage due to &#39;high demand&#39;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you were hoping to create some silly images this long holiday weekend with Google&#39;s new Nano Banana Pro model, I have some bad news: the company is restricting free usage of the AI system. In a support document spotted by 9to5Google, Google notes free users can currently generate two images daily...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/the-disney-hulu-bundle-drops-to-5-per-month-for-one-year-during-black-friday-094131442.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The Disney+ Hulu bundle drops to $5 per month for one year during Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Disney fans and binge-watchers, rejoice. The Disney+ and Hulu bundle (with ads) is getting a holiday discount again this year, bringing both platforms together for one low price of $5 per month for one year. The bundle includes the Disney+ basic plan with ads and Hulu’s basic plan with ads. If you’r...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/this-apple-tv-black-friday-deal-gives-you-six-months-of-access-for-only-6-per-month-203322217.html?src=rss" target="_blank" rel="noopener noreferrer">
+        This Apple TV+ Black Friday deal gives you six months of access for only $6 per month
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple TV+ is offering six months of access for only $36 for Black Friday. The deal is live now for new and eligible returning subscribers and runs through December 1, giving you a chance to stream shows like Silo, The Morning Show and For All Mankind for less. It’s a short-term offer, so you’ll want...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/vpn/vpn-services/after-a-year-of-using-threat-protection-pro-a-nordvpn-plus-plan-might-be-the-only-black-friday-vpn-deal-i-recommend" target="_blank" rel="noopener noreferrer">
+        After a year of using Threat Protection Pro, a NordVPN Plus plan might be the only Black Friday VPN deal I recommend
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A Black Friday VPN deal that goes beyond privacy</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/this-is-not-a-drill-a-2025-flagship-iphone-just-got-a-gbp100-discount-for-black-friday" target="_blank" rel="noopener noreferrer">
+        This is not a drill – a 2025 flagship iPhone just got a £100 discount for Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The iPhone Air has gotten an unprecedented discount for Black Friday, following widespread rumors of poor sales</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/hair-care/im-obsessed-with-these-dyson-hair-gadgets-heres-where-to-buy-an-airwrap-supersonic-or-airstrait-at-its-lowest-price-this-black-friday" target="_blank" rel="noopener noreferrer">
+        I&#39;m obsessed with these Dyson hair gadgets – here&#39;s where to buy an Airwrap, Supersonic or Airstrait at its lowest price this Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">These are some of the best styling tools on the market, and deals are rare – so make the most of them.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/black-friday-streaming-deals-include-one-year-of-hbo-max-for-36-163017424.html?src=rss" target="_blank" rel="noopener noreferrer">
+        HBO Max Black Friday deal: Get one year of access for only $36
+      </a>
+    </h3>
+    
+    
+    <p class="summary">HBO Max has launched its latest offer, giving new subscribers one year of streaming for $36 through December 1. The deal is on the ad-supported option, which normally goes for $11 per month. With this discount, you&#39;re getting it for $3 per month for one year. It’s a rare opportunity to explore HBO M...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/these-worrying-security-flaws-could-put-every-major-cloud-provider-at-risk-heres-what-we-know-so-far" target="_blank" rel="noopener noreferrer">
+        These worrying security flaws could put every major cloud provider at risk - here&#39;s what we know so far
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Fluent Bit contains critical vulnerabilities that allow remote code execution, log manipulation, and authentication bypass across major cloud providers.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/paramount-black-friday-deal-get-either-the-essential-or-premium-plan-for-only-3-per-month-for-two-months-183036673.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Paramount+ Black Friday deal: Get either the Essential or Premium plan for only $3 per month for two months
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Paramount+ has launched its latest streaming offer, giving new subscribers two months of access for $6 total through December 2 for Black Friday. With prices rising across other platforms, this short-term deal offers a chance to explore either the Essential or Premium plan and see which fits your vi...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ai/us-patent-office-says-generative-ai-is-equivalent-to-other-tools-in-inventors-belts-211700837.html?src=rss" target="_blank" rel="noopener noreferrer">
+        US patent office says generative AI is equivalent to other tools in inventors&#39; belts
+      </a>
+    </h3>
+    
+    
+    <p class="summary">While generative AI systems cannot be considered inventors under US patent laws, the US Patent and Trademark Office has updated its guidelines on how they can be used in the process of creating innovations. The agency&#39;s director, John Squires, said in a notice obtained by Reuters that the USPTO deem...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/black-friday-deals-2025/" target="_blank" rel="noopener noreferrer">
+        Best Black Friday Deals 2025: We&#39;ve Tested Every Item and Tracked Every Price
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Our Reviews team has scoured the entire internet to find the best Black Friday deals on gear we&#39;ve tested and approved.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 00:46</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/vacuums/i-tested-a-whole-bunch-of-vacuums-and-these-are-the-best-lightweight-options" target="_blank" rel="noopener noreferrer">
+        I tested a whole bunch of vacuums, and these are the best lightweight options
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you&#39;re seeking cleaning that isn&#39;t a workout, step this way.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/openai/openai-apologizes-for-big-mixpanel-data-breach-that-exposed-emails-and-more-heres-what-we-know" target="_blank" rel="noopener noreferrer">
+        OpenAI apologizes for big Mixpanel data breach that exposed emails and more – here&#39;s what we know
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Heard about an &#39;OpenAI data breach&#39;? It&#39;s not actually the company that was compromised, but a partner, and here&#39;s what that means for ChatGPT users.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/live/news/dyson-australia-black-friday-deals-2025-live-2" target="_blank" rel="noopener noreferrer">
+        20 best Dyson Black Friday 2025 deals – my expert-vetted discounts on stick vacs, Airwraps and more (plus the best cheaper dupes)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Dyson&#39;s Black Friday 2025 deals in Australia are here with hundreds to be saved on premium tech, plus there are plenty of Dyson dupes to choose from too.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/black-friday-2025-deals-we-found-huge-sales-from-amazon-apple-lego-ninja-dyson-and-others-to-start-shopping-now-100052292.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Black Friday 2025 deals: We found huge sales from Amazon, Apple, Lego, Ninja, Dyson and others to start shopping now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Black Friday has become the time to buy the hottest tech of the year. Whether you&#39;re shopping for yourself or stocking up on gifts for the holidays, Black Friday deals are sure to bring the best prices of the year to things like headphones, game consoles, robot vacuums, phone accessories and everyth...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/9-of-my-favorite-black-friday-deals-on-rugged-phones-these-are-the-phones-i-recommend-based-on-my-rigorous-shock-drop-and-performance-tests" target="_blank" rel="noopener noreferrer">
+        9 of my favorite Black Friday deals on rugged phones - these are the phones I recommend based on my rigorous shock, drop, and performance tests
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I&#39;ve tested and benchmarked rugged phones for years, and these are my top picks for picking up a tough, go-anywhere phone cheaply this Black Friday.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/gadgets/829574/ray-ban-meta-smart-glasses-gen-1-black-friday-deal-sale-2025" target="_blank" rel="noopener noreferrer">
+        The Ray-Ban Meta smart glasses are at their best-ever price for Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta may have just released the Ray-Ban Meta (Gen 2) at the end of October, but they’re not significantly different from the last-gen model introduced in 2021. The overall experience is very similar, which is why the original Ray-Ban Meta smart glasses remain a great buy, especially now that they’re...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/opera-neons-ai-researcher-does-in-one-minute-what-used-to-take-a-dozen-tabs" target="_blank" rel="noopener noreferrer">
+        Opera Neon’s AI researcher does in one minute what used to take a dozen tabs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Opera Neon can do a deep dive in a minute of research, and now lets you pick your AI model.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/laptops/this-dell-14-plus-is-the-best-all-around-laptop-deal-in-the-black-friday-sales-save-gbp250" target="_blank" rel="noopener noreferrer">
+        This Dell 14 Plus is the best all-around laptop deal in the Black Friday sales - save £250
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Move over, MacBook Pro, this Dell 14 Plus is the portable powerhouse for Windows users</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/27/iphone-sales-china-singles-day-event-sales/" target="_blank" rel="noopener noreferrer">
+        Report: iPhone ‘single-handedly’ drove phone sales growth during China’s Singles’ Day event
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A new report from Counterpoint Research shows that the iPhone’s comeback in China is still going strong. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/entertainment/streaming/chicago-bears-vs-philadelphia-eagles-how-to-watch-the-nfl-black-friday-football-game-204559009.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Chicago Bears vs. Philadelphia Eagles: How to watch the NFL Black Friday football game
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Coach Nick Sirianni and the Philadelphia Eagles host the Chicago Bears this Friday, here&#39;s how to watch. (Kevin Jairaj-Imagn Images) IMAGN IMAGES via Reuters Connect / Reuters Two top NFC teams will face off in a Black Friday showdown airing on Prime Video. The Philadelphia Eagles will host the Chic...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/seagates-gargantuan-24-tb-barracuda-hard-drive-is-on-sale-for-its-lowest-price-ever-at-just-usd1-per-gigabyte-get-your-hands-on-massive-hdd-storage-for-just-usd240" target="_blank" rel="noopener noreferrer">
+        Seagate&#39;s gargantuan 24 TB BarraCuda hard drive is on sale for its lowest price ever at just $1 per gigabyte — Get your hands on massive HDD storage for just $240
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Your next storage upgrade just got cheaper, thanks to Seagate&#39;s 24 TB BarraCuda hard drive going on sale on Newegg. Down from $300, you can get this colossal HDD for a record-low price of just $240. For that money, you get a 7200-RPM spinner with top speeds of up to 190 MB/s, backed by a 2-year warr...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 00:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/27/black-friday-new-lows-on-macbook-air-mac-mini-more/" target="_blank" rel="noopener noreferrer">
+        MacBook Air, Mac mini, and more hit new lows for Black Friday: from $479
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Black Friday deals have arrived for Apple’s latest and greatest lineup of Macs. We’re tracking solid deals across the board on the MacBook Air, MacBook Pro, and Mac mini. Whether you’re tempted by the ultra-slim and cute design of the Mac mini, the portability of the MacBook Air, or the sheer po...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/maybe-dont-trust-every-windows-update-without-checking-hackers-hijack-images-to-spread-dangerous-malware" target="_blank" rel="noopener noreferrer">
+        Maybe don&#39;t trust every Windows Update without checking - hackers hijack images to spread dangerous malware
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Hackers use fake Windows Update screens and steganographic images to deliver multi-stage malware that executes silently through deceptive command prompts.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/malicious-blender-model-files-deliver-stealc-infostealing-malware" target="_blank" rel="noopener noreferrer">
+        Malicious Blender model files deliver StealC infostealing malware
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Another open source platform being abused to infect users with infostealers.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/ive-hand-picked-28-of-the-best-black-friday-kitchen-appliance-deals-from-ninja-breville-kitchenaid-and-more" target="_blank" rel="noopener noreferrer">
+        I&#39;ve hand-picked 28 of the best Black Friday kitchen appliance deals from Ninja, Breville, KitchenAid and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Black Friday Kitchen deals are the perfect opportunity to restock and refresh your kitchen countertops, and with these hand-picked deals, you&#39;re in for a tasty treat.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/live/news/amazon-australia-black-friday-deals-2025-live-3" target="_blank" rel="noopener noreferrer">
+        Amazon AU&#39;s Black Friday deals include record low prices on select items – I&#39;ve filtered out the best 170+ offers you can nab right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With Black Friday here now, there&#39;s just four days left to shop all the best Amazon deals on Kindles, air fryers, vacuums, phones, cameras and more.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/vpn/vpn-privacy-security/missouri-to-enforce-mandatory-age-verification-in-three-days" target="_blank" rel="noopener noreferrer">
+        Missouri to enforce mandatory age verification in three days
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Missouri is the latest US state to enforce age verification legislation, and it&#39;s set to provoke yet another surge in VPN usage. Here&#39;s what&#39;s at stake for your privacy, and what you can do about it.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/11/27/apple-podcasts-auto-open-attack-attempt/" target="_blank" rel="noopener noreferrer">
+        Weird Apple Podcasts behavior could enable cross-site hacking attempts
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you’ve had Apple Podcasts open randomly to a show you don’t subscribe to, you’re not alone. Here’s what’s going on. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/nyt-connections-today-answers-hints-28-november-2025" target="_blank" rel="noopener noreferrer">
+        NYT Connections hints and answers for Friday, November 28 (game #901)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Connections answers and hints? Here&#39;s all you need to know to solve today&#39;s game, plus my commentary on the puzzles.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/nyt-strands-today-answers-hints-28-november-2025" target="_blank" rel="noopener noreferrer">
+        NYT Strands hints and answers for Friday, November 28 (game #635)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Strands answers and hints? Here&#39;s all you need to know to solve today&#39;s game, including the spangram.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/quordle-today-answers-clues-28-november-2025" target="_blank" rel="noopener noreferrer">
+        Quordle hints and answers for Friday, November 28 (game #1404)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for Quordle clues? We can help. Plus get the answers to Quordle today and past solutions.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/best-movies-hbo-max-right-now/" target="_blank" rel="noopener noreferrer">
+        The 40 Best Movies on HBO Max Right Now (December 2025)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Materialists, Eddington, and Elf are just a few of the movies you should be watching on HBO Max this month.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/27/this-thanksgivings-real-drama-may-be-michael-burry-versus-nvidia/" target="_blank" rel="noopener noreferrer">
+        This Thanksgiving’s real drama may be Michael Burry versus Nvidia
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Is Burry the canary in the coal mine, warning of a collapse that&#39;s inevitable? Or could his fame, his track record, his now unrestricted voice, and a fast-growing audience trigger the very implosion he&#39;s predicting?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/amazons-rival-to-starlink-offers-fastest-downloads-and-uploads-but-how-will-it-stack-up-in-real-life" target="_blank" rel="noopener noreferrer">
+        Amazon&#39;s rival to Starlink offers &#34;fastest downloads and uploads&#34; - but how will it stack up in real life?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon pushes Leo Ultra into enterprise testing with high-speed claims, direct AWS links, and expanding satellite coverage.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/apple-black-friday-deals-the-ipad-a16-is-cheaper-than-ever-right-now-125224085.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Apple Black Friday deals: The iPad A16 is cheaper than ever right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The iPad A16 is now on sale for $274 for Black Friday, giving you a chance to pick up Apple’s newest entry-level tablet at a discount. It’s the most affordable iPad in the current lineup, offering quick performance, strong battery life and all the essentials for everyday use. Apple’s latest 11-inch ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/ive-struggled-to-recommend-the-iphone-16e-but-this-black-friday-discount-makes-it-a-no-brainer" target="_blank" rel="noopener noreferrer">
+        I&#39;ve struggled to recommend the iPhone 16e, but this Black Friday discount makes it a no brainer
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The iPhone 16e is pretty expensive for what it is, which makes this £100 Black Friday discount a welcome sight</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/live/news/australia-black-friday-deals-2025-live-3" target="_blank" rel="noopener noreferrer">
+        Black Friday weekend is finally here – from thousands of offers, I&#39;ve collected the top 165+ tech deals worth your dosh
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This year&#39;s Black Friday sale sees massive savings on Apple, Samsung, Google, Dyson, Sony, Bose, SharkNinja and more.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/airpods-pro-3-drop-to-a-record-low-price-in-this-black-friday-deal-124617194.html?src=rss" target="_blank" rel="noopener noreferrer">
+        AirPods Pro 3 drop to a record-low price in this Black Friday deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple’s new AirPods Pro 3 are already shaping up to be one of the most sought-after tech gifts this season, and now you can grab them at a lower price. They’re on sale for $220, down from the regular $249. Previously, the lowest we’ve seen the AirPods Pro 3 discounted to is $239. If you’ve been hold...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/gadgets/829006/dreame-x40-ultra-black-friday-2025-deal-sale" target="_blank" rel="noopener noreferrer">
+        Dreame’s X40 Ultra is arguably the best robovac deal you can grab for Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Robot vacuums show up in our gift guides almost every year, and it’s easy to understand why: they clean, they save time, and they’re cheaper than hiring a professional. But not all robovacs are created equal, and some save more time than others. The Dreame X40 Ultra is one of those, offering a more ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/ram/five-smart-ways-to-ride-out-the-the-ram-price-apocalypse-get-the-most-of-your-old-ddr4-buy-a-prebuilt-or-new-gpu-before-prices-rise-get-a-better-cpu-for-your-socket-or-make-your-game-frames-look-better-with-a-new-monitor" target="_blank" rel="noopener noreferrer">
+        Five smart ways to ride out the RAM pricing apocalypse — get the most of your old DDR4, buy a prebuilt or new GPU before prices rise, get a better CPU for your socket, or make your game frames look better with a new monitor
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We called on five of our in-house hardware experts to give you the best advice on how to cope with high DDR5 RAM prices.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/i-do-not-recommend-buying-this-usd99-ryzen-3-mini-pc-get-these-4-black-friday-computer-bargains-instead-for-less-than-usd170" target="_blank" rel="noopener noreferrer">
+        I do not recommend buying this $99 Ryzen 3 mini PC - Get these 4 Black Friday computer bargains instead for less than $170
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Check out these affordable mini PCs between $100 and $170</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/this-delonghi-electric-radiator-saved-me-from-a-wintery-grave-when-my-heating-broke-and-right-now-its-55-percent-off" target="_blank" rel="noopener noreferrer">
+        This De&#39;Longhi electric radiator saved me from a wintery grave when my heating broke, and right now it&#39;s 55% off
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It&#39;s bloody freezing, but this steamy Black Friday deal knocks 55% off the electric radiator I recommend to everyone I know</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/get-business-grade-cloud-storage-for-just-usd1-per-month-this-black-friday" target="_blank" rel="noopener noreferrer">
+        Get business-grade cloud storage for just $1 per month this Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Enjoy 90% off this Black Friday with the Ionos cloud storage deal!</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/ive-tested-13-tvs-this-year-and-these-are-the-top-black-friday-deals-i-recommend" target="_blank" rel="noopener noreferrer">
+        I&#39;ve tested 13 TVs this year and these are the top Black Friday deals I recommend
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I&#39;ve tested a number of TVs this year, and I&#39;ve found Black Friday deals on some of the best models among them.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/vehicle-tech/hybrid-electric-vehicles/google-hints-at-google-assistant-shutdown-date-for-android-auto-heres-what-that-means-for-you" target="_blank" rel="noopener noreferrer">
+        Google hints at Google Assistant shutdown date for Android Auto – here&#39;s what that means for you
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Google Gemini promises more natural interaction with Android Auto infotainment systems and it&#39;s coming sooner than you think.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:46</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/microsd-cards/sandisk-and-samsung-nintendo-switch-2-microsd-express-cards-hit-all-time-low-prices-on-amazon-for-black-friday-add-512gb-of-storage-to-your-console-for-less" target="_blank" rel="noopener noreferrer">
+        SanDisk and Samsung Nintendo Switch 2 microSD Express cards hit all-time low prices on Amazon for Black Friday — add 512GB of storage to your console for less
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Increase your storage capacity with Samsung and SanDisk Black Friday deals on microSD Express cards.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 21:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://thehackernews.com/2025/11/bloody-wolf-expands-java-based.html" target="_blank" rel="noopener noreferrer">
+        Bloody Wolf Expands Java-based NetSupport RAT Attacks in Kyrgyzstan and Uzbekistan
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The threat actor known as Bloody Wolf has been attributed to a cyber attack campaign that has targeted Kyrgyzstan since at least June 2025 with the goal of delivering NetSupport RAT. As of October 2025, the activity has expanded to also single out Uzbekistan, Group-IB researchers Amirbek Kurbanov an...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Hacker News</span>
+      
+      
+      
+      <span class="time">🕒 21:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/its-a-myth-that-you-have-to-spend-usd1-000-or-more-on-a-gaming-pc-and-this-stellar-black-friday-deal-proves-it" target="_blank" rel="noopener noreferrer">
+        It&#39;s a myth that you have to spend $1,000 or more on a gaming PC, and this stellar Black Friday deal proves it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I&#39;m here to tell you that I&#39;ve found one of the most affordable gaming PC deals this Black Friday, so don&#39;t dawdle.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/samsung-galaxy-phones/save-more-than-gbp1-000-on-the-samsung-galaxy-z-fold-6-with-this-incredible-refurbished-deal" target="_blank" rel="noopener noreferrer">
+        Save more than £1,000 on the Samsung Galaxy Z Fold 6 with this incredible refurbished deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Samsung Galaxy Z Fold 6 is on sale, but you can get an even better price if you’re happy to go refurbished.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/save-up-to-30-percent-on-the-best-drawing-tablets-ive-tried-and-tested-this-black-friday" target="_blank" rel="noopener noreferrer">
+        Save up to 30% on the best drawing tablets I&#39;ve tried and tested this Black Friday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Shopping for a great tablet that&#39;ll fit your drawing or photo editing needs? Look no further than my top five picks to shop this Black Friday</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:38</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/cameras/gopros/i-test-gopros-all-year-round-these-are-the-7-black-friday-deals-i-recommend" target="_blank" rel="noopener noreferrer">
+        I test GoPros all year round – these are the 7 Black Friday deals I recommend
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Black Friday is here, and I recommend these top deals on the GoPro Max, Hero 13 Black, and more</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/gaming-pcs/this-ibuypower-nvidia-rtx-5070-ti-gaming-pc-is-usd900-less-for-black-friday-and-i-might-have-to-buy-it" target="_blank" rel="noopener noreferrer">
+        This iBuyPower Nvidia RTX 5070 Ti gaming PC is $900 less for Black Friday, and I might have to buy it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Thanks to a 33% discount, you can literally save $900 on this iBuyPower Nvidia RTX 5070 Ti gaming PC this Black Friday.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/mit-study-claims-ai-could-currently-replace-12-percent-of-total-us-jobs-market" target="_blank" rel="noopener noreferrer">
+        More job cuts on the way? MIT study claims AI could currently replace 12% of total US jobs market
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tech layoffs aren’t the only side effect of AI – all 50 US states could see the repercussions, report claims.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/deals/sling-orange-day-passes-drop-to-1-each-with-this-black-friday-streaming-deal-231208021.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Sling Orange Day Passes drop to $1 each with this Black Friday streaming deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Sling TV is one of the best live streaming streaming services out there right now, giving you the option to watch a number of traditional cable channels without the traditional, locked-in price of a cable subscription. For Black Friday, you can save on Sling TV&#39;s newly announced $5 Day Passes. That ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 21:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/wireless-headphones/these-sonos-headphones-are-criminally-underrated-and-this-black-friday-deal-makes-them-all-too-easy-to-recommend" target="_blank" rel="noopener noreferrer">
+        These Sonos headphones are criminally underrated, and this Black Friday deal makes them all too easy to recommend
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Despite what some others think, I love the Sonos Ace, and they&#39;re incredibly cheap with these Black Friday deals.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/amazon-prime-video/prime-video-is-adding-over-50-new-movies-in-december-2025-but-you-shouldnt-miss-these-3-critically-acclaimed-hits" target="_blank" rel="noopener noreferrer">
+        Prime Video is adding over 50 new movies in December 2025 - but you shouldn’t miss these 3 critically acclaimed hits
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Prime Video has added three of this year&#39;s biggest new movies and you won&#39;t want to miss them.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/apps/a-google-maps-power-saving-mode-lands-on-pixel-10-devices-180000601.html?src=rss" target="_blank" rel="noopener noreferrer">
+        A Google Maps power-saving mode lands on Pixel 10 devices
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you have a Pixel 10 phone that you use for turn-by-turn directions in lieu of a dedicated GPS device, Google has an update that might be right up your alley. A Google Maps power-saving mode is now available for Pixel 10, Pixel 10 Pro, Pixel 10 Pro XL and Pixel 10 Pro Fold. The company announced t...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 21:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/chatgpt/amazon-blocks-chatgpts-new-shopping-agent-what-the-fallout-could-mean-for-you" target="_blank" rel="noopener noreferrer">
+        Amazon blocks ChatGPT&#39;s new shopping agent – what the fallout could mean for you
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon has blocked ChatGPT’s new shopping agent, kicking off a battle over who controls what you see and buy online</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/video-games/handheld-gaming/the-best-switch-2-accessories-this-black-friday-2025" target="_blank" rel="noopener noreferrer">
+        The best Switch 2 accessories this Black Friday 2025 — controllers, cameras, cases, screen protectors, and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Upgrade your Nintendo Switch 2 with these essential accessories</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 21:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/11/27/best-ipad-apps-for-unleashing-and-exploring-your-creativity/" target="_blank" rel="noopener noreferrer">
+        Best iPad apps for unleashing and exploring your creativity
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We’ve compiled a list of some of the best iPad apps for creativity that are available on the App Store.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 20:59</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2025-11-28 06:59 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
