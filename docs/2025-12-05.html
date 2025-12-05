@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for December 05, 2025</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/apple-tv-plus/pluribus-episode-6-sees-a-mortified-carol-make-two-new-big-discoveries-about-the-others-and-finally-teases-the-team-up-weve-been-waiting-for" target="_blank" rel="noopener noreferrer">
+        Pluribus episode 6 sees a mortified Carol make two new big discoveries about The Others – and finally teases the team-up we&#39;ve been waiting for
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Pluribus episode 6 is out now on Apple TV – and it doesn&#39;t make us wait for answers about its predecessor&#39;s ending.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 06:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/paramount-plus/landman-season-2-episode-4-release-date-time" target="_blank" rel="noopener noreferrer">
+        What is the release date for Landman season 2 episode 4 on Paramount+?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Another week, another chance for Tommy to hate everything around him. But when is Landman season 2 episode 4 on Paramount+?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/the-big-interview-2025-recap/" target="_blank" rel="noopener noreferrer">
+        Check Out Highlights From WIRED’s 2025 Big Interview Event
+      </a>
+    </h3>
+    
+    
+    <p class="summary">On December 4, WIRED sat down with some of the biggest names in tech, culture, business, and science for a day full of in-depth interviews.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 05:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/big-interview-event-inside-doge-leland-dudek/" target="_blank" rel="noopener noreferrer">
+        Former USIP Lawyer on DOGE: ‘Brass Knuckles on an Authoritarian Fist’
+      </a>
+    </h3>
+    
+    
+    <p class="summary">George Foote, who served as the outside general counsel to the US Institute of Peace, said at WIRED’s Big Interview event that DOGE operatives arrived like a “strike team.”</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 05:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/big-interview-event-david-hogg/" target="_blank" rel="noopener noreferrer">
+        David Hogg to Democratic Establishment: Get the Message or Get Voted Out
+      </a>
+    </h3>
+    
+    
+    <p class="summary">At WIRED’s Big Interview event, the activist and organizer said he doesn’t “think the Chuck Schumers of the world understand” what’s coming for the party.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 05:09</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/nvidia-boss-jensen-huang-steers-trump-congress-against-ai-chip-limits-and-state-level-ai-rules" target="_blank" rel="noopener noreferrer">
+        Nvidia boss Jensen Huang steers Trump, Congress against AI chip limits and state-level AI rules
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nvidia’s Jensen Huang successfully lobbied Trump and lawmakers against a proposed AI chip export rule and issued a warning about fragmented state regulation of AI.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/12/04/chicago-tribune-sues-perplexity/" target="_blank" rel="noopener noreferrer">
+        Chicago Tribune sues Perplexity
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The newspaper is alleging copyright infringement and calling out Perplexity&#39;s Retrieval Augmented Generation (RAG) as a culprit.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 04:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/12/04/all-the-biggest-news-from-aws-big-tech-show-reinvent-2025/" target="_blank" rel="noopener noreferrer">
+        All the biggest news from AWS’ big tech show re:Invent 2025
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon Web Services&#39; giant tech conference re:Invent 2025 is happening this week with news ranging from chips to AI services.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 04:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/21345733/best-noise-canceling-headphones" target="_blank" rel="noopener noreferrer">
+        The best noise-canceling headphones to buy right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Whether you’re wearing them for the morning commute, while traveling, or if you’re simply trying to find some peace and quiet while working at home, noise-canceling headphones are a more essential piece of kit nowadays than ever before. And you’ve got a slew of great options to pick from; it’s hard ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:28</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/big-interview-event-techdirt-mike-masnick-common-tools-alex-komoroske/" target="_blank" rel="noopener noreferrer">
+        It&#39;s Time to Save Silicon Valley From Itself
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Big Tech has lost its way. At WIRED’s Big Interview event, Techdirt editor Mike Masnick and Common Tools CEO Alex Komoroske announced a manifesto designed to help the industry get back on track.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 04:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/the-disproportionate-effects-of-ai-data-centers-on-local-communities" target="_blank" rel="noopener noreferrer">
+        The disproportionate effects of AI data centers on local communities – and what can be done about it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">How AI’s power, water and carbon footprints have a disproportionate effect on local communities, and what can be done about it.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/meta-poached-apples-top-design-guys-to-fix-its-software-ui/" target="_blank" rel="noopener noreferrer">
+        Meta Poached Apple’s Top Design Guys to Fix Its Software UI
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta wants to make its AI hardware slicker and more fashion-forward. It also needs to make its software more usable. The way to do all that appears to be hiring design maestros away from Apple.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 03:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/big-interview-event-jeremy-allaire-circle/" target="_blank" rel="noopener noreferrer">
+        Circle’s Jeremy Allaire: We’re Building an ‘Economic OS’ for the AI Era
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The cofounder and CEO of Circle says “money as an app platform” is the next step in a digital-based global economic system that’s right around the corner.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 03:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/big-interview-event-sahil-lavingia/" target="_blank" rel="noopener noreferrer">
+        Former DOGE Engineer Is Now Back in Government
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Sahil Lavingia, previously a DOGE operative at the Department of Veterans Affairs, is now a career employee at the IRS. He said at WIRED’s Big Interview event that he expects to work there 10 years.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 03:41</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/iam8bit-is-suing-skybound-game-studios-alleging-fraud-and-theft-of-designs-000822886.html?src=rss" target="_blank" rel="noopener noreferrer">
+        iam8bit is suing Skybound Game Studios alleging fraud and theft of designs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Skybound Game Studios is being sued by indie outfit iam8bit over fraud and breach of contract, including the theft of original designs. Skybound Entertainment, the parent company of Skybound Game Studios, is chaired by Robert Kirkman, who may be best known for creating the original comic book of The...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:38</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/signalgate-inspector-general-report-hegseth-change/" target="_blank" rel="noopener noreferrer">
+        ‘Signalgate’ Inspector General Report Wants Just One Change to Avoid a Repeat Debacle
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The United States Inspector General report reviewing Secretary of Defense Pete Hegseth’s text messaging mess recommends a single change to keep classified material secure.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 03:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/android-vs-iphone-heres-what-techradar-readers-prefer" target="_blank" rel="noopener noreferrer">
+        Android vs iPhone: here’s what TechRadar readers prefer
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The results are in: Android beats iPhone for TechRadar readers.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/12/04/spongebob-powerwash-simulator-apple-arcade-december-2025/" target="_blank" rel="noopener noreferrer">
+        SpongeBob and PowerWash Simulator headline today’s six additions to Apple Arcade
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As announced a few weeks ago, Apple Arcade added multiple new titles today, including SpongeBob: Patty Pursuit 2 and PowerWash Simulator. Here’s the full list. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 03:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/nvidia-drops-linux-590-driver-support-for-gtx-900-and-10-series-signaling-the-end-of-game-ready-updates-for-older-gpus" target="_blank" rel="noopener noreferrer">
+        Nvidia drops Linux 590 driver support for GTX 900 and 10-series, signaling the end of Game Ready updates for older GPUs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nvidia’s Linux 590 driver drops support for GTX 900 and 10-series GPUs, ending Game Ready updates but quarterly security ones continue.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/big-interview-event-mayor-daniel-lurie/" target="_blank" rel="noopener noreferrer">
+        San Francisco Mayor Daniel Lurie: Past Leaders Took the City ‘for Granted’
+      </a>
+    </h3>
+    
+    
+    <p class="summary">People like to rag on the Bay Area, but mayor Daniel Lurie believes there’s no better place in the world than San Francisco.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 02:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/trump-fuel-economy-standards-rollback-might-not-work/" target="_blank" rel="noopener noreferrer">
+        Trump Wants to Trade Fuel Economy for Cheaper Cars. But It Might Not Work
+      </a>
+    </h3>
+    
+    
+    <p class="summary">By rolling back auto industry fuel efficiency goals, US president Donald Trump hopes to make new cars cheaper. But prices won’t drop for years, and consumers will spend more on gas in the meantime.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 02:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/top-youtube-app-for-android-tv-compromised-to-serve-malware-heres-what-we-know-and-how-to-stay-safe" target="_blank" rel="noopener noreferrer">
+        Top YouTube app for Android TV compromised to serve malware - here&#39;s what we know, and how to stay safe
+      </a>
+    </h3>
+    
+    
+    <p class="summary">SmartTube suffered a major breach that introduced hidden background code, triggering community alarm, Play Protect warnings, and urgent calls for caution.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/big-interview-event-eric-topol-super-agers/" target="_blank" rel="noopener noreferrer">
+        Can AI Look at Your Retina and Diagnose Alzheimer’s? Eric Topol Hopes So
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The author of Super Agers believes AI could bring big changes to the world of medicine.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 02:41</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/hackers-are-exploiting-arrayos-ag-vpn-flaw-to-plant-webshells/" target="_blank" rel="noopener noreferrer">
+        Hackers are exploiting ArrayOS AG VPN flaw to plant webshells
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Threat actors have been exploiting a command injection vulnerability in Array AG Series VPN devices to plant webshells and create rogue users. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 02:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://krebsonsecurity.com/2025/12/sms-phishers-pivot-to-points-taxes-fake-retailers/" target="_blank" rel="noopener noreferrer">
+        SMS Phishers Pivot to Points, Taxes, Fake Retailers
+      </a>
+    </h3>
+    
+    
+    <p class="summary">China-based phishing groups blamed for non-stop scam SMS messages about a supposed wayward package or unpaid toll fee are promoting a new offering, just in time for the holiday shopping season: Phishing kits for mass-creating fake but convincing e-commerce websites that convert customer payment card...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Krebs on Security</span>
+      
+      
+      
+      <span class="time">🕒 02:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/the-godfather-speaks-this-is-the-device-linus-torvalds-says-would-be-his-perfect-linux-pc-but-youll-never-get-one" target="_blank" rel="noopener noreferrer">
+        The godfather speaks - this is the device Linus Torvalds says would be his perfect Linux PC, but you&#39;ll never get one
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Linus Torvald’s new PC build highlights his preference for reliable hardware, strong kernel compatibility, and quiet high-performance components chosen for serious development work.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/12/04/sam-altman-and-jony-ive-lose-appeal-over-io-name/" target="_blank" rel="noopener noreferrer">
+        Sam Altman and Jony Ive lose appeal over ‘io’ name
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The legal fight between OpenAI and iyO took another turn, following a decision by the 9th Circuit Court of Appeals. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 02:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/space/2025/12/congress-told-there-needs-to-be-consequences-for-nasa-delays-amid-chinas-rise/" target="_blank" rel="noopener noreferrer">
+        Congress warned that NASA’s current plan for Artemis “cannot work”
+      </a>
+    </h3>
+    
+    
+    <p class="summary">&#34;The Artemis III mission and those beyond should be canceled.&#34;</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 02:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/12/04/feds-ask-waymo-about-robotaxis-repeatedly-passing-school-buses-in-austin/" target="_blank" rel="noopener noreferrer">
+        Feds ask Waymo about robotaxis repeatedly passing school buses in Austin
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The agency already opened an investigation in October over Waymo&#39;s performance around school buses. Waymo said it issued a software update to its fleet to improve performance.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 02:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/12/04/micro1-a-scale-ai-competitor-touts-crossing-100m-arr/" target="_blank" rel="noopener noreferrer">
+        Micro1, a Scale AI competitor, touts crossing $100M ARR
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Micro1 started the year with roughly $7 million ARR. Now, it claims to have surpassed $100 million in ARR, double what it reported in September.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 02:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/838712/apple-policy-lead-lisa-jackson-retiring" target="_blank" rel="noopener noreferrer">
+        Apple announces even more major executive turnover
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Following the recent retirement of former COO Jeff Williams, AI chief John Giannandrea stepping down, and the departure of head of design Alan Dye for Meta, Apple announced Thursday that environmental and policy lead Lisa Jackson is retiring and that Jennifer Newstead will replace Kate Adams as the ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/newly-discovered-usd1-5-billion-lithium-deposit-could-revolutionize-the-tech-industry-but-bad-news-its-inside-a-supervolcano" target="_blank" rel="noopener noreferrer">
+        Newly-discovered $1.5 billion lithium deposit could revolutionize the tech industry - but bad news, it&#39;s inside a supervolcano
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Researchers discovered massive lithium-rich clay in the McDermitt Caldera, offering a potential multi-trillion-dollar supply for batteries and industry.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/12/04/apples-executive-shakeup-continues-with-departures-of-general-counsel-and-policy-head/" target="_blank" rel="noopener noreferrer">
+        Apple’s executive shake-up continues with departures of general counsel and policy head
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple loses two more top senior executives with exits of longtime general counsel Kate Adams and environmental VP Lisa Jackson. Meta’s Jennifer Newstead is set to join as new general counsel in 2026.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/gadgets/836519/nintendo-switch-2-mario-kart-world-bundle-walmart-deal" target="_blank" rel="noopener noreferrer">
+        Nintendo’s Switch 2 Mario Kart bundle is on sale at Amazon again for $50 off
+      </a>
+    </h3>
+    
+    
+    <p class="summary">One of the biggest surprises of Cyber Monday was the terrific discount we saw on the Nintendo Switch 2 Mario Kart World bundle, which dropped in price by $50. We expected the price to return to normal once the shopping holiday ended, but to our surprise, it’s still going strong two days later. Sever...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 01:54</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/ncscs-proactive-notifications-warns-orgs-of-flaws-in-exposed-devices/" target="_blank" rel="noopener noreferrer">
+        NCSC&#39;s ‘Proactive Notifications’ warns orgs of flaws in exposed devices
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The UK&#39;s National Cyber Security Center (NCSC) announced the testing phase of a new service called Proactive Notifications, designed to inform organizations in the country of vulnerabilities present in their environment. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 01:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/big-interview-event-matthew-prince-cloudflare/" target="_blank" rel="noopener noreferrer">
+        Cloudflare Has Blocked 416 Billion AI Bot Requests Since July 1
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Cloudflare CEO Matthew Prince claims the internet infrastructure company’s efforts to block AI crawlers are already seeing big results.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/warhammer-40-000-dawn-of-war-4-gets-a-new-story-trailer-teasing-the-playable-dark-angels-faction-ahead-of-its-2026-launch" target="_blank" rel="noopener noreferrer">
+        Warhammer 40,000: Dawn of War 4 gets a new story trailer teasing the playable Dark Angels faction ahead of its 2026 launch
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Deep Silver and King Art Games have shared a new story trailer for Warhammer 40,000: Dawn of War 4, teasing an epic campaign and the playable Dark Angels faction.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/over-70-us-banks-and-credit-unions-affected-by-marquis-ransomware-breach-heres-what-we-know" target="_blank" rel="noopener noreferrer">
+        Over 70 US banks and credit unions affected by Marquis ransomware breach - here&#39;s what we know
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Marquis was struck with ransomware and allegedly even paid the demand.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/looking-to-supercharge-your-raspberry-pi-this-adapter-provides-two-full-sized-hdmi-ports-and-a-pcie-connector-and-it-only-costs-usd10" target="_blank" rel="noopener noreferrer">
+        Looking to supercharge your Raspberry Pi? This adapter provides two full-sized HDMI ports and a PCIe connector - and it only costs $10
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The $10 Waveshare adapter expands Raspberry Pi 5 connectivity through dual HDMI support and a functional PCIe M.2 slot.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/pc/liquid-swords-debut-title-is-a-25-noir-action-game-coming-next-year-215544328.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Liquid Swords&#39; debut title is a $25 &#39;noir action game&#39; coming next year
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The debut game from Liquid Swords will arrive in early 2026, it was announced at today&#39;s PC Gaming Show. Samson: A Tyndalston Story is billed as &amp;amp;quot;a consequence-heavy noir action game&amp;amp;quot; by its developer, and focuses on the eponymous Samson McCray, a man who&#39;s got himself into serious debt in...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/838582/signalgate-pentagon-oig-report-pete-hegseth" target="_blank" rel="noopener noreferrer">
+        Pentagon’s Signalgate report finds Pete Hegseth violated military policies
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It has been months since a group of Trump administration officials put together a Signal group chat to discuss classified military intelligence ahead of a military strike in Yemen while inadvertently adding a journalist, and now the Pentagon’s inspector general has released its report on the mess. T...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 01:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/information-technology/2025/12/previously-convicted-contractors-wiped-gov-databases-after-being-fired-feds-say/" target="_blank" rel="noopener noreferrer">
+        In comedy of errors, men accused of wiping gov databases turned to an AI tool
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Defendants were convicted of similar crimes a decade ago. How were they cleared again?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/12/04/daily-december-4-2025/" target="_blank" rel="noopener noreferrer">
+        9to5Mac Daily: December 4, 2025 – Apple’s design VP leaves for Meta
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Listen to a recap of the top stories of the day from 9to5Mac. 9to5Mac Daily is available on iTunes and Apple’s Podcasts app, Stitcher, TuneIn, Google Play, or through our dedicated RSS feed for Overcast and other podcast players. Sponsored by Narwal:Narwal is officially launching their Black Friday ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/12/04/apple-announces-departure-of-two-more-top-executives/" target="_blank" rel="noopener noreferrer">
+        Apple announces departure of two more top executives
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple’s leadership shakeup continues. Apple has announced that two more executives are departing the company: Katherine Adams, Senior Vice President and General Counsel, and Lisa Jackson, vice president of Environment, Policy and Social Initiatives. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/big-interview-event-daniela-amodei-anthropic/" target="_blank" rel="noopener noreferrer">
+        Anthropic’s Daniela Amodei Believes the Market Will Reward Safe AI
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Trump administration might think regulation is killing the AI industry, but Anthropic president Daniela Amodei disagrees.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/12/04/tvos-26-2-gets-new-rc-for-apple-tv-4k-ahead-of-launch/" target="_blank" rel="noopener noreferrer">
+        tvOS 26.2 gets new RC for Apple TV 4K ahead of launch
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Yesterday Apple shipped RC (release candidate) versions of its upcoming 26.2 software updates. But now just one day later, Apple has debuted a revised RC build for tvOS 26.2. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/bending-spoons-continues-its-spree-of-famous-tech-brands-with-the-eventbrite-deal" target="_blank" rel="noopener noreferrer">
+        Bending Spoons continues its spree of buying famous tech brands with the Eventbrite deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Bending Spoons buys Eventbrite for $500 million, aiming to revive growth using operational changes, pricing strategies, and product enhancements.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/this-tiny-white-tower-packs-an-rtx-5060-gpu-and-a-ryzen-9-8945hx-cpu-but-looks-nothing-like-a-mini-pc" target="_blank" rel="noopener noreferrer">
+        This tiny white tower packs an RTX 5060 GPU and a Ryzen 9 8945HX CPU, but looks nothing like a mini PC
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Minisforum AtomMan G1 Pro mini PC pairs a mobile-class flagship CPU with a desktop GPU inside a narrow chassis, pushing cooling limits hard.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/12/04/apple-tv-born-to-be-wild-trailer/" target="_blank" rel="noopener noreferrer">
+        Apple TV’s ‘Born to be Wild’ gets an official trailer
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple released today the first trailer for its upcoming series “Born to be Wild,” which premieres next Friday, December 19. Watch it below. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:56</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/monitors/game-in-style-with-almost-50-percent-off-this-31-5-inch-msi-curved-gaming-monitor" target="_blank" rel="noopener noreferrer">
+        Game in style with almost 50% off this 31.5-inch MSI Curved Gaming Monitor
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This MSI is a cheap full HD curved gaming monitor with a high refresh rate and low response time.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gadgets/2025/12/despite-accessing-user-data-kohler-still-says-its-smart-toilet-cameras-use-e2ee/" target="_blank" rel="noopener noreferrer">
+        Engineer proves that Kohler’s smart toilet cameras aren’t very private
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Kohler is getting the scoop on people&#39;s poop.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/cairns-new-release-date-is-january-29-2026-211508330.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Cairn&#39;s new release date is January 29, 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We&#39;ve been monitoring the upcoming rock climbing game Cairn for several months, as have the many folks who&#39;ve already enjoyed the demo — which has an impressive 99 percent rating on Steam. In September, developer The Game Bakers pushed back the game&#39;s planned 2025 debut to give some extra time for p...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/uncanny-valley-podcast-what-happens-when-your-coworkers-are-ai-agents/" target="_blank" rel="noopener noreferrer">
+        What Happens When Your Coworkers Are AI Agents
+      </a>
+    </h3>
+    
+    
+    <p class="summary">In this episode of Uncanny Valley, we talk to writer Evan Ratliff about how he created a small startup made entirely of AI employees—and what his findings reveal about the reality of an agentic future.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 00:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/12/04/ios-26-made-live-activities-even-better-on-iphone-heres-whats-new/" target="_blank" rel="noopener noreferrer">
+        iOS 26 made Live Activities even better on iPhone, here’s what’s new
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Live Activities have become one of my favorite iPhone features, and they recently got even better thanks to upgrades and expansions in iOS 26. Here’s everything new. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/the-ai-race-explodes-as-hpe-deploys-amds-helios-racks-crushing-limits-with-venice-cpus-and-insane-gpu-density" target="_blank" rel="noopener noreferrer">
+        The AI race explodes as HPE deploys AMD’s Helios racks, crushing limits with Venice CPUs and insane GPU density
+      </a>
+    </h3>
+    
+    
+    <p class="summary">HPE adopts AMD Helios AI racks with 72 GPUs and Venice CPUs, aiming for exascale workloads while testing Ethernet scale-up.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/health/2025/12/cdc-vaccine-panel-realizes-again-it-has-no-idea-what-its-doing-delays-big-vote/" target="_blank" rel="noopener noreferrer">
+        CDC vaccine panel realizes again it has no idea what it’s doing, delays big vote
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Today&#39;s meeting was chaotic and included garbage anti-vaccine presentations.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/12/04/apple-christmas-trees-ipad-competition-winners-battersea/" target="_blank" rel="noopener noreferrer">
+        Apple now projecting iPad-designed Christmas trees onto Battersea Power Station
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Last month, Apple announced a Christmas tree drawing competition for British iPad users, with winning designs to be exhibited “alongside trees drawn by established artists and notable figures”. Now, the selected trees will light up Battersea Power Station’s wash towers until December 24. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/predator-spyware-uses-new-infection-vector-for-zero-click-attacks/" target="_blank" rel="noopener noreferrer">
+        Predator spyware uses new infection vector for zero-click attacks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Predator spyware from surveillance company Intellexa has been using a zero-click infection mechanism dubbed &#34;Aladdin&#34; that compromised specific targets when simply viewing a malicious advertisement. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 00:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/scientists-engineer-erbium-molecular-qubits-that-plug-directly-into-existing-fiber-networks-promising-telecom-ready-quantum-systems" target="_blank" rel="noopener noreferrer">
+        Scientists engineer erbium molecular qubits that plug directly into existing fiber networks, promising telecom-ready quantum systems
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Erbium molecular qubits create a spin-photon interface compatible with telecom networks, enabling hybrid quantum devices and potential scalable quantum communication.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/838563/trump-kei-truck-authorize-cute-usdot" target="_blank" rel="noopener noreferrer">
+        Trump invites ‘cute’ Japanese kei trucks to come to America
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tiny kei trucks from Japan have a new fan: President Donald Trump. Trump expressed admiration for the pint-sized autos during a briefing with reporters to announce his plan to gut fuel economy standards. “They&amp;amp;#8217;re very small. They&amp;amp;#8217;re really cute,” Trump said. “And I said, how would that d...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/12/04/anthropic-ceo-weighs-in-on-ai-bubble-talk-and-risk-taking-among-competitors/" target="_blank" rel="noopener noreferrer">
+        Anthropic CEO weighs in on AI bubble talk and risk-taking among competitors
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Anthropic&#39;s CEO shared his thoughts on the economics of AI and the risk-taking of competitors, saying some were &#34;YOLO-ing&#34; with regard to spending.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/big-interview-event-jon-chu-wicked/" target="_blank" rel="noopener noreferrer">
+        Jon M. Chu Says AI Couldn’t Have Made One of Wicked’s Best Moments
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Wicked: For Good director says being able to improvise on set allows for the kind of moments that are hard for machines to make.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 23:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/science/2025/12/researchers-find-what-makes-ai-chatbots-politically-persuasive/" target="_blank" rel="noopener noreferrer">
+        Researchers find what makes AI chatbots politically persuasive
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A massive study of political persuasion shows AIs have, at best, a weak effect.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2025/12/04/musk-says-new-tesla-software-allows-texting-and-driving-which-is-illegal-in-most-states/" target="_blank" rel="noopener noreferrer">
+        Musk says new Tesla software allows texting and driving, which is illegal in most states
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Texting while driving is banned in nearly every state, even with the use of advanced driver-assistance systems like Tesla&#39;s Full Self-Driving (Supervised) software.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/12/04/rumor-replay-iphone-17e-design-changes-mac-chips-via-intel-more/" target="_blank" rel="noopener noreferrer">
+        Rumor Replay: iPhone 17e design changes, Mac chips via Intel, more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This is Rumor Replay, a weekly column at 9to5Mac offering a quick rundown of the most recent Apple product rumors, with analysis and commentary. Today: iPhone 17e design changes, Intel producing M-class chips, and ChatGPT integrating with Apple Health. Here are this week’s Apple rumors. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/ceos-are-warning-ai-adoption-and-spending-should-be-more-strategic" target="_blank" rel="noopener noreferrer">
+        CEOs are warning AI adoption and spending should be more strategic
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tech companies need to make calculated, strategic decisions about AI’s next phases.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/best-movies-disney-plus/" target="_blank" rel="noopener noreferrer">
+        The 67 Best Movies on Disney+, WIRED’s Picks (December 2025)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Madame Web, Love+War, and The Fantastic Four: First Steps are just a few of the movies you should be watching on Disney+ this month.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/games/838428/metroid-prime-4-analysis-open-world-nintendo" target="_blank" rel="noopener noreferrer">
+        Metroid Prime 4 doesn&amp;amp;#8217;t stand up to Nintendo&amp;amp;#8217;s best
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Metroid Prime 4: Beyond is finally out after a long and difficult development - and despite some bright spots, the game really shows its age. Nintendo has a long and celebrated history of doing things its own way. During the original Switch era, going back to Super Mario Odyssey in 2017, Nintendo ha...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:29</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/12/04/rivian-apple-wallet-car-keys-support-r1t-r1s-software-update/" target="_blank" rel="noopener noreferrer">
+        Rivian to add Apple Wallet car keys support with upcoming R1T and R1S software update
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Rivian’s Chief Software Officer Wassym Bensaid confirmed today that the .46 OTA update will bring Digital Key support to the second-generation R1S and R1T. Here’s what that means. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/i-went-hands-on-with-hengbot-sirius-an-ai-robot-that-left-me-wanting-more" target="_blank" rel="noopener noreferrer">
+        I went hands-on with Hengbot Sirius, an AI robot that left me wanting more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It&#39;s a bit tipsy</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gaming/2025/12/why-wont-steam-machine-support-hdmi-2-1-digging-in-on-the-display-standard-drama/" target="_blank" rel="noopener noreferrer">
+        Why won’t Steam Machine support HDMI 2.1? Digging in on the display standard drama.
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve tells Ars its &#34;trying to unblock&#34; limits caused by open source driver issues.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/apps/russia-reportedly-bans-snapchat-and-facetime-194906404.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Russia reportedly bans Snapchat and FaceTime
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Roskomnadzor, Russia&#39;s federal agency for monitoring and censoring mass media, has blocked access to Snapchat and FaceTime in the country, Bloomberg reports, citing Russian news service Interfax. The bans were reportedly put in place because the platforms were used &amp;amp;quot;to organize and carry out te...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:19</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/home-security/amazon-slashes-the-original-blink-mini-to-a-ridiculously-low-gbp10" target="_blank" rel="noopener noreferrer">
+        Amazon slashes the original Blink Mini to a ridiculously low £10
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon slashes the price of the Blink Mini down to just £9.99.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/fbi-says-dc-pipe-bomb-suspect-brian-cole-kept-buying-bomb-parts-after-jan-6/" target="_blank" rel="noopener noreferrer">
+        FBI Says DC Pipe Bomb Suspect Brian Cole Kept Buying Bomb Parts After January 6
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The 30-year-old Virginia resident evaded capture for years after authorities discovered pipe bombs planted near buildings in Washington, DC, the day before the January 6, 2021, Capitol attack.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 23:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/838491/amazon-dynamic-pricing-school-supplies-islr" target="_blank" rel="noopener noreferrer">
+        Amazon&amp;amp;#8217;s dynamic pricing is causing chaos for school budgets
+      </a>
+    </h3>
+    
+    
+    <p class="summary">School districts are paying extra for basic supplies thanks to unpredictable dynamic pricing on Amazon, which is costing them on average 17 percent more, according to a report by the Institute for Local Self-Reliance (ILSR). As reported earlier by The Guardian, unlike the contracts schools and local...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/838489/trump-admin-h1b-visas-content-moderation" target="_blank" rel="noopener noreferrer">
+        Trump admin may deny H-1B visas to people who worked in content moderation, report says
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Trump administration has ordered US consulates to consider rejecting H-1B visa applicants involved in content moderation or “censorship,” according to a report from Reuters. A State Department cable viewed by the outlet says officials should check an applicant’s resume or LinkedIn profile for a ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/aws-graviton5-is-its-most-powerful-and-efficient-cpu-to-date-and-could-mean-big-changes-for-your-key-cloud-workloads" target="_blank" rel="noopener noreferrer">
+        AWS Graviton5 is its most powerful and efficient CPU to date - and could mean big changes for your key cloud workloads
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Fastest and more efficient performance for AI workloads is coming with AWS Graviton5.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:58</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/big-tech/amazon-reportedly-considering-ending-ties-with-the-us-postal-service-144555021.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Amazon reportedly considering ending ties with the US Postal Service
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon is reportedly considering discontinuing use of the US Postal Service and building out its own shipping network to rival it, according to The Washington Post. The e-commerce behemoth spends more than $6 billion a year on the public mail carrier, representing just shy of 8 percent of the servic...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:54</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2025/12/04/stephen-lemay-can-help-rebuild-apple-design-culture/" target="_blank" rel="noopener noreferrer">
+        Maybe a design blow-up is just what Apple needed
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With Alan Dye departing for Meta and leaving a hollowed-out design division behind him, his replacement, Stephen Lemay, will have a rare opportunity to rebuild the company’s design culture from the inside out. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/russia-blocks-facetime-and-snapchat-over-use-in-terrorist-attacks/" target="_blank" rel="noopener noreferrer">
+        Russia blocks FaceTime and Snapchat for alleged use by terrorists
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Russian telecommunications watchdog Roskomnadzor has blocked access to Apple&#39;s FaceTime video conferencing platform and the Snapchat instant messaging service, claiming they&#39;re being used to coordinate terrorist attacks. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 22:42</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2025-12-05 06:30 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
