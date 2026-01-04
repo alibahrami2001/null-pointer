@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for January 04, 2026</h2>
+  <div class="stats">
+    70 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/03/best-apple-macbook-deals-in-january-2026/" target="_blank" rel="noopener noreferrer">
+        These are the best new MacBook Air and MacBook Pro deals in January so far
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you’re looking to kick off the new year with a new MacBook, now’s a fantastic time to buy. In recent years, Macs have become more and more affordable – largely in part because of Apple’s transition to Apple Silicon. These MacBooks are also more capable than ever. Apple’s latest macOS Tahoe update...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/03/ipad-lineup-heres-whats-coming-in-2026-and-more/" target="_blank" rel="noopener noreferrer">
+        Here’s what’s in store for the iPad lineup throughout 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This year, Apple is anticipated to refresh the majority of its iPad lineup. Apple kicked off a new iPad generation with the launch of the M5 iPad Pro in October, and every other iPad in the lineup will follow suit later this year. These are the latest rumors. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 03:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/03/tech-billionaires-cashed-out-16-billion-in-2025-as-stocks-soared/" target="_blank" rel="noopener noreferrer">
+        Tech billionaires cashed out $16 billion in 2025 as stocks soared
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Jeff Bezos led the way. The Amazon founder sold 25 million shares for $5.7 billion in June and July, right around the time he was getting hitched to Lauren Sanchez in Venice.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 03:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/games/853786/hollow-knight-silksong-steamawards-game-of-the-year" target="_blank" rel="noopener noreferrer">
+        Surprise, surprise: Silksong wins Steam’s Game of the Year
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve has announced the winners of the 2025 Steam Awards and, unsurprisingly, Hollow Knight: Silksong, took home the Game of the Year honors. It was also given the &#34;Best Game You Suck At&#34; award, which, I&#39;m not sure if that&#39;s a good thing or not. Given the relentless fawning over Silksong since its r...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/03/california-residents-can-use-new-tool-to-demand-brokers-delete-their-personal-data/" target="_blank" rel="noopener noreferrer">
+        California residents can use new tool to demand brokers delete their personal data
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A new tool should make it easier for California residents to limit data brokers’ ability to store and sell their personal information.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/what-happens-next-in-venezuela-and-the-rest-of-latin-america/" target="_blank" rel="noopener noreferrer">
+        What Happens Next in Venezuela—and the Rest of Latin America?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Donald Trump says that Venezuela’s governance will remain in the hands of senior US officials until a “proper and judicious transition” can take place. The rest of the region is on notice.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/not-exactly-a-deepseek-moment-for-ai-accelerators-but-this-chinese-optical-chip-may-well-be-100x-faster-than-nvidias-a100-on-some-tasks" target="_blank" rel="noopener noreferrer">
+        Not exactly a DeepSeek moment for AI accelerators - but this Chinese optical chip may well be 100x faster than Nvidia&#39;s A100 on some tasks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Chinese photonic AI chips demonstrate extreme speed and energy efficiency in narrowly defined generative workloads, exceeding conventional GPU performance in lab tests.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/cricket/australia-vs-england-5th-ashes-test-free" target="_blank" rel="noopener noreferrer">
+        How to watch Australia vs England: live stream 5th Ashes Test for *FREE* from anywhere, Day 1
+      </a>
+    </h3>
+    
+    
+    <p class="summary">All the ways to watch 5th Ashes Test live streams for FREE from anywhere, as Australia and England face off in the series finale at Sydney Cricket Ground.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/853765/someone-made-a-ton-of-money-betting-on-maduros-capture" target="_blank" rel="noopener noreferrer">
+        Someone made a ton of money betting on Maduro’s capture
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Shortly before the US military launched an attack on Venezuela and captured President Nicol&amp;amp;#225;s Maduro, an account on Polymarket made some very suspiciously timed investments. The prediction market had been running bets on when or if Maduro would be removed from power, with prices for &#34;out by Jan...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/hackers-claim-resecurity-hack-firm-says-it-was-a-honeypot/" target="_blank" rel="noopener noreferrer">
+        Hackers claim to hack Resecurity, firm says it was a honeypot
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The ShinyHunters hacking group claims it breached the systems of cybersecurity firm Resecurity and stole internal data, while Resecurity says the attackers only accessed a deliberately deployed honeypot containing fake information used to monitor their activity. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 00:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/03/indie-app-spotlight-backlot-movie-tv-companion-for-iphone/" target="_blank" rel="noopener noreferrer">
+        Indie App Spotlight: ‘Backlot’ is your ultimate companion for finding TV shows and movies
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Welcome to Indie App Spotlight. This is a weekly 9to5Mac series where we showcase the latest apps in the indie app world. If you’re a developer and would like your app featured, get in contact. In this vast world of streaming, finding something you want to watch can be a challenge. Backlot simplifie...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/the-core-9-ultra-285k-is-intels-fastest-cpu-and-costs-under-usd500-so-why-is-it-so-much-cheaper-compared-to-amd-usd679-ryzen-9-9950x3d" target="_blank" rel="noopener noreferrer">
+        The Core 9 Ultra 285K is Intel&#39;s fastest CPU and costs under $500 - so why is it so much cheaper compared to AMD $679 Ryzen 9 9950X3D?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Benchmark data places AMD’s Ryzen 9 9950X3D only slightly ahead of Intel’s cheaper and more efficient top desktop processor.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/03/bitfinex-hacker-ilya-lichtenstein-credits-trump-for-early-release-from-prison/" target="_blank" rel="noopener noreferrer">
+        Bitfinex hacker Ilya Lichtenstein credits Trump for early release from prison
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ilya Lichtenstein, who pled guilty to money laundering charges tied to his role in the massive hack of crypto exchange Bitfinex, has apparently been released early from prison.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/03/apple-card-rumors-goldman-sachs-partnership-exit-jpmorgan-chase/" target="_blank" rel="noopener noreferrer">
+        Apple Card shake-up may finally happen this year: Here’s the latest
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After debuting over 6 years ago, Apple Card has been a little bit of a nightmare for its partner bank, Goldman Sachs. They’re looking to exit, and while rumors aren’t crystal clear on the future of Apple Card, we’ll be recapping them here. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/transportation/evs/volkswagen-is-bringing-physical-buttons-back-to-the-dashboard-with-the-id-polo-ev-190246116.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Volkswagen is bringing physical buttons back to the dashboard with the ID. Polo EV
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We could be witnessing the start of the renaissance for real buttons in cars, courtesy of Volkswagen&#39;s ID. Polo. The German automaker unveiled the interior of its upcoming compact EV, which features real buttons, switches and even a knob for audio controls. &amp;amp;quot;We have created an interior that fee...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/transportation/how-to-watch-the-hyundai-ces-2026-presentation-live-190051072.html?src=rss" target="_blank" rel="noopener noreferrer">
+        How to watch the Hyundai CES 2026 presentation live
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A look at Hyundai&#39;s Holographic Windshield Display. (Hyundai) CES has long felt like a full-on auto show, but the car-centric energy seems somewhat muted at CES 2026. Sure, the Afeela electric vehicle from the Sony-Honda joint venture is returning to the show floor, but with the Trump administration...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/software/windows/microsoft-silently-kills-windows-and-office-phone-activation-and-forces-online-activation-with-a-microsoft-account-windows-users-are-now-herded-into-an-online-only-portal-for-activation" target="_blank" rel="noopener noreferrer">
+        Microsoft silently kills Windows and Office phone activation and forces online activation with a Microsoft account — Windows users are now herded into an online-only portal for activation
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft has somehow put the cap on yet another way to circumvent its internet-powered setup process, and this time it&#39;s on a build that they haven&#39;t even supported for a while! Production activation via call is still listed in Microsoft&#39;s support docs, but a new YouTube video running Windows 7 sho...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 21:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/gpus/intel-arc-b570-gpu-kicks-off-new-year-at-just-usd199-save-usd30-on-one-of-the-best-budget-gpus-around" target="_blank" rel="noopener noreferrer">
+        Intel Arc B570 GPU kicks off new year at just $199 — save $30 on one of the best budget GPUs around
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Sparkle&#39;s Arc B570 Guardian OC dual-fan graphics card is on sale for 13%, bringing its price down to $199.99 on Amazon.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 21:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/disinformation-floods-social-media-after-nicolas-maduros-capture/" target="_blank" rel="noopener noreferrer">
+        Disinformation Floods Social Media After Nicolás Maduro’s Capture
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From seemingly AI-generated videos to repurposed old footage, TikTok, Instagram, and X did little to stop the onslaught of misleading posts in the wake of the US invasion of Venezuela.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 21:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/gpus/msis-rtx-5090-lightning-shatters-gpu-records-before-launch-40-phase-vram-and-dual-12v-2x6-connectors-turn-heads-on-upcoming-overclocking-monster" target="_blank" rel="noopener noreferrer">
+        MSI’s RTX 5090 Lightning shatters GPU records before launch — 40-phase VRAM and dual 12V-2x6 connectors turn heads on upcoming overclocking monster
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Several benchmark records have appeared online, with users saying they&#39;re from the MSI RTX 5090 Lightning, which the company is expected to announce on January 5 at CES 2026.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 21:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/cybersecurity/california-introduces-a-one-stop-shop-to-delete-your-online-data-footprint-173102064.html?src=rss" target="_blank" rel="noopener noreferrer">
+        California introduces a one-stop shop to delete your online data footprint
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Californians can now put a stop to their personal data being sold around on an online trading floor, thanks to a new free tool. On January 1, the state launched its Delete Request and Opt-out Platform, shortened to DROP, that allows residents to request to delete all of their personal information on...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 21:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/macbooks/we-have-more-rumored-details-for-apples-cheaper-macbook-and-it-could-be-out-soon" target="_blank" rel="noopener noreferrer">
+        We have more rumored details for Apple&#39;s cheaper MacBook – and it could be out soon
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple is ready to introduce its cheaper MacBook to the world, according to a new analyst report.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/gadgets/853151/meta-quest-3s-apple-airtag-steam-winter-sale-deal" target="_blank" rel="noopener noreferrer">
+        Meta’s Quest 3S is still $50 off and comes with a $50 gift card
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We posted a couple of times about Meta’s Quest 3S during the holidays. The virtual reality headset that typically sold for $299.99 was — and still is — available for $249.99. Better yet, you can get in on a promotion at Amazon that includes a $50 digital account credit with purchase. You can find a ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 20:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/motherboards/gigabyte-unleashes-new-ddr4-am4-motherboards-as-ram-shortage-continues-to-slam-pc-builders-sky-high-ddr5-prices-spark-rush-for-affordable-alternatives" target="_blank" rel="noopener noreferrer">
+        Gigabyte unleashes new DDR4 AM4 motherboards as RAM shortage continues to slam PC builders — sky-high DDR5 prices spark rush for affordable alternatives
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Consumers are flocking back to AM4, which supports DDR4, as DDR5 prices continue to skyrocket. Gigabyte is taking advantage of the opportunity and has launched four new AM4 motherboard variants in Mini-ITX and Micro-ATX form factors.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 20:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/sport/how-to-watch-luke-littler-vs-gian-van-veen-for-free-live-stream-pdc-world-darts-championship-2026-final-preview" target="_blank" rel="noopener noreferrer">
+        How to watch Luke Littler vs Gian van Veen for *FREE* — live stream PDC World Darts Championship 2026 final, preview
+      </a>
+    </h3>
+    
+    
+    <p class="summary">All the ways to watch Luke Littler vs Gian van Veen live streams for FREE from anywhere, in the PDC World Darts Championship final at Alexandra Palace.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/us-invaded-venezuela-and-captured-nicolas-maduro-chatgpt-disagrees/" target="_blank" rel="noopener noreferrer">
+        The US Invaded Venezuela and Captured Nicolás Maduro. ChatGPT Disagrees
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Some AI chatbots have a surprisingly good handle on breaking news. Others decidedly don’t.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 19:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/ram/corsair-cancels-usd240-48gb-ddr5-memory-kit-orders-due-to-pricing-error-companys-blunder-ignites-shopper-uproar-over-botched-ram-deal" target="_blank" rel="noopener noreferrer">
+        Corsair cancels $240 48GB DDR5 memory kit orders due to pricing error — company’s blunder ignites shopper uproar over botched RAM deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Over the past few days, many customers purchased an incorrectly-priced kit of premium DDR5 memory from Corsair&#39;s webstore for just $240. Today, the company has cancelled all those orders, saying the memory is out of stock and that the pricing was a mistake. It&#39;s safe to say this decision has been me...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 19:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/desktops/gaming-pcs/corsair-reverses-course-and-honors-gaming-pc-order-after-usd700-price-hike-uproar-order-was-erroneously-flagged-but-the-company-sends-a-coupon-to-the-buyer-to-snag-the-pc-at-the-original-price" target="_blank" rel="noopener noreferrer">
+        Corsair reverses course and honors gaming PC order after $700 price hike uproar — order was erroneously flagged, but the company sends a coupon to the buyer to snag the PC at the original price
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A Redditor posted on r/Corsair to complain that the company canceled their order and hiked the price by $700 the following day. A Corsair rep then takes steps to clear the air and makes things right by giving the user a discount coupon to bring the cost back down to its sale price.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 18:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/streaming/853133/stranger-things-finale-theater-scene-report" target="_blank" rel="noopener noreferrer">
+        I went to the Stranger Things finale in theaters and the strangest thing happened
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The parking lot was packed. That&#39;s the first Strange Thing. A little background. Just about every mall is struggling now, but the Neshaminy Mall in Bensalem, Pennsylvania is more or less comatose. As Defector&#39;s Dan McQuade, a lifelong Pennsylvanian and mall fan, wrote in his fond remembrance of the ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/quordle-today-answers-clues-4-january-2026" target="_blank" rel="noopener noreferrer">
+        Quordle hints and answers for Sunday, January 4 (game #1441)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for Quordle clues? We can help. Plus get the answers to Quordle today and past solutions.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/nyt-connections-today-answers-hints-4-january-2026" target="_blank" rel="noopener noreferrer">
+        NYT Connections hints and answers for Sunday, January 4 (game #938)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Connections answers and hints? Here&#39;s all you need to know to solve today&#39;s game, plus my commentary on the puzzles.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/nyt-strands-today-answers-hints-4-january-2026" target="_blank" rel="noopener noreferrer">
+        NYT Strands hints and answers for Sunday, January 4 (game #672)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Strands answers and hints? Here&#39;s all you need to know to solve today&#39;s game, including the spangram.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/852598/mui-board-smart-home-controller-matter" target="_blank" rel="noopener noreferrer">
+        This smart home controller is literally a piece of wood
+      </a>
+    </h3>
+    
+    
+    <p class="summary">One of the fun parts of being a tech journalist for over a decade is that occasionally you get to watch a truly unique gadget go from concept to reality - and, eventually, into your living room. That&#39;s the case with the Mui Board, a smart home controller built into a piece of wood. The [&amp;amp;#8230;]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/yakuza-kiwami-2-nintendo-switch-2-review" target="_blank" rel="noopener noreferrer">
+        I punched my way through Yakuza Kiwami 2 on Nintendo Switch 2, and it’s a decent port of an excellent RPG
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Yakuza Kiwami 2 plays pretty well on Nintendo Switch 2, and being able to take Kiryu’s adventure on the go is a big bonus.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/most-exciting-new-shows-of-2026" target="_blank" rel="noopener noreferrer">
+        The 30 most exciting new shows of 2026: TechRadar&#39;s top TV picks on Netflix, Prime Video, HBO Max, and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There&#39;ll be lots of great new TV shows this year – here are our top choices for early 2026, plus some to look out for in the months ahead.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/peripherals/gaming-mice/turtle-beach-burst-ii-pro-review-ultra-light-8k-polling-and-a-little-creaky" target="_blank" rel="noopener noreferrer">
+        Turtle Beach Burst II Pro Review: Ultra-light, 8K polling, and a little creaky
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Turtle Beach&#39;s Burst II Pro is an ultra-lightweight wireless mouse with 8K polling rates and a somewhat uniquely-placed DPI switch button.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/big-tech/ces-2026-what-to-expect-from-techs-big-january-conference-120000956.html?src=rss" target="_blank" rel="noopener noreferrer">
+        CES 2026: What to expect from tech&#39;s big January conference
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The new year is upon us, and that means CES 2026 is imminent. The biggest tech trade show of the calendar comes with a bevy of new and notable announcements that set the tone for trends and expectations for the subsequent 12 months. The CES 2026 show floor is officially open from January 6 through 9...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 17:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/phone-accessories/the-new-clicks-power-keyboard-can-turn-your-phone-into-a-blackberry-and-it-doubles-as-a-wireless-charger-too" target="_blank" rel="noopener noreferrer">
+        The new Clicks Power Keyboard can turn your phone into a BlackBerry – and it doubles as a wireless charger too
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Clicks Powerkeyboard will wirelessly charge your phone and gives you a physical keyboard as well.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/836627/ces-2026-news-gadgets-announcements" target="_blank" rel="noopener noreferrer">
+        CES 2026: all the news, gadgets, and innovations from the biggest tech show
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Hot on the heels of new year’s celebrations, the annual Consumer Electronics Show will get underway in early January 2026. Once again, Las Vegas will host a sprawling sneak peek at the tech that will shape the industry throughout 2026. The Verge will be on the ground at CES 2026 covering the biggest...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/apple-iphone-17-pro-google-pixel-10-pro-galaxy-s25-ultra-camera-comparison-review" target="_blank" rel="noopener noreferrer">
+        Flagship phone camera clash: I compared photos from the iPhone 17 Pro, Google Pixel 10 Pro, and Samsung Galaxy S25 Ultra – here&#39;s what I discovered
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple&#39;s, Google&#39;s and Samsung&#39;s latest and greatest all offer great cameras, but which one is best for you?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/vpn/vpn-services/beyond-vpn-protection-how-nordvpn-changed-in-2025-and-whats-in-store-for-2026" target="_blank" rel="noopener noreferrer">
+        Beyond VPN protection – how NordVPN changed in 2025, and what’s in store for 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From post-quantum encryption to censorship unblocking and scam protection, next year NordVPN is set to finish the work started in 2025. Here&#39;s all you need to know.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/atari-2600-pac-man-edition-review" target="_blank" rel="noopener noreferrer">
+        Using Atari’s 2600+ Pac-Man edition takes me back to pumping all my pocket money into arcades
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Atari’s Pac-Man-themed retro console has me reliving childhood memories all over again and returned me to a simpler, pixelated past.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/review/framework-laptop-16/" target="_blank" rel="noopener noreferrer">
+        Framework Laptop 16 (RTX 5070) Review: A Dream Come True
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With upgradable graphics, the Framework Laptop 16 achieves what PC nerds have only ever dreamed of.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/maker-stem/laser-cutting-and-engraving-from-a-software-perspective-master-your-hardware-and-optimize-your-creative-output-with-some-software-know-how" target="_blank" rel="noopener noreferrer">
+        Laser cutting and engraving from a software perspective — master your hardware and optimize your creative output with some software know-how
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We take a closer look at the software side of laser cutting and engraving.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/cooling/yplasma-to-announce-solid-state-laptop-cooler-at-ces-2026-new-cooler-design-uses-plasma-and-corona-discharge-to-generate-airflow" target="_blank" rel="noopener noreferrer">
+        Plasma-powered solid-state laptop cooler to debut at CES — new cooler design uses ionized gas and electrical discharge to generate airflow
+      </a>
+    </h3>
+    
+    
+    <p class="summary">YPlasma has developed a new solid-state cooling solution that uses corona discharge to generate airflow without any moving parts. The new cooler will be on display at CES 2026 and will be presented with a live demo.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ai/how-to-watch-the-bosch-ces-2026-press-conference-live-on-monday-130020396.html?src=rss" target="_blank" rel="noopener noreferrer">
+        How to watch the Bosch CES 2026 press conference live on Monday
+      </a>
+    </h3>
+    
+    
+    <p class="summary">You might recognize Bosch as a home appliance name (thanks to its partnership with Siemens), but the German multinational brand&#39;s core business is really about providing the underlying technology and engineering that powers cars, homes and factories around the world. That focus is reflected at CES 2...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/meditation-was-my-biggest-life-upgrade-this-year-heres-the-app-im-using-to-continue-my-hot-streak-in-2026" target="_blank" rel="noopener noreferrer">
+        Meditation was my biggest life upgrade this year – here&#39;s the app I&#39;m using to continue my hot streak in 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Down Dog’s Meditation app has been the perfect way for me to practice mindfulness in 2025 –here&#39;s how you can use it to do the same this year.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/vpn/vpn-services/splash-out-or-skimp-the-pros-and-cons-of-choosing-a-more-expensive-vpn" target="_blank" rel="noopener noreferrer">
+        Splash out or skimp? The pros and cons of choosing a more expensive VPN
+      </a>
+    </h3>
+    
+    
+    <p class="summary">In the world of VPNs, do you get what you pay for?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/vpn/vpn-services/norton-vpn-2025s-milestones-and-the-roadmap-for-2026" target="_blank" rel="noopener noreferrer">
+        Norton VPN: 2025’s milestones and the roadmap for 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">2025 was a &#34;turning-point year&#34; for Norton VPN. From 25Gbps server upgrades to navigating a threat landscape changed by Generative AI, here is how the provider evolved over the last 12 months.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/handy-free-speech-to-text-app/" target="_blank" rel="noopener noreferrer">
+        Stop Using Your Keyboard and Start Using Handy, a Free Speech-to-Text App
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It’s called Handy, and it uses AI models to accurately convert your speaking voice into text—all for free.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/monitors/gaming-monitors/samsung-display-finally-brings-v-stripe-subpixel-layout-to-qd-oled-mass-production-of-new-1-300-nit-34-ultrawide-panel-also-boosts-text-clarity" target="_blank" rel="noopener noreferrer">
+        Samsung Display finally brings V-Stripe subpixel layout to QD-OLED — mass production of new 1,300-nit 34-inch ultrawide panel also boosts text clarity
+      </a>
+    </h3>
+    
+    
+    <p class="summary">QD-OLED monitors have historically faced text clarity issues due to their unorthodox subpixel layouts, which are a result of the way the OLED stack is layered. Samsung Display is finally fixing that with its first 34-inch ultrawide panel featuring a vertical stripe subpixel layout, similar to typica...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/03/9to5mac-top-stories-what-to-expect-in-2026-ios-27-rumors-more/" target="_blank" rel="noopener noreferrer">
+        9to5Mac Top Stories: What to expect in 2026, iOS 27 rumors, more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Welcome to 9to5Mac’s top stories of the week, where we recap the biggest news in the Apple world every Saturday. This week, we have what to expect from Apple in the new year, iOS 27 rumors, and the latest on Apple TV. Plus, our usual slate of new podcast episodes, opinion pieces, and much more. Read...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/headphones/final-audio-dx3000cl-review" target="_blank" rel="noopener noreferrer">
+        Final&#39;s latest DX over-ear headphones still aren&#39;t cheap — but if you need detail and faithful neutrality, they&#39;re the ones
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The first closed-back design in Final Audio’s ‘DX’ range is also the most affordable – but that’s not the same as saying it’s in any way inexpensive…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/oura-whoop-blood-labs/" target="_blank" rel="noopener noreferrer">
+        Blood Feud: Oura’s Health Panels Versus Whoop’s Advanced Labs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It’s easier than ever to order your own blood draws, but direct-access testing won’t replace a doctor.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 14:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/health-fitness/ive-been-using-the-james-bond-shower-method-for-years-and-according-to-my-smartwatch-its-good-for-me-heres-how-to-do-it" target="_blank" rel="noopener noreferrer">
+        I&#39;ve been using the &#39;James Bond shower&#39; method for years, and according to my smartwatch, it’s good for me — here&#39;s how to do it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Cold showers offer benefits for body and mind, but are miserable – here’s how to get the best of both worlds.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 14:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/how-to-manage-files-on-ios-and-android/" target="_blank" rel="noopener noreferrer">
+        How to Manage Files on iOS and Android
+      </a>
+    </h3>
+    
+    
+    <p class="summary">You have more access to your phone’s file system than you may think.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 14:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/03/new-survey-shows-why-the-mac-is-becoming-the-most-sustainable-device-in-the-enterprise/" target="_blank" rel="noopener noreferrer">
+        Apple @ Work: New survey shows why the Mac is becoming the most sustainable device in the enterprise
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple @ Work is exclusively brought to you by Mosyle, the only Apple Unified Platform. Mosyle is the only solution that integrates in a single professional-grade platform all the solutions necessary to seamlessly and automatically deploy, manage &amp;amp;amp; protect Apple devices at work. Over 45,000 organ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 14:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.securityweek.com/president-trump-orders-divestment-in-2-9-million-chips-deal-to-protect-us-security-interests/" target="_blank" rel="noopener noreferrer">
+        President Trump Orders Divestment in $2.9 Million Chips Deal to Protect US Security Interests
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The deal involved aerospace and defense specialist Emcore Corp. selling its computer chips and wafer fabrication operation. The post President Trump Orders Divestment in $2.9 Million Chips Deal to Protect US Security Interests appeared first on SecurityWeek.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 SecurityWeek</span>
+      
+      
+      
+      <span class="time">🕒 14:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/best-fitness-workout-apps/" target="_blank" rel="noopener noreferrer">
+        13 Best Fitness and Workout Apps for 2026, Tested &amp;amp; Reviewed
+      </a>
+    </h3>
+    
+    
+    <p class="summary">These fitness apps will help you turn New Year&#39;s resolutions into real results.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 14:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/notion-is-now-way-more-than-a-note-taking-app-here-are-5-ways-im-using-it-to-run-my-life-in-2026" target="_blank" rel="noopener noreferrer">
+        Notion isn&#39;t just a note-taking app –here are 5 ways I&#39;m using it to run my life in 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Notion has become an all-in-one app like no other – here’s why it’s worth a look in 2026, plus my favorite new tools.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 13:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/how-broadcom-went-from-a-simple-hewlett-packard-division-to-eventually-grew-and-become-a-tech-industry-behemoth" target="_blank" rel="noopener noreferrer">
+        How Broadcom went from a simple Hewlett Packard division to eventually grew and become a tech industry behemoth
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Broadcom&#39;s early beginning date back to the 1960s - we take a look back.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 13:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/how-to-protect-your-iphone-or-android-device-from-spyware/" target="_blank" rel="noopener noreferrer">
+        How to Protect Your iPhone or Android Device From Spyware
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Being targeted by sophisticated spyware is relatively rare, but experts say that everyone needs to stay vigilant as this dangerous malware continues to proliferate worldwide.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 13:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/coffee-machines/how-to-deep-clean-your-coffee-maker" target="_blank" rel="noopener noreferrer">
+        How to deep-clean your coffee maker for a better-tasting espresso in 2026 – a barista&#39;s guide
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Deep clean your coffee maker for the tastiest espresso ever – six top tips from a barista</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 13:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/1password-coupon/" target="_blank" rel="noopener noreferrer">
+        1Password Coupon: Score a Free Trial in January
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Save up to 28% on business and personal memberships with 1Password promo codes and deals.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 11:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/vistaprint-coupon-code/" target="_blank" rel="noopener noreferrer">
+        30% VistaPrint Coupon &amp;amp; Promo Codes | January 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From personalized gifts to business essentials, WIRED can help you save with our selection of VistaPrint promo codes.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 10:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/nomad-discount-code/" target="_blank" rel="noopener noreferrer">
+        Nomad Goods Promo Codes: 25% Off | January 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Save up to 25% on Nomad Goods accessories such as Nomad phone cases, Nomad wallets, and more this December.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 10:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/vimeo-promo-code/" target="_blank" rel="noopener noreferrer">
+        Vimeo Promo Codes and Deals: Save Up to 40%
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Enjoy 25% off a membership, 40% off, plus an additional 10% off annual plans, and more deals to save at Vimeo.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 10:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/factor-promo-code/" target="_blank" rel="noopener noreferrer">
+        Factor Promo Code: Up to $130 Off Meal Prep
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Make meal prep easier for any dietary need while enjoying great savings with our hand-picked Factor discount codes this December.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 09:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/oneplus-promo-code/" target="_blank" rel="noopener noreferrer">
+        OnePlus Promo Code: $70 Off | January 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Save 30% with a OnePlus coupon this month, plus save up to 10% on earbuds, phones, and more.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 09:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/surfshark-coupon/" target="_blank" rel="noopener noreferrer">
+        Surfshark Promo Codes: 87% Off | January 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Save up to 87% with a Surfshark coupon code, 3 months of VPN free today, and more January 2026 discounts from WIRED.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 09:30</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2026-01-04 05:30 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
