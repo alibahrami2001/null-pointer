@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for January 07, 2026</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/this-game-controller-has-a-force-feedback-steering-wheel-lodged-in-the-middle-034521141.html?src=rss" target="_blank" rel="noopener noreferrer">
+        This game controller has a force feedback steering wheel lodged in the middle
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Not everyone remembers the unique controllers that never quite made it. As third-party peripheral makers attempt to offer gamers something different to the likes of DualSense and Joy-Cons, they often have to go in a different direction. GameSir’s Swift Drive (apparently a working product name) is de...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 07:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/857252/intel-handheld-gaming-pc-panther-lake-custom-cpu" target="_blank" rel="noopener noreferrer">
+        Intel is planning a custom Panther Lake CPU for handheld PCs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Intel announced yesterday that it&#39;s developing an entire &#34;handheld gaming platform&#34; powered by its new Panther Lake chips, and joining an increasingly competitive field. Qualcomm is hinting about potential Windows gaming handhelds showing up at the Game Developers Conference in March, and AMD&#39;s new ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 06:46</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/06/mckinsey-and-general-catalyst-execs-say-the-era-of-learn-once-work-forever-is-over/" target="_blank" rel="noopener noreferrer">
+        McKinsey and General Catalyst execs say the era of ‘learn once, work forever’ is over
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Calacanis, General Catalyst&#39;s Taneja, and McKinsey&#39;s Sternfels discussed how AI is reshaping technology and the labor force.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 06:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/06/metas-manus-news-is-getting-different-receptions-in-washington-and-beijing/" target="_blank" rel="noopener noreferrer">
+        Meta’s Manus news is getting different receptions in Washington and Beijing
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Chinese officials are reportedly reviewing whether the Meta deal violates technology export controls, potentially giving Beijing leverage it wasn&#39;t initially perceived as having.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 06:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/column/857053/lenovo-ai-assistant-qira" target="_blank" rel="noopener noreferrer">
+        Lenovo is building an AI assistant that ‘can act on your behalf’
+      </a>
+    </h3>
+    
+    
+    <p class="summary">While most attention in the AI race is focused on model builders and cloud platforms, Lenovo sits closer to millions of users than most companies. As the world&#39;s top PC maker by volume, Lenovo ships tens of millions of devices every year. What it decides to ship, bundle, and integrate can directly s...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 06:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/planning-to-see-acer-at-ces-2026-heres-the-three-things-you-dont-want-to-miss" target="_blank" rel="noopener noreferrer">
+        Planning to see Acer at CES 2026? Here are the three things you don’t want to miss
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Acer&#39;s updated lineup was on display at CES 2026</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/home/dreames-latest-robot-vacuum-concept-has-slightly-terrifying-legs-that-can-climb-full-size-stairs-210000399.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Dreame&#39;s latest robot vacuum concept has slightly terrifying legs that can climb full-size stairs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Robot vacuum companies are once again out in full force at CES 2026, giving their devices a new set of intriguing — and sometimes unsettling — capabilities. This year, Chinese appliance maker Dreame is showing off a vacuum prototype with giant legs that can climb up and down an entire flight of stai...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/857229/samsung-display-intel-oled-smartpower-hdr" target="_blank" rel="noopener noreferrer">
+        Samsung and Intel&amp;amp;#8217;s OLED tech makes HDR easier on laptop battery life
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Samsung Display and Intel have teamed up on laptop technology called SmartPower HDR that they claim can minimize power usage while you&#39;re watching HDR content on an OLED screen. Intel showed off this technology last year, but Samsung Display is sharing details about how it works and the power saving...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/wearables/lenovo-just-revealed-a-concept-for-ai-powered-smartglasses-at-ces-010057822.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Lenovo just revealed a concept for AI-powered smartglasses at CES
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo just revealed a new smartglasses concept design at CES 2026. The appropriately-named Lenovo AI Glasses Concept promises to transform &amp;amp;quot;how users interact with their surroundings and unifies their workflow.&amp;amp;quot; They look like a standard pair of specs and not all that different from somet...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/pc/lenovo-updates-its-legion-and-loq-gaming-laptops-for-ces-010042509.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Lenovo updates its Legion and LOQ gaming laptops for CES
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo has brought a slew of updates to its Legion and LOQ line of gaming laptops for CES 2026. The refreshed laptops are all built around Nvidia RTX 50-series GPUs. The new Legion 7a is both thinner and lighter than the previous generation and is aimed at gamers, creators, and working professionals...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/laptops/lenovos-top-thinkpads-and-yogas-go-all-in-on-panther-lake-business-laptops-come-with-windows-and-linux-options" target="_blank" rel="noopener noreferrer">
+        Lenovo&#39;s top ThinkPads and Yogas go all-in on Panther Lake — business laptops come with Windows and Linux options
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo is updating its high-end ThinkPad and Yoga laptops with Intel&#39;s Panther Lake Core Ultra processors at CES 2026.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/laptops/lenovos-ces-concept-devices-include-a-rollable-ultra-wide-oled-legion-gaming-laptop-thinkpad-concept-has-an-expandable-screen-that-wraps-around-the-outside-of-the-lid" target="_blank" rel="noopener noreferrer">
+        Lenovo&#39;s CES concept devices include a rollable ultra-wide OLED Legion gaming laptop – ThinkPad concept has an expandable screen that wraps around the outside of the lid
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo rolled out a pair of concept laptops at CES based around rollable, wrappable OLED screens. The Legion Pro Rollable is a gaming laptop that can go from wide to ultrawide, while the Rollable XD&#39;s extra screen height becomes a dynamic lid display when the front display isn&#39;t extended.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/motorola-just-announced-a-foldable-phone-to-rival-samsung-and-google-at-ces-010015323.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Motorola just announced a foldable phone to rival Samsung and Google at CES
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Motorola just announced its very first side-foldable smartphone, joining the ranks of the Pixel 10 Pro Fold and the Galaxy Z Fold 7. The Razr Fold boasts an impressive 6.6-inch external screen and an 8.1-inch flexible main display. The company hasn&#39;t provided dimensions, so we don&#39;t know how thick i...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/video-games/handheld-gaming/lenovo-brings-handheld-favorite-steamos-to-the-flagship-legion-go-2-the-amd-z2-extreme-gets-official-steamos-support-for-the-first-time" target="_blank" rel="noopener noreferrer">
+        Lenovo brings handheld-favorite SteamOS to the flagship Legion Go 2 — the AMD Z2 Extreme gets official SteamOS support for the first time
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo is bringing official SteamOS support to AMD’s Ryzen Z2 Extreme processor for the first time with an updated Legion Go 2.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gadgets/2026/01/motorola-reveals-the-razr-fold-a-book-style-foldable-launching-this-summer/" target="_blank" rel="noopener noreferrer">
+        Motorola reveals the Razr Fold, a book-style foldable launching this summer
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Motorola is light on details but heavy on hype for its first book-style foldable.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/gadgets/851643/moto-watch-android-smarwatch-ces-2026" target="_blank" rel="noopener noreferrer">
+        Motorola’s latest smartwatch promises 13-day battery life and Polar-powered health tracking
+      </a>
+    </h3>
+    
+    
+    <p class="summary">At CES, Motorola announced its latest smartwatch, the Moto Watch. According to Motorola, the Android watch offers up to 13 days of battery life, alongside Polar-powered health tracking, open-source software, and dual-frequency GPS - a combination that helps set it apart from Apple&#39;s and Google&#39;s fla...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/852251/lenovos-auto-twist-laptop-is-going-from-concept-to-real-product" target="_blank" rel="noopener noreferrer">
+        Lenovo’s Auto Twist laptop is going from concept to real product
+      </a>
+    </h3>
+    
+    
+    <p class="summary">At CES 2026, Lenovo is announcing a new ThinkBook Plus Gen 7 Auto Twist laptop. Once a concept, the 14-inch thin-and-light sports a motorized pivoting hinge, allowing it to twist and angle its screen toward you. It can be manually controlled, but the real trick is tracking your head and automaticall...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/852276/the-new-lenovo-yoga-pro-9i-laptop-has-a-super-bright-tandem-oled-and-magnetic-stylus" target="_blank" rel="noopener noreferrer">
+        The new Lenovo Yoga Pro 9i laptop has a super-bright tandem OLED and magnetic stylus
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo&#39;s new pair of Yoga laptops for CES 2026 are its most powerful and most lightweight models. The flagship Yoga Pro 9i is a creator-focused laptop with a 16-inch 4K tandem OLED reaching 1,600 peak nits of brightness, Intel Panther Lake processor options, and up to an RTX 5070 for a discrete GPU....</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/852352/lenovo-legion-pro-rollable-gaming-laptop-concept-ces-2026" target="_blank" rel="noopener noreferrer">
+        Lenovo&amp;amp;#8217;s new concept rollable could be the ideal gaming laptop
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo is at it again with wild laptop concepts for CES 2026, and the biggest one is the Legion Pro Rollable gaming laptop. It has a flexible OLED display that expands horizontally - as opposed to Lenovo&#39;s ThinkBook Plus Gen 6, which rolls up and down. The Legion Pro Rollable&#39;s screen goes from a co...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/852482/lenovo-thinkpad-rollable-xd-concept-laptop-ces-2026" target="_blank" rel="noopener noreferrer">
+        This ThinkPad laptop concept has a rollable display that wraps around its lid
+      </a>
+    </h3>
+    
+    
+    <p class="summary">At CES 2026, Lenovo is announcing yet another new concept laptop with a transforming screen: the ThinkPad Rollable XD Concept. It&#39;s a ThinkPad, complete with its iconic red TrackPoint nub, but it features a flexible OLED display that wraps around to the outer part of its lid. Slide your finger along...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/852860/lenovo-yoga-aio-i-aura-edition-ces-2026" target="_blank" rel="noopener noreferrer">
+        Lenovo’s new All-in-One PC can sync its lighting to your notifications
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you prefer to have your notifications on silent but don&#39;t want to miss anything, Lenovo&#39;s new All-in-One (AIO) PC might have a solution. The Yoga AIO i Aura Edition unveiled today at CES features a major design overhaul with a transparent light bar at the bottom of the display. The customizable a...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/853434/ces-2026-lenovo-concept-ai-glasses-wearables" target="_blank" rel="noopener noreferrer">
+        Lenovo’s joining the bandwagon with concept AI glasses
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo is the latest tech company to get bit by the smart glasses bug. The company just showed off a pair of concept AI glasses at CES 2026. While these weren&#39;t a working prototype, we have some idea of where Lenovo&#39;s head is at. The lightweight frames weigh about 45g and have a 2MP camera [&amp;amp;#8230;]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/motorola-phones/motorola-razr-fold-is-mostly-a-mystery-but-it-already-outdoes-the-galaxy-fold-7-in-one-key-way" target="_blank" rel="noopener noreferrer">
+        Motorola Razr Fold is mostly a mystery, but it already outdoes the Samsung Galaxy Fold 7 in one key way
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Motorola is unveiling a new, larger flexible phone, the Razr Fold, but questions about specs, pricing, and availability remain.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/lenovo-unveils-the-ai-tools-it-hopes-will-supercharge-your-productivity-at-work" target="_blank" rel="noopener noreferrer">
+        Lenovo unveils the AI tools it hopes will supercharge your productivity at work
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo&#39;s releases for includes an all-new, combined &#34;Qira&#34; AI platform.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/return-of-the-sli-lenovos-new-workstation-pc-supports-up-to-2-rtx-5060-ti-gpus-for-ai-inference-but-im-more-interested-in-the-secretive-1tb-ai-fusion-card" target="_blank" rel="noopener noreferrer">
+        Return of the SLI: Lenovo&#39;s new workstation PC supports up to two RTX 5060 Ti GPUs for AI inference - but I&#39;m more interested in the secretive 1TB AI Fusion Card
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo ThinkCentre X Tower supports dual RTX 5060 Ti GPUs, 256GB RAM, and a 1TB AI Fusion Card for inference.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/worlds-first-pc-with-a-square-screen-announced-at-ces-2026-extraordinary-thinkcentre-x-aio-aura-edition-has-16mp-webcam-28-inch-display-and-can-even-be-used-as-a-monitor" target="_blank" rel="noopener noreferrer">
+        World&#39;s first PC with a square screen announced at CES 2026 — extraordinary ThinkCentre X AIO Aura Edition has 16MP webcam, 28-inch display, and can even be used as a monitor
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo’s ThinkCentre X AIO Aura Edition combines a square 16:18 display with desktop hardware, prioritizing vertical productivity over traditional widescreen norms.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/lenovo-debuts-usd1-499-convertible-laptop-that-comes-with-a-tongue-twisting-name-thinkbook-plus-gen-7-auto-twist-rotates-and-pivots-on-two-axes" target="_blank" rel="noopener noreferrer">
+        Lenovo debuts $1,499 convertible laptop that comes with a tongue-twisting name — ThinkBook Plus Gen 7 Auto Twist rotates and pivots as you move around the room
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo’s ThinkBook Plus Gen 7 Auto Twist combines a rotating OLED display, Intel Core Ultra hardware, and business-friendly features.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/lenovo-just-launched-the-most-powerful-sub-1kg-laptop-ever-thinkpad-x1-carbon-gen-14-sports-a-core-ultra-x7-series-3-cpu-and-weighs-996g" target="_blank" rel="noopener noreferrer">
+        Lenovo launches the most powerful sub-1kg laptop ever — ThinkPad X1 Carbon Gen 14 sports a Core Ultra X7 Series 3 CPU and weighs just 996g
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo’s latest Carbon series laptop features an ultralight design, enhanced thermal efficiency, extensive connectivity, and sustainable materials for modern business professionals.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/lenovo-releases-its-most-grandiose-and-powerful-thinkpad-laptop-ever-2tb-pcie-5-0-ssd-six-speakers-10mp-webcam-and-just-1-5kg" target="_blank" rel="noopener noreferrer">
+        Lenovo releases its most grandiose and powerful ThinkPad laptop ever — 2TB PCIe 5.0 SSD, six speakers, 10MP webcam, but weighing in at just 1.5Kg!
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo unveils the ThinkPad X9 15p Aura Edition at CES 2026, combining an OLED display, Intel Arc graphics, and advanced features.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/lenovo-adds-copilot-mac-mini-rival-to-yoga-product-line-but-i-am-so-disappointed-that-it-didnt-revive-the-nano-m75n-the-smallest-pc-ever" target="_blank" rel="noopener noreferrer">
+        Lenovo adds Copilot Mac Mini rival to Yoga product line — but I am so disappointed that it didn&#39;t revive the Nano M75n, the smallest PC ever
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo’s Yoga Mini i is a 600-gram ultra-compact PC with AI Copilot, four display support, 32GB memory, and extensive connectivity.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/gaming-laptops/i-was-one-of-the-first-to-test-lenovos-new-legion-pro-rollable-laptop-im-as-impressed-as-i-am-skeptical" target="_blank" rel="noopener noreferrer">
+        Lenovo officially unveils the rumored Legion Pro Rollable gaming laptop with expanding screen
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo brings a new expandable gaming laptop to the scene, but will it ever see production?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/computing/laptops/lenovos-14th-gen-thinkpad-x1-carbon-comes-with-a-new-space-frame-design-010000262.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Lenovo&#39;s 14th-gen ThinkPad X1 Carbon comes with a new Space Frame design
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo has unveiled a bunch of new laptops and concepts at CES 2026, including its latest ThinkPad X1 models. The ThinkPad X1 Carbon Gen 14 Aura Edition and ThinkPad X1 2-in-1 Gen 11 Aura Edition come with a new design the company has dubbed “Space Frame.” Lenovo calls Space Frame an “engineering br...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/pc/lenovo-reveals-a-steamos-variant-of-the-legion-go-2-at-ces-010000852.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Lenovo reveals a SteamOS variant of the Legion Go 2 at CES
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you saw Lenovo&#39;s Legion Go 2 launch last year and thought, &amp;amp;quot;I&#39;ll wait for the SteamOS version,&amp;amp;quot; well, you&#39;ll have to wait a little longer. But at least now it&#39;s official. At CES 2026, the company revealed the Legion Go 2, Powered by SteamOS. The Valve-friendly variant of the gaming hand...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/computing/laptops/ces-2026-the-lenovo-thinkbook-plus-gen-7-auto-twist-wont-let-you-out-of-it-sight-010000913.html?src=rss" target="_blank" rel="noopener noreferrer">
+        CES 2026: The Lenovo ThinkBook Plus Gen 7 Auto Twist won&#39;t let you out of it sight
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A couple years ago Lenovo showed off a concept laptop stand that used cameras and AI to follow you around. But now at CES 2026, the company has taken that idea and turned it into a full-fledged system that it’s actually going to sell.&amp;amp;nbsp;Dubbed the ThinkBook Plus Gen 7 Auto Twist, instead of a lap...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/motorola-expands-its-moto-things-lineup-with-a-new-bluetooth-tracker-stylus-and-smartwatch-010000669.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Motorola expands its Moto Things lineup with a new Bluetooth tracker, stylus and smartwatch
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After kicking off its Moto Things accessory line with wireless earbuds, a Bluetooth tracker and a cheap smartwatch in 2024, Motorola is doubling down. At CES 2026, the company is announcing a sequel to its tracker, the Moto Tag 2, a stylus for its new folding phone, the Moto Pen Ultra and a more pre...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ai/lenovo-and-motorola-are-releasing-their-own-on-device-ai-assistant-010000696.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Lenovo and Motorola are releasing their own on-device AI assistant
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If the world didn&#39;t already have one too many digital assistants, Lenovo is adding another one to the pile. On Tuesday evening, the company announced Qira, a cross-device AI for both its own computers and Motorola smartphones. Set to arrive later this quarter, it will live at the system level of Len...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/computing/laptops/lenovo-goes-sci-fi-with-its-wild-xd-rollable-concept-at-ces-2026-010000817.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Lenovo goes sci-fi with its wild XD Rollable Concept at CES 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo has experimented more with laptops featuring rollable displays than pretty much any other PC maker and at CES 2026 it’s keeping that trend going with the XD Rollable Concept.Equipped with a 180-degree Gorilla Glass Victus 2 cover, the XD Rollable concept features a very futuristic design. How...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/computing/laptops/ces-2026-the-lenovo-legion-pro-rollable-concept-goes-big-wide-at-the-touch-of-a-button-010000333.html?src=rss" target="_blank" rel="noopener noreferrer">
+        CES 2026: The Lenovo Legion Pro Rollable concept goes big wide at the touch of a button
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo might have the most concept devices of any company at CES 2026, but the wildest and most interesting one is almost certainly the Legion Pro Rollable which features a 16-inch flexible display that can expand to not one but two different sizes.&amp;amp;nbsp;To make the Legion Pro Rollable, Lenovo start...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/lenovo-legion-pro-gaming-laptop-ultrawide-rollable-screen/" target="_blank" rel="noopener noreferrer">
+        Lenovo’s Legion Pro Rollable Gaming Laptop Goes Ultrawide at the Press of a Key
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lenovo brought a Legion gaming laptop to CES this year with a rollable OLED display that expands horizontally by six inches.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/motorola-razr-fold-ces-2026/" target="_blank" rel="noopener noreferrer">
+        Motorola Razr Fold Book-Style Foldable: Specs, Details, Release Date
+      </a>
+    </h3>
+    
+    
+    <p class="summary">At CES 2026, the company also announced a new smartwatch, stylus, Bluetooth tracker, and even a weird AI pendant.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/artificial-intelligence/openai-is-rolling-out-gpt-52-codex-max-for-some-users/" target="_blank" rel="noopener noreferrer">
+        OpenAI is rolling out GPT-5.2 “Codex-Max” for some users
+      </a>
+    </h3>
+    
+    
+    <p class="summary">OpenAI is testing a new model for Codex called &#34;GPT-5.2-Codex-Max,&#34; and it&#39;s already rolling out to users with a subscription. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 04:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/home/smart-home/dreames-robot-vacuum-with-an-arm-is-back-at-ces-2026-and-it-can-do-more-than-pick-up-shoes-210000020.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Dreame&#39;s robot vacuum with an arm is back at CES 2026 and it can do more than pick up shoes
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Last year at CES, Dreame showed off a robot vacuum prototype with a mechanical arm. But while we were able to see the arm extend and retract, we didn’t see the device, which was described as a prototype at the time, actually grab anything, which was a bit disappointing.This year, though, the company...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/wearables/ipolish-brings-color-changing-press-on-smart-nails-to-ces-001345407.html?src=rss" target="_blank" rel="noopener noreferrer">
+        iPolish brings color-changing press-on smart nails to CES
+      </a>
+    </h3>
+    
+    
+    <p class="summary">In the original, and best Total Recall, there’s a scene where Rekall’s receptionist uses a digital pen to change the color of her nail polish. It’s only taken 35 years, but now a company has turned up to CES 2026 with a version that actually works outside a pricey sci-fi movie. iPolish is a company ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/hair-care/its-a-total-reinvention-of-a-category-loreal-exec-on-why-its-new-glass-infrared-powered-hair-straightener-is-so-exciting" target="_blank" rel="noopener noreferrer">
+        &#34;It&#39;s a total reinvention of a category&#34; – L&#39;Oréal exec on why its new glass, infrared-powered hair straightener is so exciting
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The L&#39;Oréal Light Straight + uses infrared technology to straighten effectively at a far lower temperature, for less damage.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/wearables/metas-emg-wristband-is-moving-beyond-its-ar-glasses-120000503.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Meta&#39;s EMG wristband is moving beyond its AR glasses
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Meta has been experimenting with EMG technology for years. In 2025, the company commercialized it for the first time in its Meta Ray-Ban Display glasses, which users control via a dedicated neural band that is able to interpret subtle muscle movements in the wrist.Now, at CES 2026, the company is of...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/06/daily-january-6-2026/" target="_blank" rel="noopener noreferrer">
+        9to5Mac Daily: January 6, 2026 – CES news
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Listen to a recap of the top stories of the day from 9to5Mac. 9to5Mac Daily is available on iTunes and Apple’s Podcasts app, Stitcher, TuneIn, Google Play, or through our dedicated RSS feed for Overcast and other podcast players. Sponsored by 9to5Mac Daily Plus: Get ad-free versions of every episode...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 03:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/gpus/nvidia-ceo-jensen-huang-says-the-future-is-neural-rendering-at-ces-2026-teasing-dlss-advancements-rtx-5090-could-represent-the-pinnacle-of-traditional-raster" target="_blank" rel="noopener noreferrer">
+        Nvidia CEO Jensen Huang says &#34;the future is neural rendering&#34; at CES 2026, teasing DLSS advancements — RTX 5090 could represent the pinnacle of traditional raster
+      </a>
+    </h3>
+    
+    
+    <p class="summary">During a Q&amp;amp;amp;A at CES 2025, Nvidia CEO Jensen Huang says that the future of graphics is neural rendering, and that the company is &#34;working on things in the lab that are just utterly shocking and incredible.&#34;</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 02:46</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/06/ces-2026-everything-revealed-from-nvidias-debuts-to-amds-new-chips-to-razers-ai-oddities/" target="_blank" rel="noopener noreferrer">
+        CES 2026: Everything revealed, from Nvidia’s debuts to AMD’s new chips to Razer’s AI oddities
+      </a>
+    </h3>
+    
+    
+    <p class="summary">CES 2026&amp;amp;#160;is in full swing in Las Vegas, with the show floor open to the public after a packed couple of days&amp;amp;#160;occupied by&amp;amp;#160;press conferences from the likes of Nvidia, Sony, and AMD&amp;amp;#160;and previews from Sunday’s Unveiled event.&amp;amp;#160; As has been the case for the past two years at CES, ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 02:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gadgets/2026/01/hps-eliteboard-g1a-is-a-ryzen-powered-windows-11-pc-in-a-membrane-keyboard/" target="_blank" rel="noopener noreferrer">
+        HP’s EliteBoard G1a is a Ryzen-powered Windows 11 PC in a membrane keyboard
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The most familiar, full-fledged PC experience you can get from a keyboard.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 02:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/gpus/amd-hints-at-officially-open-sourcing-fsr-4-upscaling-and-frame-generation-technology-in-the-wake-of-accidental-release-accidental-release-may-have-forced-the-companys-hand" target="_blank" rel="noopener noreferrer">
+        AMD hints at officially open-sourcing FSR 4 upscaling and frame generation technology in the wake of accidental release — accidental release may have forced the company&#39;s hand
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AMD hints at officially open-sourcing FSR 4</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 02:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/06/wearable-health-devices-could-generate-a-million-tons-of-e-waste-by-2050/" target="_blank" rel="noopener noreferrer">
+        Wearable health devices could generate a million tons of e-waste by 2050
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The most surprising part is that the plastic isn&#39;t the biggest problem.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 02:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/quake-is-now-steam-deck-verified-223009852.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Quake is now Steam Deck Verified
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Bethesda announced on X today that Quake is now a Steam Deck Verified title. The 1996 game from the legendary id Software has also been designated Handheld Optimized for the Xbox ROG Ally devices. As one of the OG boomer shooters, Quake still commands a sizable and passionate fan base, and it&#39;s now ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/taiwan-says-chinas-attacks-on-its-energy-sector-increased-tenfold/" target="_blank" rel="noopener noreferrer">
+        Taiwan says China&#39;s attacks on its energy sector increased tenfold
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The National Security Bureau in Taiwan says that China&#39;s attacks on the country&#39;s energy sector increased tenfold in 2025 compared to the previous year. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 01:57</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/06/a-viral-reddit-post-alleging-fraud-from-a-food-delivery-app-turned-out-to-be-ai-generated/" target="_blank" rel="noopener noreferrer">
+        A viral Reddit post alleging fraud from a food delivery app turned out to be AI-generated
+      </a>
+    </h3>
+    
+    
+    <p class="summary">When fake content goes viral, the damage has already been done, even if the post is debunked.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/grok-is-pushing-ai-undressing-mainstream/" target="_blank" rel="noopener noreferrer">
+        Grok Is Pushing AI ‘Undressing’ Mainstream
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Paid tools that “strip” clothes from photos have been available on the darker corners of the internet for years. Elon Musk’s X is now removing barriers to entry—and making the results public.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/hyperkin-and-gamesir-x5-alteron-modular-game-controller-ces-2026-221853624.html?src=rss" target="_blank" rel="noopener noreferrer">
+        CES 2026: Hyperkin and Gamesir made a modular game controller for your smartphone, tablet and even your Switch
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I’ve been using the same smartphone controller on my iPhone for years. That’s partly because most options are so similar. Announced at CES 2026, the X5 Alteron couldn’t be more different. It’s a collaboration between GameSir (which loves unusual peripheral dalliances) and Hyperkin (retro-leaning con...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/tech-industry/nvidia-ceo-jensen-huang-says-robots-are-ai-immigrants-that-can-address-labor-shortages-can-do-the-type-of-work-that-maybe-we-decided-not-to-do-anymore" target="_blank" rel="noopener noreferrer">
+        Nvidia CEO Jensen Huang says robots could be &#39;AI immigrants&#39; that can address labor shortages — can &#39;do the type of work that maybe we decided not to do anymore&#39;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Jensen Huang, CEO of Nvidia, said that a wave of robots will serve as &#34;AI immigrants&#34; to drive the economy and do the jobs others don&#39;t want to do.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 01:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/intels-core-ultra-series-3-let-me-play-battlefield-6-at-190-fps-on-a-lenovo-ultraportable-220952246.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Intel&#39;s Core Ultra Series 3 let me play &#39;Battlefield 6&#39; at 190 fps on a Lenovo ultraportable
+      </a>
+    </h3>
+    
+    
+    <p class="summary">How far has Intel&#39;s embedded Arc&amp;amp;nbsp;graphics come over the years? Enough to let me play Battlefield 6 at up to 190 fps in 1080p, with the graphics settings set to high, all on an unassuming Lenovo IdeaPad Pro 5. There was no need for dedicated graphics, just the Intel Core Ultra X9 388H&#39;s built-in...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/legendary-hdd-brand-that-created-3-5-inch-format-makes-surprising-comeback-at-ces-could-illustrious-names-like-maxtor-iomega-or-syquest-be-next" target="_blank" rel="noopener noreferrer">
+        Legendary HDD brand that created 3.5-inch format makes surprising comeback at CES 2026 — could illustrious names like Maxtor, Iomega or SyQuest be next?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Once a pioneer of PC hard drives, Conner reappears at CES 2026 with a very different product focus.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gadgets/2026/01/nvidia-leans-on-dlss-improvements-to-make-up-for-a-lack-of-gpus-at-ces/" target="_blank" rel="noopener noreferrer">
+        With GeForce Super GPUs missing in action, Nvidia focuses on software upgrades
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nvidia&#39;s only GeForce announcements this year were about software improvements.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/06/pluribus-had-many-alternate-titles-heres-the-worst-one-of-all-per-vince-gilligan/" target="_blank" rel="noopener noreferrer">
+        Pluribus had many alternate titles, here’s ‘the worst one of all’ per Vince Gilligan
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Pluribus season 1 is over, and in an interview creator Vince Gilligan gave during the show’s run, he revealed how hard it was to land on the meaning-filled final title. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:19</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/gpus/nvidia-says-h200-demand-in-china-is-very-high-as-export-licenses-near-completion" target="_blank" rel="noopener noreferrer">
+        Nvidia says H200 demand in China is &#39;very high&#39; as export licenses near completion — a month after the green light, Huang has high hopes for China buy-in despite political sensitivity
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nvidia says demand in China for its H200 data center GPU is “very high,” as it works through the final stages of U.S. export licensing, according to comments from Jensen Huang at CES 2026.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 01:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/owc-debuts-pcie-gen4-class-8tb-thunderbolt-5-external-ssd-the-largest-and-fastest-in-its-category-but-it-wont-be-cheap" target="_blank" rel="noopener noreferrer">
+        OWC debuts PCIe Gen4-class 8TB Thunderbolt 5 external SSD, the largest and fastest in its category — but it won&#39;t be cheap
+      </a>
+    </h3>
+    
+    
+    <p class="summary">OWC introduces an 8TB Thunderbolt 5 SSD offering high transfer speeds, broad compatibility, rugged design claims, and pricing well above mainstream portable storage.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/gpus/nvidia-non-committal-on-plans-to-solve-gpu-pricing-squeeze-ceo-jensen-huang-floats-bringing-ai-tech-to-older-models" target="_blank" rel="noopener noreferrer">
+        CEO Jensen Huang says Nvidia could potentially resurrect old GPUs to address shortages and high pricing — adding performance-boosting advanced AI features to older architectures is also on the table
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nvidia CEO Jensen Huang says there are options on the table for easing GPU pricing pressures, including bringing newer AI features to older hardware.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 00:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/tech-policy/2026/01/letting-prisons-jam-contraband-phones-is-a-bad-idea-phone-companies-tell-fcc/" target="_blank" rel="noopener noreferrer">
+        Letting prisons jam contraband phones is a bad idea, phone companies tell FCC
+      </a>
+    </h3>
+    
+    
+    <p class="summary">&#34;Jamming will block all communications,&#34; including 911 calls, CTIA tells FCC.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:41</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/06/mobileye-acquires-humanoid-robot-startup-mentee-robotics-for-900m/" target="_blank" rel="noopener noreferrer">
+        Mobileye acquires humanoid robot startup Mentee Robotics for $900M
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Mentee Robotics was co-founded by Mobileye president Amnon Shashua.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/06/apple-tv-has-long-delayed-tehran-season-3-returning-soon/" target="_blank" rel="noopener noreferrer">
+        Apple TV has long-delayed thriller series returning this week
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tehran is one of Apple TV’s longest running thriller series, but you may have never heard of it because for years, the new season’s release has been delayed. Recently though, Apple announced that Tehran season 3 is finally about to premiere, and there’s even a season 4 on the way. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/06/xai-says-it-raised-20b-in-series-e-funding/" target="_blank" rel="noopener noreferrer">
+        xAI says it raised $20B in Series E funding
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nvidia is among the many investors, but xAI has not disclosed if these investments come in the form of equity or debt.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:27</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/ssds/micron-announces-3610-ssd-the-industry-first-pcie-5-0-qlc-ssd-available-to-oems-offers-4tb-storage-in-a-compact-single-sided-m-2-2230-offers-11-000-mb-s-and-9-300-mb-s-sequential-read-and-write" target="_blank" rel="noopener noreferrer">
+        Micron announces 3610 SSD, the industry-first PCIe 5.0 QLC SSD available to OEMs — offers 4TB storage in a tiny single-sided M.2 2230 and 11,000 MB/s of performance
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Micron just announced the 3610 SSD, which is the first QLC chip to be offered in a compact single-sided M.2 2230 form factor.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 00:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-cancels-plans-to-rate-limit-exchange-online-bulk-emails/" target="_blank" rel="noopener noreferrer">
+        Microsoft cancels plans to rate limit Exchange Online bulk emails
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft announced today that it has canceled plans to impose a daily limit of 2,000 external recipients on Exchange Online bulk email senders. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 00:19</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/tech-events/ces-2026-day-2-the-11-best-gadgets-weve-seen-today-from-smart-flashlights-to-new-dell-xps-laptops" target="_blank" rel="noopener noreferrer">
+        CES 2026 day 2: the 11 best gadgets we&#39;ve seen today, from smart flashlights to new Dell XPS laptops
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The gadgets and gizmos on show at CES 2026 are continuing to impress us, as we tour the Las Vegas show floor.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/art-frame-tv-trends/" target="_blank" rel="noopener noreferrer">
+        The Inevitable Rise of the Art TV
+      </a>
+    </h3>
+    
+    
+    <p class="summary">New televisions from Amazon, Hisense, TCL, and others are designed to display fine art and look like a painting when they’re switched off. It’s all thanks to smaller living spaces and new screen tech.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 00:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/ssds/phisons-new-ssd-controller-sips-a-mere-2-3w-and-runs-at-14-7-gb-s-addressing-pcie-5-0s-power-concerns-more-affordable-and-power-saving-pcie-5-0-drives-are-coming-for-laptops-and-gaming-handhelds" target="_blank" rel="noopener noreferrer">
+        Phison&#39;s new SSD controller sips a mere 2.3W and runs at 14.7 GB/s, addressing PCIe 5.0&#39;s power concerns — more affordable and power-saving PCIe 5.0 drives are coming for laptops and gaming handhelds
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Phison launches the new E37T PCIe 5.0 SSD controller at CES 2026, while also providing an update on the E38 controller with upcoming drives spanning up to 8TB.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 00:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/msi-teamed-with-microsoft-to-build-a-unique-stylus-that-doubles-as-an-ai-microphone-for-copilot-and-you-can-fully-charge-it-in-just-30-seconds" target="_blank" rel="noopener noreferrer">
+        MSI teamed with Microsoft to build a unique stylus that doubles as an AI microphone for Copilot — and you can fully charge it in just 30 seconds
+      </a>
+    </h3>
+    
+    
+    <p class="summary">MSI Nano Pen for Prestige Flip laptops combines pressure-sensitive stylus input, tilt support, rapid charging, and built-in Copilot voice commands.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/one-of-the-largest-us-broadband-providers-investigates-breach" target="_blank" rel="noopener noreferrer">
+        One of the largest US broadband providers investigates breach
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Brightspeed is looking into claims of a data breach, made earlier by threat actors Crimson Collective.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/robot-vacuums/i-just-saw-roborocks-new-robot-vacuum-with-legs-and-its-going-to-make-no-go-zones-a-thing-of-the-past" target="_blank" rel="noopener noreferrer">
+        I just saw Roborock&#39;s new robot vacuum with legs, and it&#39;s going to make no-go zones a thing of the past
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Cleaning stairs is just the start.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/06/california-lawmaker-proposes-a-four-year-ban-on-ai-chatbots-in-kids-toys/" target="_blank" rel="noopener noreferrer">
+        California lawmaker proposes a four-year ban on AI chatbots in kids’ toys
+      </a>
+    </h3>
+    
+    
+    <p class="summary">“Our children cannot be used as lab rats for Big Tech to experiment on,” Senator Steve Padilla said. He just introduced a bill to ban AI chatbots in toys until safety regulations are developed.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/cpus/amd-ryzen-chief-teases-return-of-older-zen-3-chips-to-fight-soaring-ram-prices-thats-something-were-actively-working-on-right-now" target="_blank" rel="noopener noreferrer">
+        AMD Ryzen chief teases return of older Zen 3 chips to fight soaring RAM prices — &#39;That&#39;s something we&#39;re actively working on right now&#39;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AMD interview suggests it might restart production of DDR4-based AM4 Ryzen desktop processors</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 23:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/06/the-most-bizarre-tech-announced-so-far-at-ces-2026/" target="_blank" rel="noopener noreferrer">
+        The most bizarre tech announced so far at CES 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From an AI panda pet to an anime girl hologram for your desk, here are the wildest products at CES 2026.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/best-shows-disney-plus/" target="_blank" rel="noopener noreferrer">
+        The 57 Best Shows on Disney+, WIRED’s Picks (January 2026)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The End of an Era, Percy Jackson and the Olympians, and The Beatles Anthology are just a few of the shows you should be watching on Disney+ this month.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2026-01-07 07:15 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
