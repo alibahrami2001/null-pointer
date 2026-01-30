@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for January 30, 2026</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/this-upcoming-ps5-game-from-china-wants-to-combine-the-action-of-black-myth-wukong-with-the-accessibility-of-street-fighter-6s-modern-and-classic-control-schemes" target="_blank" rel="noopener noreferrer">
+        This upcoming PS5 game from China wants to combine the action of Black Myth Wukong with the accessibility of Street Fighter 6&#39;s modern and classic control schemes
+      </a>
+    </h3>
+    
+    
+    <p class="summary">GeniGods: Nezha could be China&#39;s next breakout hit, following in the footsteps of Black Myth Wukong and Where Winds Meet.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 06:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/moltbot-briefly-becomes-the-internets-favorite-ai-chatbot-after-chaotic-rebrand" target="_blank" rel="noopener noreferrer">
+        Moltbot briefly becomes the internet’s favorite AI chatbot after chaotic rebrand
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Open-source personal AI assistant Moltbot went viral after a chaotic rebrand to offer proactive automation</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 06:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/heres-how-people-are-using-apple-intelligence-according-to-tim-cook/" target="_blank" rel="noopener noreferrer">
+        Here’s how people are using Apple Intelligence, according to Tim Cook
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tim Cook’s opening remarks on Apple’s fiscal Q1 2026 earnings call touched on how customers are using Apple Intelligence. Here’s what he said. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 05:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/cairn-climbing-game-interview" target="_blank" rel="noopener noreferrer">
+        ‘Why do they climb mountains? Why do they sacrifice everything and take so many risks just to climb a rock – nobody asked them to?’ — Cairn’s creative director unpacks the studio&#39;s survival-climber
+      </a>
+    </h3>
+    
+    
+    <p class="summary">We sat down with The Game Bakers&#39; Creative Director, Emeric Thoa, and got granular about the studio’s survival-climbing experience, Cairn.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/hbo-max/the-pitt-season-2-episode-4-has-humbled-almost-everybody-in-the-er-except-for-the-person-who-needs-taking-down-the-most" target="_blank" rel="noopener noreferrer">
+        The Pitt season 2 episode 4 has humbled almost everybody in the ER — except for the person who needs taking down the most
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Sometimes little losses hurt more than big blows, and The Pitt season 2 episode 4 was full of the former. Amazingly, they&#39;ve gone completely over the head of one medic.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/pc-gaming/nvidia-just-gave-gamers-another-reason-to-switch-to-linux-a-shiny-new-geforce-now-app" target="_blank" rel="noopener noreferrer">
+        Nvidia just gave gamers another reason to switch to Linux — a shiny new GeForce Now app
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Linux desktop PCs and laptops now have a full official app, rather than the previous handheld-focused offering.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/airpods-pro-3-supply-constraints-may-have-cost-apple-at-least-230-million-last-quarter/" target="_blank" rel="noopener noreferrer">
+        AirPods Pro 3 supply constraints may have cost Apple at least $230 million last quarter
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A comment made by Apple CFO Kevan Parekh underscored just how important the AirPods line is to Apple’s bottom line. Here’s what he said. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 05:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/29/how-sequoia-backed-ethos-reached-the-public-market-while-rivals-fell-short/" target="_blank" rel="noopener noreferrer">
+        How Sequoia-backed Ethos reached the public market while rivals fell short
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The profitable life-insurance platform was one of the first major tech companies to test the 2026 public markets.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 05:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/tennis/carlos-alcaraz-vs-alexander-zverev-australian-open-2026-semi-final-live-free" target="_blank" rel="noopener noreferrer">
+        Alcaraz vs Zverev Free Streams: TV Channels, Start Times &amp;amp; Preview for Australian Open 2026 semi-final
+      </a>
+    </h3>
+    
+    
+    <p class="summary">How to watch Alcaraz vs Zverev live streams online and from anywhere, as the top seed takes on the third seed in the semi-finals of the Australian Open 2026.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/rivian-carplay-interview-apple/" target="_blank" rel="noopener noreferrer">
+        Rivian CEO touts ‘great working relationship with Apple’ despite lack of CarPlay support
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Rivian’s opposition to CarPlay is well-documented, with CEO RJ Scaringe emphasizing the automaker’s focus on creating a native and integrated infotainment experience. In a new interview with Kara Swisher this week, Scaringe once again reiterated those thoughts, while simultaneously touting a “great ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 04:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/planned-saudi-the-line-170km-megacity-for-9-million-people-could-now-be-transformed-into-a-significantly-downscaled-and-redesigned-data-center" target="_blank" rel="noopener noreferrer">
+        Planned Saudi megacity &#39;The Line&#39;, designed for 9 million people across 170km, could be redesigned as a far smaller data center
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Saudi Arabia’s The Line project shifts from a massive residential city to an AI-focused industrial hub due to costs, climate, and fiscal pressures.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-links-windows-11-boot-failures-to-failed-december-2025-update/" target="_blank" rel="noopener noreferrer">
+        Microsoft links Windows 11 boot failures to failed December 2025 update
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft has linked recent reports of Windows 11 boot failures after installing the January 2026 updates to previously failed attempts to install the December 2025 security update, which left systems in an &#34;improper state.&#34; [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 03:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/apple-confirms-gemini-powered-siri-will-use-private-cloud-compute/" target="_blank" rel="noopener noreferrer">
+        Apple confirms Gemini-powered Siri will use Private Cloud Compute
+      </a>
+    </h3>
+    
+    
+    <p class="summary">During today’s fiscal Q1 2026 earnings call, Apple CEO Tim Cook and CFO Kevan Parekh fielded, albeit vaguely, questions regarding the recent deal to have Gemini power the next-gen Siri. Here’s what they said. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 03:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/29/the-iphone-just-had-its-best-quarter-ever/" target="_blank" rel="noopener noreferrer">
+        The iPhone just had its best quarter ever
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Growth in regions like China and India are credited with pushing Apple&#39;s phone sales higher than ever.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 03:27</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/29/guys-i-dont-think-tim-cook-knows-how-to-monetize-ai/" target="_blank" rel="noopener noreferrer">
+        Guys, I don’t think Tim Cook knows how to monetize AI
+      </a>
+    </h3>
+    
+    
+    <p class="summary">One intrepid Morgan Stanley analyst dared to ask how Apple will make money on its AI investments. The answer will not shock you.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 03:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/apple-looking-at-a-range-of-options-to-offset-rising-memory-prices/" target="_blank" rel="noopener noreferrer">
+        Apple ‘looking at a range of options’ to make up for skyrocketing memory prices
+      </a>
+    </h3>
+    
+    
+    <p class="summary">While the current worldwide memory constraints had minimal impact on Apple’s Q1 2026, the company expects Q2 to be a very different story. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 03:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/apple-just-reported-its-best-ever-quarter-for-iphone-sales-234135513.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Apple just reported its best-ever quarter for iPhone sales
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple shared its latest quarterly financial results today and the news is once again very, very good for the Cupertino company. The quarter ending December 27, 2025 marked &amp;amp;quot;the best-ever quarter&amp;amp;quot; for iPhones, which generated a record high revenue of nearly $85.27 billion for the business. ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/we-found-2-theaters-with-sold-out-melania-opening-day-screenings/" target="_blank" rel="noopener noreferrer">
+        We Found Two Theaters With Sold-Out ‘Melania’ Opening Day Screenings
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A WIRED analysis of nearly 1,400 Friday showtimes of Melania found only two with no tickets available. Both are before 3 pm.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 02:57</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/health/2026/01/having-that-high-deductible-health-plan-might-kill-you-literally/" target="_blank" rel="noopener noreferrer">
+        Having that high-deductible health plan might kill you, literally
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With ACA tax credits gone, more people are turning to high-deductible plans.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 02:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/website-hosting/namecheap-reveals-the-most-popular-tlds-of-2025-and-although-an-old-favorite-rules-the-roost-new-ai-challengers-are-coming" target="_blank" rel="noopener noreferrer">
+        Namecheap reveals the most popular TLDs of 2025 - and although an old favorite rules the roost, new AI challengers are coming
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Domain name registrar unveils some interesting stats on the most popular TLDs of 2025.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/space/2026/01/us-spy-satellite-agency-declassifies-high-flying-cold-war-listening-post/" target="_blank" rel="noopener noreferrer">
+        US spy satellite agency declassifies high-flying Cold War listening post
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The JUMPSEAT satellites loitered over the North Pole to spy on the Soviet Union.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 02:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/cameras/camera-accessories/hohem-isteady-mt3-pro-review" target="_blank" rel="noopener noreferrer">
+        I&#39;ve finally found the only gimbal I need — here&#39;s why the Hohem iSteady MT3 Pro is my go-to stabilizer for every camera I own
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Hohem iSteady MT3 Pro is a versatile gimbal that can stabilize most cameras, including phones, and offers some fantastic features.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ai/amazon-discovered-a-high-volume-of-csam-in-its-ai-training-data-but-isnt-saying-where-it-came-from-224749228.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Amazon discovered a &#39;high volume&#39; of CSAM in its AI training data but isn&#39;t saying where it came from
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The National Center for Missing and Exploited Children said it received more than 1 million reports of AI-related child sexual abuse material (CSAM) in 2025. The &amp;amp;quot;vast majority&amp;amp;quot; of that content was reported by Amazon, which found the material in its training data, according to an investiga...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/29/elon-musk-spacex-tesla-xai-merger-talks-ipo-reuters/" target="_blank" rel="noopener noreferrer">
+        Elon Musk’s SpaceX, Tesla, and xAI in talks to merge, according to reports
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This merger would bring the Grok chatbot, Starlink satellites, and SpaceX rockets together under one corporation.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 02:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/gadgets/2026/01/windows-11-has-hit-1-billion-users-just-a-hair-faster-than-windows-10-did/" target="_blank" rel="noopener noreferrer">
+        People complaining about Windows 11 hasn&#39;t stopped it from hitting 1 billion users
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Windows 11 clears a milestone as Windows 10 continues its slow fade.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 02:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/ai-is-entering-its-next-frontier-the-foundation-of-the-ai-industrial-revolution-nvidia-confirms-coreweave-will-be-among-the-first-to-get-vera-rubin-chips-as-it-doubles-down-on-financial-commitments" target="_blank" rel="noopener noreferrer">
+        &#39;AI is entering its next frontier... the foundation of the AI industrial revolution&#39;: Nvidia confirms CoreWeave will be among the first to get Vera Rubin chips as it doubles down on financial commitments
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nvidia expands its CoreWeave partnership with capital investment, early access to Vera Rubin, and deeper coordination on large-scale AI factory construction.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/uncanny-valley-podcast-ice-minneapolis-tiktok-moltbot/" target="_blank" rel="noopener noreferrer">
+        ‘Uncanny Valley’: Minneapolis Misinformation, TikTok’s New Owners, and Moltbot Hype
+      </a>
+    </h3>
+    
+    
+    <p class="summary">On this episode of Uncanny Valley, we dive into the news that&#39;s held our attention this week: ICE activity as it&#39;s been unfolding in Minnesota.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 01:49</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/870422/data-center-ai-gas-power-surge" target="_blank" rel="noopener noreferrer">
+        It’s a new heyday for gas thanks to data centers
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The US is now leading a global surge in new gas power plants being built in large part to satisfy growing energy demand for data centers. And more gas means more planet-heating pollution. Gas-fired power generation in development globally rose by 31 percent in 2025. Almost a quarter of that added ca...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 01:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/29/amazon-is-reportedly-in-talks-to-invest-50-billion-in-openai/" target="_blank" rel="noopener noreferrer">
+        Amazon is reportedly in talks to invest $50B in OpenAI
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If a deal materializes, it would mean Amazon is backing competing startups in the race for AI supremacy.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:41</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/bring-the-beach-to-work-i-found-34-ocean-inspired-upgrades-that-turn-your-home-office-into-a-seaside-sanctuary" target="_blank" rel="noopener noreferrer">
+        Bring the beach to work: I found 34 ocean-inspired upgrades that turn your home office into a seaside sanctuary
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Beautiful office decor for beach-lovers.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/hugging-face-abused-to-spread-thousands-of-android-malware-variants/" target="_blank" rel="noopener noreferrer">
+        Hugging Face abused to spread thousands of Android malware variants
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A new Android malware campaign is using the Hugging Face platform as a repository for thousands of variations of an APK payload that collects credentials for popular financial and payment services. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 01:38</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/ivanti-warns-of-two-epmm-flaws-exploited-in-zero-day-attacks/" target="_blank" rel="noopener noreferrer">
+        Ivanti warns of two EPMM flaws exploited in zero-day attacks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ivanti has disclosed two critical vulnerabilities in Ivanti Endpoint Manager Mobile (EPMM), tracked as CVE-2026-1281 and CVE-2026-1340, that were exploited in zero-day attacks. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 01:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/ai/2026/01/how-often-do-ai-chatbots-lead-users-down-a-harmful-path/" target="_blank" rel="noopener noreferrer">
+        How often do AI chatbots lead users down a harmful path?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Anthropic&#39;s latest paper on &#34;user disempowerment&#34; has some troubling findings.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 01:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/130-inch-tvs-vs-the-projector-2026s-giant-tv-launches-point-to-a-new-living-room-battle" target="_blank" rel="noopener noreferrer">
+        130-inch TVs vs the projector: 2026&#39;s giant TV launches point to a new living-room battle
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Choosing between a giant TV and a home theater projector is about to get a lot harder…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/870319/apple-iphone-best-revenue-ai-q1-2026" target="_blank" rel="noopener noreferrer">
+        Apple just had a record-breaking iPhone quarter
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple says the iPhone had its &#34;best-ever&#34; quarter, with revenue hitting more than $85.3 billion over the past few months. The company announced the news as part of its Q1 2026 earnings report, which also revealed record-breaking revenue of $143.8 billion, up 16 percent when compared to the same time...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 01:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/29/medium-gives-employees-friday-off-to-participate-in-national-strike-protesting-ice/" target="_blank" rel="noopener noreferrer">
+        Medium gives employees Friday off to participate in national strike protesting ICE
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Activists behind the general strike are calling for &#34;no work, no school, and no shopping&#34; amid a push to defund ICE, which has escalated raids in U.S. cities, killing several people, including two U.S. citizens earlier this month in Minneapolis.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 01:19</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/apple-reveals-it-has-2-5-billion-active-devices-around-the-world/" target="_blank" rel="noopener noreferrer">
+        Apple reveals it has 2.5 billion active devices around the world
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple just reported its best quarterly earnings ever, beating Wall Street expectations in large part due to “staggering” iPhone demand. Alongside its earnings report, the company has revealed it now has 2.5 billion active devices in use around the world. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/micron-does-its-bit-to-help-ease-global-chip-crisis-new-usd24-billion-singapore-facility-should-boost-nand-supply-worldwide-but-will-it-be-enough" target="_blank" rel="noopener noreferrer">
+        Micron looks to help ease global chip crisis - new $24 billion Singapore facility should boost NAND supply worldwide, but will it be enough?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Micron’s $24 billion Singapore expansion aims to boost NAND supply, though long lead times will limit near-term impact on shortages.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/happy-hour-575/" target="_blank" rel="noopener noreferrer">
+        Creator Studio bundle, AirTag 2, new Siri features coming soon
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Benjamin and Chance review the proposition of the Creator Studio bundle now it is finally available, as well as some weirdness in the choices made of the apps in it. Also, Benjamin has been using his new AirTags for the past couple days, and Bloomberg’s Mark Gurman suggests that the new Gemini Siri ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:08</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/apple-reports-record-breaking-q1-2026-earnings-apple-reports-record-breaking-q1-2026-earnings-143-7-billion-in-revenue-up-16xx-billion-in-revenue-up-xx/" target="_blank" rel="noopener noreferrer">
+        Apple reports record-breaking Q1 2026 earnings: $143.7 billion in revenue, up 16%
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple just had its biggest fiscal quarter ever, delivering on the promise it made last October during the Q4 2025 earnings call. In the quarter ended December 27, 2025, the company reported $143.7 billion in revenue, $42.09 in net profit, and $2.84 in earnings per share. Here’s the full breakdown. m...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/daily-january-29-2026/" target="_blank" rel="noopener noreferrer">
+        9to5Mac Daily: January 29, 2026 – M6 coming soon, more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Listen to a recap of the top stories of the day from 9to5Mac. 9to5Mac Daily is available on iTunes and Apple’s Podcasts app, Stitcher, TuneIn, Google Play, or through our dedicated RSS feed for Overcast and other podcast players. Sponsored by Stuff: Stuff helps you get everything out of your head an...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/altstore-announces-the-csam-store-checker/" target="_blank" rel="noopener noreferrer">
+        AltStore announces CSAM Store Checker app, pledges donations to anti-trafficking nonprofit
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AltStore developers Riley Testut and Shane Gill today announced CSAM Store Checker, an app that tracks app marketplaces where child sexual abuse material is available. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/29/microsoft-wont-stop-buying-ai-chips-from-nvidia-amd-even-after-launching-its-own-nadella-says/" target="_blank" rel="noopener noreferrer">
+        Microsoft won’t stop buying AI chips from Nvidia, AMD, even after launching its own, Nadella says
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Microsoft says its own chip leapfrogs those made by other cloud providers like Amazon and Google. But it needs more.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/big-tech/elon-musks-spacex-and-xai-are-reportedly-holding-merger-talks-211740150.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Elon Musk’s SpaceX and xAI are reportedly holding merger talks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Two Elon Musk companies are reportedly planning to merge. On Thursday, Reuters reported that SpaceX and xAI are holding merger talks ahead of a planned IPO. Part of their plan is to launch AI data centers into space (but unfortunately, only as far as Earth&#39;s orbit).Last week, it was reported that Mu...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/870416/tdm-neo-wireless-headphones-bluetooth-speaker-kickstarter-february" target="_blank" rel="noopener noreferrer">
+        The weirdest headphones at CES will launch on Kickstarter next month
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There&#39;s never a shortage of weird tech debuting at CES every year. A new company called Tomorrow Doesn&#39;t Matter, or TDM, announced a peculiar pair of headphones at the show earlier this month with a feature no one has tried before. The Neo headphones can be rolled up like a hedgehog which turns them...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:33</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/iphone-17-pro-to-play-key-role-in-offside-calls-in-brazils-top-soccer-league/" target="_blank" rel="noopener noreferrer">
+        iPhone 17 Pro to play key role in offside calls in Brazil’s top soccer league
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Maracanã Stadium was the first to install a 12-rig system containing 28 iPhone 17 Pro units that will help enable semi-automated offside calls. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/rumor-replay-new-siri-unveiling-iphone-18-pro-homepad-and-more/" target="_blank" rel="noopener noreferrer">
+        Rumor Replay: New Siri unveiling, iPhone 18 Pro, HomePad, and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This is Rumor Replay, a weekly column at 9to5Mac offering a quick rundown of the most recent Apple product rumors, with analysis and commentary. Today: Apple’s upcoming Siri unveiling, iPhone 18 Pro’s Dynamic Island, ‘HomePad’ update, and more. Here are this week’s Apple rumors. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ai/publishers-are-blocking-the-internet-archive-for-fear-ai-scrapers-can-use-it-as-a-workaround-204001754.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Publishers are blocking the Internet Archive for fear AI scrapers can use it as a workaround
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Internet Archive has often been a valuable resource for journalists, from it&#39;s finding records of deleted tweets or providing academic texts for background research. However, the advent of AI has created a new tension between the parties. A few major publications have begun blocking the nonprofi...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 00:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/29/fintech-firm-marquis-blames-hack-at-firewall-provider-sonicwall-for-its-data-breach/" target="_blank" rel="noopener noreferrer">
+        Fintech firm Marquis blames hack at firewall provider SonicWall for its data breach
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The fintech giant said it plans to &#34;seek recoupment of any expenses&#34; from its firewall provider SonicWall after a 2025 data breach exposed customer firewall configurations.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 00:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/google/2026/01/google-project-genie-lets-you-create-interactive-worlds-from-a-photo-or-prompt/" target="_blank" rel="noopener noreferrer">
+        Google Project Genie lets you create interactive worlds from a photo or prompt
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Project Genie lets you generate new worlds 60 seconds at a time, but only if you pay for AI Ultra.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:56</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/zut-alors-french-government-to-ditch-zoom-and-microsoft-teams-in-favor-of-homegrown-tech-following-security-and-snooping-fears" target="_blank" rel="noopener noreferrer">
+        Zut alors! French government to ditch Zoom and Microsoft Teams in favor of homegrown tech, following security and snooping fears
+      </a>
+    </h3>
+    
+    
+    <p class="summary">France will replace Microsoft Teams and Zoom with Visio, a domestic platform featuring AI tools and sovereign cloud hosting.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/635839/best-foldable-phone" target="_blank" rel="noopener noreferrer">
+        The best foldable phone you can buy
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A foldable phone isn’t for the faint of heart. They’re generally heavier, pricier, and have less capable cameras than a standard slab-style phone. They’re also still not as durable as regular smartphones, though they’re not nearly as fragile as they once were. In fact, thanks to Google, we finally h...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/apple-revises-app-store-pricing-and-payouts-in-select-countries-following-new-tax-rules/" target="_blank" rel="noopener noreferrer">
+        Apple revises App Store pricing and payouts in select countries following new tax rules
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple announced today that it is updating App Store pricing and developer proceeds in nine countries effective today, with additional pricing changes to follow next month. Here’s what’s changing. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/29/satya-nadella-insists-people-are-using-microsofts-copilot-ai-a-lot/" target="_blank" rel="noopener noreferrer">
+        Satya Nadella insists people are using Microsoft’s Copilot AI a lot
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With Microsoft spending many billions on data centers, and rumors that no one is using its AI, CEO Satya Nadella shared some usage numbers.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/apples-new-acquisition-could-solve-my-biggest-ai-problem/" target="_blank" rel="noopener noreferrer">
+        Apple’s new acquisition could solve my biggest AI problem
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has acquired Q.ai in a deal estimated around $2 billion. Though there’s still a lot we don’t know, some of the details surrounding Q.ai’s work have me very excited for the future of Apple’s AI and Siri offerings. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/best-movies-hbo-max-right-now/" target="_blank" rel="noopener noreferrer">
+        The 45 Best Movies on HBO Max Right Now (February 2026)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">One Battle After Another, The Smashing Machine, and Sinners are just a few of the movies you should be watching on HBO Max this month.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/tech-policy/2026/01/comcast-keeps-losing-customers-despite-price-guarantee-and-unlimited-data/" target="_blank" rel="noopener noreferrer">
+        Comcast keeps losing customers despite price guarantee and unlimited data
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Comcast overhauled Internet plans to stop customer losses. It isn&#39;t working yet.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:21</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/870380/elon-musk-space-x-xai-merger" target="_blank" rel="noopener noreferrer">
+        Elon Musk might merge SpaceX with Tesla or xAI
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Elon Musk-led SpaceX may merge with another company helmed by Elon Musk. Reuters initially reported Thursday that SpaceX and xAI are &#34;in discussions to merge&#34; ahead of SpaceX&#39;s IPO that&#39;s planned for later this year. The merger would help with SpaceX&#39;s plans to launch data centers into space, accord...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/heres-how-to-listen-live-to-apples-q1-2026-earnings-call/" target="_blank" rel="noopener noreferrer">
+        Here’s how to listen live to Apple’s Q1 2026 earnings call
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Later today, Apple will release its Q1 2026 earnings, which are expected to be the company’s best ever, per Tim Cook’s own expectations. Here’s how you can listen in live. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/google-disrupts-ipidea-residential-proxy-networks-fueled-by-malware/" target="_blank" rel="noopener noreferrer">
+        Google disrupts IPIDEA residential proxy networks fueled by malware
+      </a>
+    </h3>
+    
+    
+    <p class="summary">IPIDEA, one of the largest residential proxy networks used by threat actors, was disrupted earlier this week by Google Threat Intelligence Group (GTIG) in collaboration with industry partners. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 22:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/transportation/evs/waymo-begins-service-at-san-francisco-international-airport-192913050.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Waymo begins service at San Francisco International Airport
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As fans and media prepare to descend on the Bay Area for Super Bowl LX, what does a high-tech city like San Francisco do? Why, call in the robotaxis, of course. On Thursday, Alphabet&#39;s Waymo began offering fully autonomous rides at San Francisco International Airport (SFO).There are some limits. For...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/870353/apple-q-ai-acquisition-silent-speech" target="_blank" rel="noopener noreferrer">
+        Apple’s second biggest acquisition ever is an AI company that listens to ‘silent speech’
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple&#39;s biggest acquisition ever is still its $3 billion Beats buy in 2014, but now the second biggest deal is bringing in Q.ai, a four-year-old AI audio startup. Apple did not disclose the terms, but Financial Times reports that Apple is spending $2 billion on the company. It also mentioned Q.ai pa...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 22:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/tech-policy/2026/01/i-dont-fear-ken-paxton-nurse-vows-to-keep-shipping-abortion-pills-to-texas/" target="_blank" rel="noopener noreferrer">
+        She&#39;ll mess with Texas: Nurse keeps mailing abortion pills, despite Paxton lawsuit
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Texas sues Delaware nurse practitioner shipping out hundreds of abortion pills each month.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 22:49</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/867950/obsbot-tiny-3-lite-hands-on-impressions" target="_blank" rel="noopener noreferrer">
+        Obsbot’s new gimbal webcam doesn’t justify its $350 price
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Webcam company Obsbot recently launched two new gimbal-equipped webcams, the $349 Tiny 3 and the $199 Tiny 3 Lite. It claims that the priciest model is the smallest pan, tilt, zoom (PTZ) 4K webcam ever made, weighing 63 grams. Ironically, the Tiny 3 Lite is heavier and bigger. I&#39;ve been testing the ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 22:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/anti-ice-videos-are-getting-the-ai-fanfic-treatment-online/" target="_blank" rel="noopener noreferrer">
+        AI-Generated Anti-ICE Videos Are Getting the Fanfic Treatment
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Across Instagram and Facebook, AI-generated videos show people of color putting ICE agents in their place. Are they cathartic or just adding to a stew of misinformation?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 22:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/dating-apps-bumble-and-match-reportedly-hit-in-cyberattack" target="_blank" rel="noopener noreferrer">
+        Dating apps Bumble and Match reportedly hit in cyberattack - user data potentially stolen, here&#39;s what we know
+      </a>
+    </h3>
+    
+    
+    <p class="summary">ShinyHunters strike again, and this time they&#39;re targeting dating apps.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/science/2026/01/what-ice-fishing-can-teach-us-about-making-foraging-decisions/" target="_blank" rel="noopener noreferrer">
+        What ice fishing can teach us about making foraging decisions
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Social density increases likelihood of sticking with a location. Environmental factors had little influence.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/big-tech/apple-acquires-qai-for-a-reported-2-billion-190017949.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Apple acquires Q.ai for a reported $2 billion
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has acquired Israel-based startup Q.ai, a move that could provide a much-needed boost to the tech giant&#39;s capabilities in artificial intelligence. Although Apple has not disclosed terms of the deal, sources told Financial Times that the arrangement is reportedly valued at nearly $2 billion. If...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/pc-gaming/its-not-a-myth-capcom-has-fixed-monster-hunter-wilds-and-i-even-tested-it-to-find-out" target="_blank" rel="noopener noreferrer">
+        It&#39;s not a myth – Capcom has fixed Monster Hunter Wilds, and I even tested it to find out
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Capcom&#39;s Monster Hunter Wilds performance patch fixes the game&#39;s frustrating stuttering issues, but don&#39;t expect a miraculous frame rate hike.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/logical-intelligence-yann-lecun-startup-chart-new-course-agi/" target="_blank" rel="noopener noreferrer">
+        A Yann LeCun–Linked Startup Charts a New Path to AGI
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As the world’s largest companies pour hundreds of billions of dollars into large language models, San Francisco-based Logical Intelligence is trying something different in pursuit of AI that can mimic the human brain.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/01/29/apple-buys-israeli-startup-q-ai-as-the-ai-race-heats-up/" target="_blank" rel="noopener noreferrer">
+        Apple buys Israeli startup Q.ai as the AI race heats up
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Q.ai is an Israeli startup specializing in imaging and machine learning, particularly technologies that enable devices to interpret whispered speech and enhance audio in noisy environments.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 22:28</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ai/music-publishers-sue-anthropic-for-3-billion-over-flagrant-piracy-185459358.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Music publishers sue Anthropic for $3 billion over ‘flagrant piracy’
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A group of music publishers led by Concord Music Group and Universal Music Group are suing Anthropic, according to a report by Reuters. The suit accuses the AI company of illegally downloading more than 20,000 copyrighted songs, including sheet music, lyrics and compositions. These songs were then a...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/anker-soundcore-aeroclip-deal-126/" target="_blank" rel="noopener noreferrer">
+        Our Favorite Open Earbuds Are $60 Off
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Anker Soundcore Aeroclip earbuds boast great sound without cutting you off from the outside world.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 22:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/01/29/apple-wont-sell-you-its-in-store-display-accessories-but-you-can-buy-them-here/" target="_blank" rel="noopener noreferrer">
+        Apple won’t sell you its in-store display accessories, but you can buy them here
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Have you ever wished you could buy the stand or charger used to display the iPhone and other products inside Apple Stores? A website called AppleUnsold might be the best way to do that. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/news/868238/prediction-markets-polymarket-kalshi-robinhood" target="_blank" rel="noopener noreferrer">
+        Everything is gambling now: the latest news on prediction markets like Polymarket and Kalshi
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Prediction markets will let you bet on just about anything, from how many tweets Elon Musk will post this week to the next president of the United States, with predictions sometimes showing shockingly (or suspiciously) spot-on accuracy. Polymarket’s CEO Shayne Copland has even claimed that predictio...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 22:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://thehackernews.com/2026/01/researchers-find-175000-publicly.html" target="_blank" rel="noopener noreferrer">
+        Researchers Find 175,000 Publicly Exposed Ollama AI Servers Across 130 Countries
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A new joint investigation by SentinelOne SentinelLABS, and Censys has revealed that the open-source artificial intelligence (AI) deployment has created a vast &#34;unmanaged, publicly accessible layer of AI compute infrastructure&#34; that spans 175,000 unique Ollama hosts across 130 countries. These system...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Hacker News</span>
+      
+      
+      
+      <span class="time">🕒 22:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/ai/googles-project-genie-lets-you-generate-your-own-interactive-worlds-183646186.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Google&#39;s Project Genie lets you generate your own interactive worlds
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This past summer, Google DeepMind debuted Genie 3. It’s what’s known as a world world, an AI system capable of generating images and reacting as the user moves through the environment the software is simulating. At the time, DeepMind positioned Genie 3 as a tool for training AI agents. Now, it’s mak...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/top-antivirus-hacked-to-push-out-a-malicious-update-find-out-if-youre-affected" target="_blank" rel="noopener noreferrer">
+        Top antivirus hacked to push out a malicious update - find out if you&#39;re affected
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Popular antivirus program eScan was used as a malware launchpad, deploying a backdoor to a small subset of users.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/security/2026/01/county-pays-600000-to-pentesters-it-arrested-for-assessing-courthouse-security/" target="_blank" rel="noopener noreferrer">
+        County pays $600,000 to pentesters it arrested for assessing courthouse security
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Settlement comes more than 6 years after Gary DeMercurio and Justin Wynn&#39;s ordeal began.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 22:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/health-fitness/smartwatches/the-garmin-venu-x1-is-back-down-to-its-lowest-ever-price-with-25-percent-shaved-off-garmins-slimmest-smartwatch" target="_blank" rel="noopener noreferrer">
+        The Garmin Venu X1 is back down to its lowest-ever price, with 25% shaved off Garmin&#39;s slimmest smartwatch
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Save a fat $200 on a slim Garmin Venu X1 — at this price, I&#39;d get it over an Apple Watch Ultra 3.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:41</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2026-01-30 06:30 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
