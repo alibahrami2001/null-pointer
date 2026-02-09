@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for February 09, 2026</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/ai-artificial-intelligence/875615/openai-super-bowl-ai-hardware-leak-hoax-fake" target="_blank" rel="noopener noreferrer">
+        OpenAI’s supposedly ‘leaked’ Super Bowl ad with ear buds and a shiny orb was a hoax
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As if OpenAI didn&#39;t have enough drama around the Super Bowl and advertising, as the game wound down, word spread of a &#34;leaked&#34; ad that actually wasn&#39;t leaked at all; it was just a fake. Screenshots of a now-deleted Reddit thread told the tale of a frustrated employee who, while posting about how ups...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 08:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/turning-point-usas-halftime-show-was-exactly-what-youd-expect/" target="_blank" rel="noopener noreferrer">
+        Turning Point USA’s Halftime Show Was Exactly What You’d Expect
+      </a>
+    </h3>
+    
+    
+    <p class="summary">“The All-American Halftime Show,&#34; born out of outrage over Bad Bunny&#39;s Super Bowl performance, fell short of the hype. From Kid Rock’s poor lip synching to Erika Kirk being MIA, it was simply dull.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 08:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/american-football/super-bowl-2026-replay" target="_blank" rel="noopener noreferrer">
+        Super Bowl 2026 replay — how to watch Patriots vs Seahawks full game and highlights for free
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Super Bowl 2026 sees the New England Patriots face the Seattle Seahawks. Here&#39;s everything you need to know to watch Super Bowl LX full-game replays and highlights.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 07:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/entertainment/olympics-2026-how-to-watch-schedule-of-events-and-everything-else-you-need-to-know-about-the-winter-games-172409755.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Olympics 2026: How to watch, schedule of events, and everything else you need to know about the Winter Games
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Milano Cortina 2026 Winter Olympics are coming up. (Mattia Ozbot/Getty Images) Mattia Ozbot via Getty Images The 2026 Winter Olympics are taking place in Italy this year, with all the action taking place in Milan and the Alpine city of Cortina. This year marks the fourth time Italy has hosted th...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 06:46</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/bad-bunny-super-bowl-halftime-show-behind-the-scenes/" target="_blank" rel="noopener noreferrer">
+        Inside Bad Bunny’s Historic Super Bowl Halftime Show
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Bad Bunny’s Super Bowl performance required 9,852 theatrical pyrotechnics, nearly 400 costumed extras, and a lot of ingenuity. And yes, that was a real couple featured in the wedding.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 06:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/entertainment/streaming/how-to-watch-the-2026-super-bowl-on-nbc-live-updates-on-patriots-vs-seahawks-where-to-stream-super-bowl-lx-channel-start-time-halftime-show-and-more-details-182758815.html?src=rss" target="_blank" rel="noopener noreferrer">
+        How to watch the 2026 Super Bowl on NBC: Live updates on Patriots vs. Seahawks, where to stream Super Bowl LX, channel, start time, halftime show and more details
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Super Bowl Sunday has arrived. Today, the New England Patriots and Seattle Seahawks will face off for Super Bowl 60. The Big Game is being played at Levi&#39;s Stadium in Santa Clara, CA, and kicks off at 6:30PM ET. Pre-game coverage for the 2026 NFL Championship Game starts at 12PM ET. Like all Sunday ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 05:17</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/american-football/theres-a-simple-way-to-watch-bad-bunny-for-free" target="_blank" rel="noopener noreferrer">
+        There&#39;s a simple way to watch Bad Bunny for FREE - replay halftime show now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There&#39;s a simple way to watch Bad Bunny for free – live stream Halftime Show at the Super Bowl 2026 including special guests.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/entertainment/a24-and-glen-powell-are-reviving-the-texas-chainsaw-massacre-as-a-tv-show-and-its-got-me-revved-up-for-all-of-the-wrong-reasons" target="_blank" rel="noopener noreferrer">
+        A24 and Glen Powell are reviving The Texas Chainsaw Massacre as a TV show — and it&#39;s got me revved up for all of the wrong reasons
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Texas Chainsaw Massacre is an iconic horror movie, but does it really need another adaptation?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/entertainment/874504/super-bowl-lx-ads-big-game" target="_blank" rel="noopener noreferrer">
+        Super Bowl LX ads: all AI everything
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Super Bowl LX is nearly here, with the Seattle Seahawks taking on the New England Patriots. While Bad Bunny will be the star of the halftime show, AI could be the star of the commercial breaks, much like crypto was a few years ago. Last year’s Super Bowl featured a Google Gemini ad that fumbled [&amp;amp;#8...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 03:28</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/entertainment/streaming/how-to-stream-the-2026-super-bowl-for-free-tonight-patriots-vs-seahawks-time-where-to-watch-super-bowl-lx-start-time-halftime-show-and-more-124512549.html?src=rss" target="_blank" rel="noopener noreferrer">
+        How to stream the 2026 Super Bowl for free tonight: Patriots vs. Seahawks time, where to watch Super Bowl LX, start time, halftime show and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The 2026 Super Bowl between the New England Patriots and the Seattle Seahawks will air on NBC today, Feb. 8, at 6:30PM ET/3:30PM PT. The Big Game is also streaming live on Peacock. If you no longer subscribe to cable, don&#39;t have access to NBC over the air and aren&#39;t currently signed up for Peacock, ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 03:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/culture/2026/02/a-project-hail-mary-final-trailer-yes-please/" target="_blank" rel="noopener noreferrer">
+        A Project Hail Mary final trailer? Yes please
+      </a>
+    </h3>
+    
+    
+    <p class="summary">&#34;There are infinite possibilities for this to go wrong.&#34;</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 02:56</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/health-fitness/smartwatches/8-fitness-features-hiding-in-your-smartwatch-that-youll-actually-use" target="_blank" rel="noopener noreferrer">
+        8 fitness features hiding in your smartwatch that you’ll actually use
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Get the most out of your smartwatch with these simple tricks</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/football/super-bowl-2026-anywhere-free-deal" target="_blank" rel="noopener noreferrer">
+        How to watch Super Bowl 2026 from anywhere in the world for free with this VPN deal
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Here&#39;s how to watch the Super Bowl 2026 for free from anywhere in the world with this mega VPN deal.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:28</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/streaming/875511/youtube-music-lyrics-paywall" target="_blank" rel="noopener noreferrer">
+        YouTube Music starts putting lyrics behind a paywall
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Free YouTube Music accounts are now seeing their access to lyrics limited, according to multiple reports. Google started testing lyrics as an exclusive feature for Premium users in September, but it appears that it&#39;s now receiving a wider rollout. It seems that free users will be limited to viewing ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 02:25</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/02/08/amazons-melania-documentary-stumbles-in-second-weekend/" target="_blank" rel="noopener noreferrer">
+        Amazon’s ‘Melania’ documentary stumbles in second weekend
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After a better-than-expected opening weekend in theaters, box office for Amazon’s “Melania”fell 67%.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 02:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/sport/super-bowl-lx-2026-stream-it-free-in-the-us" target="_blank" rel="noopener noreferrer">
+        Super Bowl LX 2026 — stream it *FREE* in the US
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Here&#39;s a quick guide on how to watch NBC&#39;s live coverage of Super Bowl LX for free in the US.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/ultrafast-wi-fi-8-switches-and-access-points-on-the-way-as-broadcom-unveils-new-chipsets-but-dont-get-rid-of-your-wi-fi-7-gear-just-yet" target="_blank" rel="noopener noreferrer">
+        Ultrafast Wi-Fi 8 switches and access points on the way as Broadcom unveils new chipsets - but don&#39;t get rid of your Wi-Fi 7 gear just yet
+      </a>
+    </h3>
+    
+    
+    <p class="summary">New Broadcom Wi-Fi 8 access point and Trident X3+ switch chips support wired and wireless telemetry with real-time network data collection.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/entertainment/tv-movies/the-final-trailer-for-project-hail-mary-is-here-and-its-an-emotional-ride-213444765.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The final trailer for Project Hail Mary is here and it&#39;s an emotional ride
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon MGM just released the final trailer for its upcoming film starring Ryan Gosling, Project Hail Mary, and it provides our first good look at his five-legged alien co-star, Rocky. The movie adapts a 2021 Andy Weir (The Martian) novel of the same name, and follows Dr. Ryland Grace, a scientist wh...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:04</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/watch-super-bowl-on-channel-5-its-free" target="_blank" rel="noopener noreferrer">
+        How to watch Super Bowl on Channel 5 (it&#39;s free)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Here&#39;s our guide on how to watch Super Bowl on Channel 5 for free from anywhere in the world.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/ai-artificial-intelligence/875501/new-york-is-considering-two-bills-to-rein-in-the-ai-industry" target="_blank" rel="noopener noreferrer">
+        New York is considering two bills to rein in the AI industry
+      </a>
+    </h3>
+    
+    
+    <p class="summary">New York&#39;s state legislature is set to consider a pair of bills that would require labels on AI-generated content and would put a three-year pause on new data center construction. The New York Fundamental Artificial Intelligence Requirements in News Act (NY FAIR News Act, for short) would require th...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 00:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/american-football/-sneaky-way-to-watch-super-bowl-2026-free" target="_blank" rel="noopener noreferrer">
+        There&#39;s a sneaky way to watch the Super Bowl 2026 for free (full replay)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">All the ways to watch Super Bowl 2026 streams for FREE from anywhere, as the New England Patriots took on the Seattle Seahawks.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/smart-home/3-reasons-why-you-shouldnt-sleep-on-these-usd6-gbp3-smart-switches-theyre-the-understated-hit-of-ikeas-new-gadget-range" target="_blank" rel="noopener noreferrer">
+        3 reasons why you shouldn&#39;t sleep on these $6 / £3 smart switches – they&#39;re the understated hit of IKEA&#39;s new gadget range
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Exclusive: &#39;There are situations when you don’t want to pick up your phone, open an app, and tap through menus to steer your smart product.&#39;</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/we-watched-the-berlin-wall-fall-on-this-tv-guatemelan-family-shocks-samsung-by-trading-in-their-indestructible-39-year-old-crt-tv-for-a-new-lcd-calling-it-a-real-workhorse" target="_blank" rel="noopener noreferrer">
+        ‘We watched the Berlin wall fall on this TV’: Guatemelan family shocks Samsung by trading in their indestructible 39-year-old CRT TV for a new LCD, calling it ‘a real workhorse’
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A Guatemalan family recently stunned Samsung by trading in their 39-year-old &#34;workhorse&#34; CRT TV for a new LCD –and started a journey that&#39;s seen the set become an exhibit at the company&#39;s HQ.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/american-football/super-bowl-2026-7plus-free" target="_blank" rel="noopener noreferrer">
+        How to watch Super Bowl on 7Plus (it&#39;s free)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Here&#39;s our guide on how to watch Super Bowl on 7Plus for free from anywhere in the world.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/atts-budget-friendly-phone-for-kids-was-designed-with-parental-controls-in-mind-202200139.html?src=rss" target="_blank" rel="noopener noreferrer">
+        AT&amp;amp;T&#39;s budget-friendly phone for kids was designed with parental controls in mind
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It might be near impossible to be a kid these days without a smartphone, but AT&amp;amp;amp;T wants to offer parents a decent compromise. The wireless carrier launched its AmiGO Jr. Phone, which combines Samsung hardware and AT&amp;amp;amp;T&#39;s app, to offer kids a smartphone that has parental controls baked right i...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/02/08/crypto-com-places-70m-bet-on-ai-com-domain-ahead-of-super-bowl/" target="_blank" rel="noopener noreferrer">
+        Crypto.com places $70M bet on AI.com domain ahead of Super Bowl
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The purchase rewrites the domain record books -- not that the crypto industry has ever been accused of restraint when it comes to spending.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:49</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/the-new-kirby-air-riders-update-is-an-absolute-game-changer-and-it-took-me-right-back-to-the-nintendo-ds-glory-days" target="_blank" rel="noopener noreferrer">
+        The new Kirby Air Riders update is an absolute game-changer, and it took me right back to the Nintendo DS glory days
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I love the new Kirby Air Riders update, especially with the inclusion of this excellent multiplayer feature.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/american-football/super-bowl-2026-halftime-show-bad-bunny" target="_blank" rel="noopener noreferrer">
+        How to watch Super Bowl 2026 halftime show — live stream Bad Bunny performance from anywhere
+      </a>
+    </h3>
+    
+    
+    <p class="summary">All the ways to watch Super Bowl 2026 halftime show live streams for FREE from anywhere, with Bad Bunny performing at the Levi&#39;s Stadium in Santa Clara.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/02/08/okay-im-slightly-less-mad-about-that-magnificent-ambersons-ai-project/" target="_blank" rel="noopener noreferrer">
+        Okay, I’m slightly less mad about that ‘Magnificent Ambersons’ AI project
+      </a>
+    </h3>
+    
+    
+    <p class="summary">But this is still a bad idea.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 23:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/computing/we-may-see-apples-new-ipads-and-macbooks-in-only-a-matter-of-weeks-192953977.html?src=rss" target="_blank" rel="noopener noreferrer">
+        We may see Apple&#39;s new iPads and MacBooks in only a matter of weeks
+      </a>
+    </h3>
+    
+    
+    <p class="summary">It&#39;s about that time. Apple is gearing up for a slew of hardware announcements that will include upgrades for the entry-level iPad, iPad Air, MacBook Pro and MacBook Air, according to Mark Gurman&#39;s Power On newsletter. In line with what we&#39;ve seen in recent years, Gurman reports, &amp;amp;quot;A product lau...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/you-can-control-your-pc-from-almost-anywhere-in-the-world-with-this-5g-remote-kvm-that-even-has-a-touchscreen-and-a-hdmi-port" target="_blank" rel="noopener noreferrer">
+        You can control your PC from almost anywhere in the world with this 5G remote KVM - and it even has a touchscreen and a HDMI port
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Comet 5G combines Wi-Fi 6, 5G RedCap, touchscreen, and multi-network failover to ensure reliable remote KVM control everywhere.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/pc/steam-now-lets-developers-display-the-exact-date-of-when-their-game-leaves-early-access-190413701.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Steam now lets developers display the exact date of when their game leaves Early Access
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Steam is adding a little more transparency when it comes to Early Access games. Announced in a blog post, Steam introduced a new feature for game developers to add the exact date of when their game would leave Early Access and see a version 1.0 launch. According to Steam, this feature stems from dev...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 22:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/mealboard" target="_blank" rel="noopener noreferrer">
+        Move Over, BigOven: MealBoard is my new kitchen essential
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Homescreen Heroes: MealBoard has taken all the stress out of meal planning and grocery shopping</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/the-iphone-17e-will-reportedly-bring-some-key-upgrades-without-raising-the-price-174154577.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The iPhone 17e will reportedly bring some key upgrades without raising the price
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple is keeping the entry level for iPhones at $599, according to Bloomberg&#39;s Mark Gurman. In the latest Power On report, Gurman said that the iPhone 17e is &amp;amp;quot;due imminently&amp;amp;quot; and will keep the same price as its predecessor. Considering we’re about a year away from the iPhone 16e’s announce...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 21:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/entertainment/875469/mandy-indiana-urgh-review" target="_blank" rel="noopener noreferrer">
+        You need to listen to the new Mandy, Indiana record: URGH
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Often, I focus on recommending older media that isn&#39;t currently getting a ton of attention. But this week, I can&#39;t stop listening to the new Mandy, Indiana album long enough to even think about anything else. It&#39;s early still, obviously, but URGH is my favorite release of 2026 so far. The band that ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 21:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/spotify/cant-escape-the-ai-slop-here-are-3-handy-ways-to-spot-ai-generated-music-in-spotify-and-what-you-can-do-to-report-it" target="_blank" rel="noopener noreferrer">
+        Can’t escape the AI slop? Here are 3 handy ways to spot AI-generated music in Spotify, and what you can do to report it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">AI-generated music is plaguing Spotify for some users, but there are things you can do to spot it.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/live/super-bowl-2026-free" target="_blank" rel="noopener noreferrer">
+        Super Bowl 2026 REPLAY: watch Patriots vs Seahawks free
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Here&#39;s where to watch Super Bowl 2026 replays online from anywhere as Seahawks beat Patriots in Santa Calara.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/amazon-is-celebrating-the-super-bowl-by-slashing-prices-on-big-screen-tvs-shop-my-9-favorite-deals-from-usd349-99" target="_blank" rel="noopener noreferrer">
+        Amazon is celebrating the Super Bowl by slashing prices on big-screen TVs - shop my 9 favorite deals from $349.99
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon is celebrating the Super Bowl today by offering stunningly low prices on big-screen TVs from brands like Samsung, Sony, LG, and TCL, starting at just $349.99.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/02/08/techcrunch-mobility-is-16b-enough-to-build-a-profitable-robotaxi-business/" target="_blank" rel="noopener noreferrer">
+        TechCrunch Mobility: Is $16B enough to build a profitable robotaxi business?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Welcome back to TechCrunch Mobility — your central hub for news and insights on the future of transportation.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 20:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/02/08/san-franciscos-pro-billionaire-march-draws-dozens/" target="_blank" rel="noopener noreferrer">
+        San Francisco’s pro-billionaire march draws dozens
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A march supporting California’s billionaires didn’t exactly draw a huge crowd on Saturday.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 20:19</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/get-ready-for-out-of-this-world-selfies-nasa-says-astronauts-can-now-take-their-own-phones-with-them-to-space" target="_blank" rel="noopener noreferrer">
+        Get ready for out of this world selfies - NASA says astronauts can now take their own phones with them to space
+      </a>
+    </h3>
+    
+    
+    <p class="summary">NASA will allow astronauts to use personal smartphones, reshaping how missions are documented and shared publicly.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 19:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/02/08/super-bowl-60-ai-ads-svedka-anthropic-brands-commercials/" target="_blank" rel="noopener noreferrer">
+        From Svedka to Anthropic, brands make bold plays with AI in Super Bowl ads
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From the first AI-generated Big Game ad courtesy of Svedka to Anthropic&#39;s beef with OpenAI, here are the biggest ads from Super Bowl LX.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 19:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/08/apple-tv-users-get-2-month-peacock-including-super-bowl-and-olympics/" target="_blank" rel="noopener noreferrer">
+        Apple TV users get $2/month Peacock, including Super Bowl and Olympics
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Peacock is home to two of the biggest TV events of the year: the Super Bowl and the Olympics. And if you’re an Apple TV subscriber, you can add on Peacock for only $2/month. Here are the details. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 19:41</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/3d-printing/3d-printing-with-one-of-the-worlds-hardest-tungsten-based-materials-is-now-possible-materials-incredible-hardness-made-it-difficult-to-additively-manufacture" target="_blank" rel="noopener noreferrer">
+        3D printing with one of the world’s hardest Tungsten-based materials is now possible — material’s incredible hardness made it difficult to additively manufacture
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Scientists based at Hiroshima University have devised a novel way of 3D printing with one of hardest engineering materials used by industry.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 19:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/gaming-accessories/razer-wont-make-the-gaming-chair-of-my-dreams-a-reality-but-the-dx-racer-martian-pro-proves-it-should" target="_blank" rel="noopener noreferrer">
+        Razer won’t make the gaming chair of my dreams a reality — but the DXRacer Martian Pro proves it should
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Razer hasn&#39;t made Project Arielle real, but the DX Racer Martian Pro proves it should.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 19:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/distinctive-hyte-x50-mid-tower-case-drops-to-a-usd129-99-all-time-low-on-amazon-premium-curved-glass-chassis-with-top-tier-airflow-goes-on-sale" target="_blank" rel="noopener noreferrer">
+        Distinctive Hyte X50 mid-tower case drops to a $129.99 all-time low on Amazon — premium, curved-glass, chassis with top-tier airflow goes on sale
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The X50 combines eye-catching curved aesthetics with practical features like extensive fan support, large GPU clearance, and excellent noise-normalized thermal performance.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 19:15</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/08/apple-ipad-and-ipad-air-refresh-coming-soon-new-chips/" target="_blank" rel="noopener noreferrer">
+        New iPad and iPad Air models should be launching soon, but don’t get too excited
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has two new iPad models slated for early in the year: a new base iPad with A18 chip, and a new iPad Air with an M4 chip. While Apple product launches can often sound exciting, there might not be too much more to the story for these iPad models. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 18:57</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/new-tool-blocks-imposter-attacks-disguised-as-safe-commands/" target="_blank" rel="noopener noreferrer">
+        New tool blocks imposter attacks disguised as safe commands
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A new open-source and cross-platform tool called Tirith can detect homoglyph attacks over command-line environments by analyzing URLs in typed commands and stopping their execution. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 18:56</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/875454/iphone-17e-launching-soon-magsafe-a19" target="_blank" rel="noopener noreferrer">
+        The iPhone 17e could launch soon with MagSafe and an A19 chip
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Almost exactly one year after launching the iPhone 16e, Apple is preparing to launch the 17e, according to Mark Gurman. The iPhone 17e will feature an upgraded A19 chip from the iPhone 17 lineup, plus MagSafe charging, and move Apple&#39;s in-house cellular chips. Just as importantly, the company appare...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 18:56</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/case-mods/this-xbox-one-s-mod-hides-a-full-windows-gaming-pc-within-the-original-shell-sleek-design-retains-a-working-optical-drive" target="_blank" rel="noopener noreferrer">
+        This Xbox One S mod hides a full Windows gaming PC within the original shell — sleek design retains a working optical drive
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ambitious project shows how thoughtful part selection and clean engineering can turn a game console into a functional living-room PC.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 18:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/862070/lcars-homes-assistant-star-trek" target="_blank" rel="noopener noreferrer">
+        How I Built the Star Trek control panel of my dreams
+      </a>
+    </h3>
+    
+    
+    <p class="summary">One of my pandemic hobbies that stuck was home automation. I discovered Home Assistant - the popular open source, extremely customizable home automation platform - and all the intricate things you can do with it to make your home work better. I have ADHD and have found Home Assistant to be a valuabl...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/874842/gulikit-hyperlink-gen2-usb-adapter-wireless-switch-2-hands-on" target="_blank" rel="noopener noreferrer">
+        GuliKit’s tiny USB dongle lets you connect your PS5 controller to your Switch 2
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Dongles have a well-earned reputation for being a nuisance. They&#39;re often costly and annoying to deal with, but for gamers, there&#39;s one that I love to recommend that&#39;s neither. 8BitDo&#39;s $20 USB Adapter 2 lets you wirelessly link controllers to the Switch 2 that would otherwise be unsupported, like t...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/nyt-connections-today-answers-hints-9-february-2026" target="_blank" rel="noopener noreferrer">
+        NYT Connections hints and answers for Monday, February 9 (game #974)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Connections answers and hints? Here&#39;s all you need to know to solve today&#39;s game, plus my commentary on the puzzles.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/nyt-strands-today-answers-hints-9-february-2026" target="_blank" rel="noopener noreferrer">
+        NYT Strands hints and answers for Monday, February 9 (game #708)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for NYT Strands answers and hints? Here&#39;s all you need to know to solve today&#39;s game, including the spangram.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/websites-apps/quordle-today-answers-clues-9-february-2026" target="_blank" rel="noopener noreferrer">
+        Quordle hints and answers for Monday, February 9 (game #1477)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for Quordle clues? We can help. Plus get the answers to Quordle today and past solutions.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/sunsetting-the-print-server-why-2026-is-the-year-to-finally-go-serverless" target="_blank" rel="noopener noreferrer">
+        Sunsetting the print server: why 2026 is the year to finally go serverless
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Legacy print servers have always carried costs; why you should eradicate them in 2026.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/tech/moflin-had-a-really-warm-and-fuzzy-moment-a-week-with-the-robot-pet-that-wriggled-and-squeaked-its-way-into-my-heart" target="_blank" rel="noopener noreferrer">
+        &#39;Moflin had a really warm and fuzzy moment&#39; – a week with the robot pet that wriggled and squeaked its way into my heart
+      </a>
+    </h3>
+    
+    
+    <p class="summary">How I learned to stop worrying and love Casio&#39;s affectionate AI guinea pig.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/08/these-are-my-early-2026-favorites-for-edc-iphone-tech-accessories/" target="_blank" rel="noopener noreferrer">
+        These are my early 2026 favorites for EDC iPhone tech accessories
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Lately, I’ve been leaning more and more into a sling-based EDC. As a techy husband and father of two, I constantly find myself needing more space than my pockets can hold, but not always wanting to bring an entire backpack. A cross-body sling (or fanny pack, as it was once called) has become the per...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 18:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-says-annas-archive-contact-does-not-show-pirated-books-were-used-to-train-its-ai" target="_blank" rel="noopener noreferrer">
+        Nvidia says it didn&#39;t use pirated books to train its AI models — company asking for Anna&#39;s Archive suit to be dismissed
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Nvidia is pushing back against claims that it trained AI models on pirated books, telling a federal court that alleged contact with Anna’s Archive doesn’t amount to proof of copyright infringement.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 18:11</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/08/iphone-17e-due-imminently-with-three-key-upgrades-no-price-change-report/" target="_blank" rel="noopener noreferrer">
+        iPhone 17e ‘due imminently’ with three key upgrades, no price change: report
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple’s next iPhone launch is expected to be one of its cheapest. With the new iPhone 17e, a follow up to last years first generation iPhone 16e – the company will add three important upgrades to the device, though one thing won’t be changing: the price. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 17:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/policy/875300/section-230-turns-30-social-media-addiction-cases-sunset" target="_blank" rel="noopener noreferrer">
+        Section 230 turns 30 as it faces its biggest tests yet
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Thirty years ago today, Section 230 of the Communications Decency Act, a bill credited with creating the groundwork for the modern internet, became law and set off a chain of events that would make it a lightning rod for the techlash. The statute has survived everything from the dot-com bubble to a ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/hulu/tell-me-lies-season-3-episode-7-release-date-time-disney-plus" target="_blank" rel="noopener noreferrer">
+        What is the release date for Tell Me Lies season 3 episode 7 on Hulu and Disney+?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Wrigley and Bree finally kissed last week, but what does that mean for Tell Me Lies season 3 episode 7, and when is it on Hulu and Disney+?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/storage/german-researchers-uncover-long-range-magnetic-textures-in-twisted-2d-magnets" target="_blank" rel="noopener noreferrer">
+        Key to ultra-dense next-gen data storage could be a new magnetic state found in twisted 2D materials — German researchers reveal &#39;super‑moiré&#39; magnetic milestone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Researchers have identified unusual magnetism in twisted, two-dimensional chromium triiodide, revealing long-range spin textures that extend beyond the material’s underlying moiré pattern.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 17:16</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/spotify/spotify-just-got-a-neat-upgrade-to-give-you-the-stories-behind-the-songs-but-it-looks-like-youtube-music-is-removing-a-key-feature-from-free-accounts" target="_blank" rel="noopener noreferrer">
+        Spotify just got a neat upgrade to give you the stories behind the songs – but it looks like YouTube Music is removing a key feature from free accounts
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There&#39;s good news if you&#39;re a Spotify Premium subscriber, but less good news if you&#39;re on the free YouTube Music tier.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/iphone/heres-how-i-optimize-my-iphones-battery-life-to-make-it-last-longer" target="_blank" rel="noopener noreferrer">
+        Here’s how I optimize my iPhone’s battery life to make it last longer
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Between various modes, automations, and settings, there are lots of tools I use to make my iPhone&#39;s battery go further.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 17:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/08/ios-26-4-heres-when-apple-will-release-the-first-beta/" target="_blank" rel="noopener noreferrer">
+        iOS 26.4: Here’s when Apple will release the first beta
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iOS 26.4 is set to be one of the most important updates ever for the iPhone, offering a suite of new Apple Intelligence and Siri features. A new report from Bloomberg today reveals Apple’s timeline for launching iOS 26.4. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 16:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/08/apple-m5-pro-m5-max-macbook-pro-new-launch-date/" target="_blank" rel="noopener noreferrer">
+        Report: M5 Pro and M5 Max MacBook Pro could launch ‘as early as’ March 2nd
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There’s been loads of speculation as to when the next generation MacBook Pros with high-end Apple Silicon would launch. Many thought January, then January came and went. All we knew is that they’d launch alongside macOS 26.3 – which should go out to the public in the coming days. However, that only ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 16:53</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/case-mods/retro-apple-mac-mod-implements-thermal-printer-floppy-swap-machine-also-benefits-from-a-mac-mini-brain-transplant" target="_blank" rel="noopener noreferrer">
+        Retro Apple Mac mod implements thermal printer floppy swap — machine also benefits from a Mac Mini brain transplant
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A retro computer enthusiast has fitted a thermal printer into an ancient Apple Macintosh Plus.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 16:47</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/best-wirefree-earbuds/" target="_blank" rel="noopener noreferrer">
+        Best Wireless Earbuds (2026): Apple, Sony, Bose, and More
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ready to cut the cord? These are our favorite buds that will never, ever get tangled.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 16:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/transportation/873197/digital-key-car-ccc-plugfest-rivian" target="_blank" rel="noopener noreferrer">
+        Digital car keys are getting more sophisticated
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Last month, over a dozen automobile and smartphone manufacturers gathered in Palo Alto, California, for the 16th annual &#34;Plugfest,&#34; hosted by the Car Connectivity Consortium (CCC) to test out the latest in digital key technology. Digital keys, which allow vehicle owners to lock, unlock, and start th...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/football/liverpool-vs-man-city-watch-premier-league-2025-26" target="_blank" rel="noopener noreferrer">
+        Liverpool vs Man City Live Streams: How to watch Premier League 2025-26 from anywhere
+      </a>
+    </h3>
+    
+    
+    <p class="summary">All the ways to watch Liverpool vs Man City live streams online and from anywhere, with Pep Guardiola&#39;s side looking to secure their first win at Anfield in the Premier League since 2003.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/ram/g-skill-trident-z5-neo-rgb-ddr5-6000-c34-2x64gb-review" target="_blank" rel="noopener noreferrer">
+        G.Skill Trident Z5 Neo RGB DDR5-6000 C34 2x64GB Review: The Sweet Spot For 128GB
+      </a>
+    </h3>
+    
+    
+    <p class="summary">G.Skill unleashed a big 128GB memory kit from its Trident Z5 Neo RGB lineup, explicitly designed for AMD Ryzen CPUs. Is it worth your hard-earned cash?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 16:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/puppy-bowl-2026" target="_blank" rel="noopener noreferrer">
+        How to watch Puppy Bowl 2026 online and stream from anywhere — date, TV channels, Super Bowl for dogs
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Adorable pups face off as Team Ruff battles Team Fluff. Here&#39;s how to watch Puppy Bowl 2026 online from anywhere.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/how-to-watch/american-football/super-bowl-2026-in-canada-free" target="_blank" rel="noopener noreferrer">
+        How to watch Super Bowl 2026 REPLAYS in Canada for *FREE*
+      </a>
+    </h3>
+    
+    
+    <p class="summary">How to watch Super Bowl in Canada for free, as the Seattle Seahawks take on the New England Patriots in the NFL championship game on Sunday, February 8</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/the-height-of-nonsense-oracle-co-founder-larry-ellisons-1987-argument-that-not-everything-should-be-ai-makes-perfect-sense-in-2026" target="_blank" rel="noopener noreferrer">
+        &#34;The height of nonsense&#34;: Oracle co-founder Larry Ellison’s 1987 argument that not everything should be AI makes perfect sense in 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Decades before the current AI boom, Oracle&#39;s Larry Ellison argued that applying AI to every problem was &#34;the height of nonsense.&#34;</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/the-shoes-and-brooms-transforming-curling-at-the-2026-winter-olympics/" target="_blank" rel="noopener noreferrer">
+        The Shoes and Brooms Transforming Curling at the 2026 Winter Olympics
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Halfway between chess and bocce, curling is experiencing an evolution thanks to technology. From brooms to stones to footwear, here’s everything you need to know about the game’s gadgets.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/best-ai-notetakers/" target="_blank" rel="noopener noreferrer">
+        4 Best AI Notetakers (2026), Tested and Reviewed
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A growing collection of pocket-sized gadgets lets you record your meetings and extract value from them. Here are our favorites.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/story/why-open-earbuds-are-my-favorite-new-category/" target="_blank" rel="noopener noreferrer">
+        I Have Fallen in Love With Open Earbuds (and You Should Too)
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From jogging and cycling to multitasking or puttering around the house, open earbuds are an excellent way to jam out in the real world.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 15:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/video-games/retro-gaming/developer-creates-real-time-3d-shader-demo-for-the-game-boy-color-you-can-download-the-rom-or-interact-with-the-3d-teapot-online" target="_blank" rel="noopener noreferrer">
+        Developer creates real-time 3D shader demo for the Game Boy Color — you can download the ROM or interact with the 3D teapot online
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A canny developer has managed to coax a Game Boy Color into running an interactive, user-controlled, real-time 3D shader demo.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 15:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.wired.com/gallery/best-vacuum-cleaner/" target="_blank" rel="noopener noreferrer">
+        Best Vacuum Cleaner (2026): Cordless Vacuums, Robot Vacuums, Dysons
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for all our top recommended vacuums? Here are our favorites in every style we’ve tested, from stick vacs to robot vacuums.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 WIRED</span>
+      
+      
+      
+      <span class="time">🕒 14:39</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2026-02-09 08:24 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
