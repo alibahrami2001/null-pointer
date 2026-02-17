@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Null Pointer</title>
+    <meta name="description" content="Automated feed of technology and cybersecurity news — updated daily" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0f0f;
+        --panel: #0f1414;
+        --txt: #c8facc;
+        --muted: #8cef95;
+        --accent: #00fff0;
+        --accent2: #39ff14;
+        --border: #123c2f;
+        --hover: rgba(0, 255, 240, 0.1);
+      }
+      
+      * {
+        box-sizing: border-box;
+        font-family: "JetBrains Mono", monospace;
+      }
+      
+      body {
+        margin: 0;
+        background: radial-gradient(
+            1200px 600px at 10% -20%,
+            rgba(0, 255, 240, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 120% 20%,
+            rgba(57, 255, 20, 0.06),
+            transparent
+          ),
+          var(--bg);
+        color: var(--txt);
+        line-height: 1.6;
+      }
+      
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      
+      a:hover {
+        text-shadow: 0 0 6px var(--accent);
+        color: var(--accent2);
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent2), var(--accent));
+        display: grid;
+        place-items: center;
+        color: #00110d;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 8px 30px rgba(0, 255, 180, 0.25);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      .title {
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+      
+      .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin: 4px 0 0 0;
+      }
+      
+      nav a {
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel);
+        transition: all 0.2s ease;
+      }
+      
+      nav a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+      
+      .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      
+      .day-header h2 {
+        margin: 0;
+        font-size: clamp(20px, 2.5vw, 28px);
+      }
+      
+      .stats {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 4px 12px;
+        background: rgba(0, 255, 240, 0.1);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+      }
+      
+      .item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #0b1211, #0a1010);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent2), var(--accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      .item:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 240, 0.15);
+      }
+      
+      .item:hover::before {
+        opacity: 1;
+      }
+      
+      .item h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      
+      .item h3 a {
+        color: var(--txt);
+        display: block;
+      }
+      
+      .item h3 a:hover {
+        color: var(--accent);
+      }
+      
+      .summary {
+        margin: 0 0 16px 0;
+        color: #b7f7bb;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .meta {
+        display: flex;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        flex-wrap: wrap;
+      }
+      
+      .source, .time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .no-news {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+      }
+      
+      .footer-stats {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      
+      nav.archive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      
+      nav.archive a {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #0b1211;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      nav.archive a:hover {
+        background: var(--hover);
+        border-color: var(--accent);
+      }
+      
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          padding: 16px;
+        }
+        
+        .card {
+          padding: 16px;
+        }
+        
+        .day-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="logo">NP</div>
+          <div>
+            <h1 class="title">The Null Pointer</h1>
+            <p class="desc">Automated feed of technology and cybersecurity news — updated daily</p>
+          </div>
+        </div>
+        <nav><a href="./index.html">🏠 Home</a></nav>
+      </header>
+
+      <main class="card">
+        
+<div class="day-header">
+  <h2>📰 News for February 17, 2026</h2>
+  <div class="stats">
+    80 articles found
+  </div>
+</div>
+
+<div class="grid">
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/ai-platforms-assistants/ive-spent-months-tracking-ai-personalities-like-twitch-streamer-neuro-sama-and-it-feels-like-acceptance-but-i-think-were-reading-it-wrong" target="_blank" rel="noopener noreferrer">
+        I’ve spent months tracking AI personalities like Twitch streamer Neuro-sama and it feels like acceptance — but I think we’re reading it wrong
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Interest in AI characters doesn’t necessarily mean people want them – and it certainly doesn’t mean we’ll stick around.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 06:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/games/879845/valve-steam-deck-oled-out-of-stock-memory-storage-ram-crisis" target="_blank" rel="noopener noreferrer">
+        Valve’s Steam Deck OLED will be ‘intermittently’ out of stock because of the RAM crisis
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Valve has updated the Steam Deck website to say that the Steam Deck OLED may be out of stock &#34;intermittently in some regions due to memory and storage shortages.&#34; The PC gaming handheld has been out of stock in the US and other parts of the world for a few days, and thanks to this [&amp;amp;#8230;]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 06:27</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/streaming/hbo-max/the-pitt-season2-episode7-release-date-time" target="_blank" rel="noopener noreferrer">
+        What is the release date for The Pitt season 2 episode 7 on HBO Max?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">My man Louie is never coming back to the ER, but we&#39;ve still got a lot of problem cases. When does The Pitt season episode 7 air on HBO Max?</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 05:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/this-is-the-first-pcie-6-0-ssd-you-can-actually-buy-and-by-you-i-mean-hyperscalers-micron-9650-can-reach-28gbps-read-speeds-and-will-only-be-used-for-ai-inference" target="_blank" rel="noopener noreferrer">
+        This is the first PCIe 6.0 SSD you can actually buy and by &#39;you&#39; I mean hyperscalers — Micron 9650 can reach 28GBps read speeds and will only be used for AI inference
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Micron has launched the 9650, the first PCIe 6.0 SSD built for hyperscale AI inference workloads and high-bandwidth data center storage.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 04:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/sex-toy-firm-hit-by-data-breach-tenga-says-hacker-infiltrated-systems-stole-customer-data" target="_blank" rel="noopener noreferrer">
+        Sex toy firm hit by data breach - Tenga says hacker infiltrated systems, stole customer data
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A Tenga employee fell for a phishing email, and gave away access to a company email account.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:10</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/samsung-galaxy-phones/what-to-do-if-the-galaxy-s26-ultra-is-a-dud-well-you-could-simply-opt-for-the-galaxy-z-fold-7-while-its-going-cheap" target="_blank" rel="noopener noreferrer">
+        What to do if the Galaxy S26 Ultra is a dud? Well, you could simply opt for the Galaxy Z Fold 7 while it&#39;s going cheap
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Galaxy S26 Ultra might blow our minds, but Samsung&#39;s other high-end device is still a fantastic device right now.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 03:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/entertainment/streaming/theres-a-dedicated-channel-for-formula-1-in-the-apple-tv-app-now-230904295.html?src=rss" target="_blank" rel="noopener noreferrer">
+        There&#39;s a dedicated channel for Formula 1 in the Apple TV app now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple continues to double down on its Formula 1 programming, following up on the box office success of its blockbuster movie by adding a dedicated channel for the racing league to the Apple TV app. This section of the streaming service hints at some of what may be coming when the F1 season begins wi...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/fractal-design-scape-review" target="_blank" rel="noopener noreferrer">
+        The Fractal Scape has no business offering this many features for a wireless headset at this price
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A minimalist wireless headset with a surprisingly affordable price considering how feature-rich it is. It’s like Apple got into the gaming market – and became way more generous.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/blu-ray/i-review-4k-blu-rays-for-a-living-and-these-are-6-of-the-best-4k-action-movies-to-show-off-your-home-theater" target="_blank" rel="noopener noreferrer">
+        I review 4K Blu-rays for a living and these are 6 of the best 4K action movies to show off your home theater
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Action movies can be a great way to show off your home theater system, and these 6 4K discs are some of the best I&#39;ve ever tested.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/audio/more-rode-mics-can-now-connect-directly-to-iphones-and-ipads-230000533.html?src=rss" target="_blank" rel="noopener noreferrer">
+        More Rode mics can now connect directly to iPhones and iPads
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Rode is rolling out a firmware update for its Wireless Pro and Wireless Go (third-gen) microphones to add a feature called Direct Connect, which was already available for the Wireless Micro. This allows the mics to pair with iPhones and iPads via Bluetooth without the need for a receiver. All you’ll...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 02:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/my-own-opinion-is-that-much-of-the-fear-is-overblown-aws-ceo-thinks-investors-may-be-worrying-about-ai-risks-too-much" target="_blank" rel="noopener noreferrer">
+        &#39;My own opinion is that much of the fear is overblown&#39;: AWS CEO thinks investors may be worrying about AI risks too much
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Investors worry AI could weaken software margins, while Amazon Web Services reports solid expansion and questions the scale of market panic.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/gaming/call-of-duty-warzone-mobile-will-go-offline-on-april-17-222240967.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Call of Duty: Warzone Mobile will go offline on April 17
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Call of Duty: Warzone Mobile will be no more this spring. According to Activision, servers will be taken offline for this mobile battle royale game on April 17, 2026. The shooter will remain available for current players until that date. This mobile port of the CoD battle royale mode has been on its...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 01:52</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/macos-26-4-brings-battery-charge-limit-to-the-mac-and-shortcuts/" target="_blank" rel="noopener noreferrer">
+        macOS 26.4 brings battery Charge Limit to the Mac and Shortcuts
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Charge Limit feature, which lets you set a maximum charge to help extend battery health, was previously only available on iPhone and iPad. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:39</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/daily-february-16-2026/" target="_blank" rel="noopener noreferrer">
+        9to5Mac Daily: February 16, 2026 – New Apple hardware is imminent
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Listen to a recap of the top stories of the day from 9to5Mac. 9to5Mac Daily is available on iTunes and Apple’s Podcasts app, Stitcher, TuneIn, Google Play, or through our dedicated RSS feed for Overcast and other podcast players. Sponsored by Stuff: Stuff helps you get everything out of your head an...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/the-new-f1-channel-has-appeared-the-in-apple-tv-app-ahead-of-first-race/" target="_blank" rel="noopener noreferrer">
+        The new F1 channel has appeared in the Apple TV app ahead of first race
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The new dedicated channel for Formula 1 has appeared in the Apple TV app, starting today. Users in the United States can now see a dedicated Formula 1 item in the sidebar, alongside the existing Apple TV originals and MLS tabs. This channel is where Apple TV app subscribers will be able to stream al...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 01:03</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/tens-of-billions-of-dollars-wiped-out-from-household-name-brands-as-obscure-penny-stock-karaoke-vendor-turned-ai-platform-debuts-game-changing-platform" target="_blank" rel="noopener noreferrer">
+        Tens of billions of dollars wiped out from household name brands as obscure &#34;penny stock&#34; karaoke-vendor-turned-AI platform debuts &#34;game-changing platform&#34;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Logistics stocks tumble after tiny AI firm claims massive freight efficiency gains trigger investor fears over automation replacing jobs and reshaping industry costs.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 01:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/washington-hotel-in-japan-discloses-ransomware-infection-incident/" target="_blank" rel="noopener noreferrer">
+        Washington Hotel in Japan discloses ransomware infection incident
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Washington Hotel brand in Japan has announced that that its servers were compromised in a ransomware attack, exposing various business data. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 00:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/computing/macbooks/5-things-to-expect-at-apples-big-event-on-march-4-and-5-things-that-might-not-make-it" target="_blank" rel="noopener noreferrer">
+        5 things to expect at Apple&#39;s big event on March 4 — and 5 things that might not make it
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has announced a press event – or &#39;experience&#39;, rather – which might consist of online announcements and hands-on deep dives with products.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/visionos-26-4-unlocks-new-foveated-streaming-feature-for-apps-and-games/" target="_blank" rel="noopener noreferrer">
+        visionOS 26.4 unlocks new ‘foveated streaming’ feature for apps and games
+      </a>
+    </h3>
+    
+    
+    <p class="summary">visionOS 26.4 beta 1 debuted today, and in addition to supporting Apple Podcasts’ new video features, the update also unlocks ‘foveated streaming’ for apps and games. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/3d-printing-saved-from-ai-as-myminifactory-acquires-thingiverse-over-8-million-users-and-an-archive-of-over-2-5-million-things-set-to-be-protected" target="_blank" rel="noopener noreferrer">
+        3D printing &#39;saved&#39; from AI as MyMiniFactory acquires Thingiverse - over 8 million users and an archive of over 2.5 million “things” set to be protected
+      </a>
+    </h3>
+    
+    
+    <p class="summary">MyMiniFactory acquires Thingiverse, promising technical cleanup, human-reviewed files, creator monetization, and protection for millions of 3D printing designs.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 00:20</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/msis-rtx-5060-equipped-cyborg-15-gaming-laptop-is-down-to-just-usd899-on-walmart-featuring-an-intel-core-7-240h-cpu-16gb-of-ram-and-a-144hz-display" target="_blank" rel="noopener noreferrer">
+        MSI&#39;s RTX 5060-equipped Cyborg 15 gaming laptop is down to just $899 on Walmart — Featuring an Intel Core 7 240H CPU, 16GB of RAM and a 144Hz display
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Unlike most cheap gaming laptops that cut major corners to cram in beefy hardware, the MSI Cyborg 15 gets rid of all the bells and whistles to focus on what&#39;s necessary. Its powerful hardware combo, mixed with that 144Hz screen, makes it one of the best budget machines around that can play any game ...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 00:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/samsungs-27-inch-odyssey-oled-g5-g50sf-goes-on-sale-at-amazon-1440p-resolution-180-hz-refresh-rate-0-03ms-response-time-for-under-usd400" target="_blank" rel="noopener noreferrer">
+        Samsung’s 27-inch Odyssey OLED G5 G50SF goes on sale at Amazon — 1440p resolution, 180 Hz refresh rate, 0.03ms response time for under $400
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This 27-inch QD-OLED gaming monitor pairs a 2560×1440 resolution with up to a 180 Hz refresh rate and a 0.03ms response time for fast and fluid gameplay.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 00:06</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/macos-tahoe-26-4-and-ipados-26-4-add-compact-tab-bar-in-safari/" target="_blank" rel="noopener noreferrer">
+        macOS Tahoe 26.4 and iPadOS 26.4 add compact tab bar in Safari
+      </a>
+    </h3>
+    
+    
+    <p class="summary">When macOS Tahoe and iPadOS 26 launched last fall, they removed support for an optional Safari layout: the compact tab bar. Now, the feature is back in macOS 26.4 and iPadOS 26.4 beta 1. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 00:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/apple/2026/02/get-ready-for-new-macs-and-ipads-apple-announces-special-experience-on-march-4/" target="_blank" rel="noopener noreferrer">
+        Get ready for new Macs and iPads: Apple announces &#34;Special Experience&#34; on March 4
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has not confirmed whether you&#39;ll be able to watch live, but Ars will bring you the news.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 00:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/ios-26-4-beta-1-heres-everything-new/" target="_blank" rel="noopener noreferrer">
+        iOS 26.4 beta 1: Here are the new iPhone features
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iOS 26.4 beta 1 is now available in beta for developers. The update includes a ton of new features and changes for iPhone users. There are new changes to the Music app, Messages, Apple Podcasts, and much more. Head below for the full roundup of all the new features in iOS 26.4 beta 1. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:56</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/879792/apple-iphone-android-rcs-messages-end-to-end-encrypted" target="_blank" rel="noopener noreferrer">
+        Apple starts testing end-to-end encrypted RCS messages on iPhone
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple is starting to test end-to-end encrypted (E2EE) RCS messages with the developer beta of iOS 26.4 released Monday. Apple announced plans last year to support the feature, and once fully available, it will let iPhone and Android users send encrypted RCS messages to each other across platforms. H...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 23:51</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/ios-26-4-beta-adds-new-playlist-playground-ai-feature-in-music/" target="_blank" rel="noopener noreferrer">
+        iOS 26.4 beta adds new ‘Playlist Playground’ AI feature for Apple Music
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple released the first beta of iOS 26.4 for developers today, and it includes a new Apple Intelligence feature for Apple Music. Dubbed “Playlist Playground,” this feature lets you create playlists based on text descriptions. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:48</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/tech-policy/2026/02/best-buy-worker-used-managers-code-to-get-99-off-macbooks-cops-say/" target="_blank" rel="noopener noreferrer">
+        Best Buy worker used manager’s code to get 99% off MacBooks, cops say
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Employee allegedly exploited Best Buy&#39;s discount system for months.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 23:40</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/android/5-of-the-best-news-apps-for-android-whether-you-want-original-reporting-or-powerful-aggregators" target="_blank" rel="noopener noreferrer">
+        5 of the best news apps for Android, whether you want original reporting or powerful aggregators
+      </a>
+    </h3>
+    
+    
+    <p class="summary">From Reuters to Readly, these are five of the best news apps on Android, with ideal options no matter what kind of news you&#39;re looking for.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/audio/headphones/best-noise-canceling-earbuds-150026857.html?src=rss" target="_blank" rel="noopener noreferrer">
+        The best noise-canceling earbuds for 2026
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Noise-canceling earbuds have become an everyday essential for a lot of people, whether you’re trying to survive a noisy commute, concentrate in a shared workspace or just carve out a little quiet time. Advances in active noise cancellation and audio processing mean today’s best earbuds do a much bet...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 23:31</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/ps5/i-cant-imagine-life-without-these-six-playstation-portal-accessories-and-im-eyeing-up-three-more-too" target="_blank" rel="noopener noreferrer">
+        I can&#39;t imagine life without these 6 PlayStation Portal accessories — and I&#39;m eyeing up 4 more, too
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Looking for PlayStation Portal accessory ideas? Here are six I can&#39;t live without, and three I&#39;m going to buy next.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/cameras/camera-accessories/these-are-the-trendiest-kind-of-camera-straps-this-presidents-day-but-theres-a-catch" target="_blank" rel="noopener noreferrer">
+        These are the trendiest kind of camera straps this Presidents&#39; Day, but there’s a catch
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Rope camera straps are the trendiest accessory, but read this before buying one of my recommendations this Presidents&#39; Day</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/streaming-devices/netflix-is-about-to-stop-working-on-some-more-older-smart-tvs-and-consoles-but-handily-you-can-get-a-roku-or-fire-tv-stick-super-cheap-right-now" target="_blank" rel="noopener noreferrer">
+        Netflix is about to stop working on some more older smart TVs and consoles — but handily, you can get a Roku or Fire TV Stick super-cheap right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Netflix is ending support for its app on the PS3 and some older TVs and set-top boxes – but streaming sticks are cheap right now, if you want to keep your old set</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/vehicle-tech/hybrid-electric-vehicles/toyota-says-its-going-all-in-on-battery-electric-cars-with-four-new-battery-models-but-is-it-too-late" target="_blank" rel="noopener noreferrer">
+        Toyota says it’s going all-in on battery electric cars with four new battery models, but is it too late?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">After resisting battery electric vehicles for years, Toyota goes all-in on EV with four new models due by 2027.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/macos-26-4-will-notify-users-of-rosetta-2-discontinuation/" target="_blank" rel="noopener noreferrer">
+        macOS 26.4 will notify users of Rosetta 2 discontinuation
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Last June at WWDC25, Apple announced that Rosetta 2, the software that translates Intel apps for Apple silicon, would be discontinued starting after macOS 27. Now, Apple will begin notifying users of apps that will soon be incompatible. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/ios-26-4-will-activate-key-theft-prevention-feature-on-all-iphones/" target="_blank" rel="noopener noreferrer">
+        iOS 26.4 will activate key theft prevention feature on all iPhones
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iOS 26.4 is the next big iPhone software release, and Apple plans to enable a key security feature by default in the update. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 23:22</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/i-think-were-going-to-have-a-human-level-performance-on-most-if-not-all-professional-tasks-microsoft-ai-chief-thinks-ai-will-replace-most-white-collar-work-in-the-12-to-18-months-so-is-this-the-end-for-human-workers" target="_blank" rel="noopener noreferrer">
+        &#39;I think we’re going to have a human-level performance on most, if not all, professional tasks&#39;: Microsoft AI chief thinks AI will replace most white-collar work in the 12 to 18 months - so is this the end for human workers?
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Is AI coming for white-collar roles next? Microsoft&#39;s AI boss thinks so.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/seasonal-sales/walmart-is-practically-begging-you-to-buy-lgs-65-inch-c5-oled-tv-its-usd1-500-off-and-an-absolute-bargain" target="_blank" rel="noopener noreferrer">
+        Walmart is practically begging you to buy LG&#39;s award-winning C5 OLED TV — it&#39;s $1,500 off and an absolute bargain
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Thanks to Walmart&#39;s Presidents&#39; Day sale, our best-rated TV, LG&#39;s 65-inch C5 OLED TV, is at its lowest price ever, with a massive $1,500 discount.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/7-presidents-day-sales-on-tvs-we-highly-recommended-from-lg-samsung-tcl-and-more" target="_blank" rel="noopener noreferrer">
+        7 Presidents’ Day sales on TVs we highly recommended — from LG, Samsung, TCL and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Don&#39;t miss these great chances for a home theater upgrade — top OLED and big-screen TVs are back to Black Friday prices</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 23:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/eurail-says-stolen-traveler-data-now-up-for-sale-on-dark-web/" target="_blank" rel="noopener noreferrer">
+        Eurail says stolen traveler data now up for sale on dark web
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Eurail B.V., the operator that provides access to 250,000 kilometers of European railways, confirmed that data stolen in a breach earlier this year is being offered for sale on the dark web. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 22:49</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/magsafe-monday-hands-on-with-the-ridges-5-in-1-magnetic-power-bank/" target="_blank" rel="noopener noreferrer">
+        MagSafe Monday: Hands-on with The Ridge’s 5-in-1 Magnetic Power Bank
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Ridge is best known for its minimalist wallets, but it’s now taking a crack at the MagSafe industry as well. I came across this battery through a social media ad and purchased it right away. The Ridge 5-in-1 Magnetic Power Bank aims to be the best all-around battery with great colors, built-in cable...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/apple-just-gave-airpods-pro-3-and-more-new-beta-firmware/" target="_blank" rel="noopener noreferrer">
+        Apple just gave AirPods Pro 3 and more new beta firmware [U]
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has new beta firmware available today for AirPods Pro 3, AirPods Pro 2, and AirPods 4. Here are the details. Update 2/16/26: The firmware shipped to developers on February 12, but now today on February 16, public beta testers received the same AirPods update. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:45</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.theverge.com/tech/879749/apple-podcasts-video-swap-hls-live-streaming" target="_blank" rel="noopener noreferrer">
+        Apple’s Podcasts app will let you ‘seamlessly’ switch between audio and video shows
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple is upgrading its Podcasts app to let users &#34;seamlessly&#34; swap between audio and video podcasts using its HTTP Live Streaming (HLS) technology. While listening to a show, users will be able to switch to a horizontal video version of the podcast and download the video versions of a podcast for of...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Verge</span>
+      
+      
+      
+      <span class="time">🕒 22:44</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/man-arrested-for-demanding-reward-after-accidental-police-data-leak/" target="_blank" rel="noopener noreferrer">
+        Man arrested for demanding reward after accidental police data leak
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Dutch authorities arrested a 40-year-old man after he downloaded confidential documents that had been mistakenly shared by the police and refused to delete them unless he received &#34;something in return.&#34; [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 22:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/smart-home/this-little-gadget-turned-me-into-a-morning-person-by-opening-my-bedroom-blinds-automatically-and-its-on-sale-for-presidents-day" target="_blank" rel="noopener noreferrer">
+        This little gadget turned me into a morning person by opening my bedroom blinds automatically — and it&#39;s on sale for Presidents&#39; Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">There&#39;s no need to splash out on expensive smart blinds when the SwitchBot Blind Tilt can do the same thing for a fraction of the price.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:35</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/apple-music-in-ios-26-4-has-new-design-for-albums-playlists-and-more/" target="_blank" rel="noopener noreferrer">
+        Apple Music in iOS 26.4 has new design for albums, playlists, and more
+      </a>
+    </h3>
+    
+    
+    <p class="summary">iOS 26.4 beta 1 launched today, and among its various changes, Apple Music introduces a new fullscreen design for albums and playlists, plus concert info and more. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/there-are-so-many-cheap-nintendo-switch-2-accessories-on-sale-this-presidents-day-here-are-six-i-strongly-recommend-while-discounts-last" target="_blank" rel="noopener noreferrer">
+        There are so many cheap Nintendo Switch 2 accessories on sale this Presidents&#39; Day — here are six I strongly recommend while discounts last
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Amazon&#39;s Presidents&#39; Day sale is a real who&#39;s who of Nintendo Switch 2 accessory discounts.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/tech/who-needs-ring-this-top-rated-video-doorbell-is-subscription-free-and-its-less-than-half-price-in-the-presidents-day-sale-at-amazon" target="_blank" rel="noopener noreferrer">
+        Who needs Ring? This top-rated video doorbell is subscription-free, and it&#39;s less than half price in the Presidents&#39; Day sale at Amazon
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Get &#34;clear, super-detailed footage&#34; and package alerts, plus 16GB storage and AI person-detection if you add the Eufy Homebase hub.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/ios-26-4-redesigns-wallpaper-gallery/" target="_blank" rel="noopener noreferrer">
+        iOS 26.4 redesigns Wallpaper Gallery
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple just released the first iOS 26.4 beta, and it seems to feature a number of under-the-hood improvements. One change includes an overhauled Wallpaper Gallery system. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 22:24</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://techcrunch.com/2026/02/16/have-money-will-travel-a16zs-hunt-for-the-next-european-unicorn/" target="_blank" rel="noopener noreferrer">
+        Have money, will travel: a16z’s hunt for the next European unicorn
+      </a>
+    </h3>
+    
+    
+    <p class="summary">According to a16z, it has eyes around the world in order to spot companies as early as local funds might.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 TechCrunch</span>
+      
+      
+      
+      <span class="time">🕒 22:23</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://thehackernews.com/2026/02/infostealer-steals-openclaw-ai-agent.html" target="_blank" rel="noopener noreferrer">
+        Infostealer Steals OpenClaw AI Agent Configuration Files and Gateway Tokens
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Cybersecurity researchers disclosed they have detected a case of an information stealer infection successfully exfiltrating a victim&#39;s OpenClaw (formerly Clawdbot and Moltbot) configuration environment. &#34;This finding marks a significant milestone in the evolution of infostealer behavior: the transit...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Hacker News</span>
+      
+      
+      
+      <span class="time">🕒 22:13</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/security/pentagon-may-sever-anthropic-relationship-over-ai-safeguards-claude-maker-expresses-concerns-over-hard-limits-around-fully-autonomous-weapons-and-mass-domestic-surveillance" target="_blank" rel="noopener noreferrer">
+        Pentagon may sever Anthropic relationship over AI safeguards - Claude maker expresses concerns over &#39;hard limits around fully autonomous weapons and mass domestic surveillance&#39;
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Pentagon is threating to cut a $200 million contract with Anthropic over a rift in how the Claude AI model should be used.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/televisions/soundbars/4-great-soundbars-in-the-presidents-day-sales-that-will-instantly-boost-your-tvs-audio-game-but-will-keep-your-wallet-healthy" target="_blank" rel="noopener noreferrer">
+        4 great soundbars in the Presidents&#39; Day sales that will instantly boost your TVs audio game — but will keep your wallet healthy
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Put more boom in your room with these cut-price soundbar deals, including Dolby Atmos options</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:01</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/phones/phone-accessories/this-anker-battery-pack-solved-my-battery-anxiety-and-its-on-sale-this-presidents-day" target="_blank" rel="noopener noreferrer">
+        This Anker battery pack solved my battery anxiety — and it’s on sale this Presidents&#39; Day
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This Anker portable charger, which is small enough for everyday carry, has become my go-to travel accessory for keeping phones and other devices powered on the move.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 22:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/apps/apples-podcasts-app-now-supports-http-live-streaming-video-technology-182605460.html?src=rss" target="_blank" rel="noopener noreferrer">
+        Apple&#39;s Podcasts app now supports HTTP Live Streaming video technology
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple is planning a major update for its Podcasts app. The app now supports the company&#39;s HTTP Live Streaming (HLS) video technology. Previously, it only streamed video in various formats like MOV, MP4 and M4V. This provides several benefits for the end user. It lets people switch seamlessly between...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 21:56</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.engadget.com/mobile/smartphones/iphone-fold-rumors-everything-we-know-so-far-including-the-leaked-design-upgrades-price-and-more-details-130000074.html?src=rss" target="_blank" rel="noopener noreferrer">
+        iPhone Fold rumors: Everything we know so far, including the leaked design, upgrades, price and more details
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple still hasn’t officially announced a foldable iPhone, but the rumor mill hasn’t slowed down. Over the past few months, analysts, supply-chain watchers and leakers have continued to sketch out what Apple’s first folding phone might look like and when it could finally arrive. Most signs still poi...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Engadget is a web magazine with obsessive daily coverage of everything new in gadgets and consumer electronics</span>
+      
+      
+      
+      <span class="time">🕒 21:50</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/apple-podcasts-app-gaining-enhanced-video-podcast-experience-in-ios-26-4/" target="_blank" rel="noopener noreferrer">
+        Apple Podcasts app gaining ‘enhanced video podcast experience’ in iOS 26.4
+      </a>
+    </h3>
+    
+    
+    <p class="summary">As part of iOS 26.4, Apple is upgrading its Podcasts app to “bring advanced video podcast capabilities” to creators and listeners, Apple says. The new “enhanced video podcast experience” will allow users to seamlessly switch between viewing a video podcast and listening to the audio. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/ios-26-4-beta-adds-support-for-testing-end-to-end-encrypted-rcs-messaging/" target="_blank" rel="noopener noreferrer">
+        iOS 26.4 beta adds support for testing end-to-end encrypted RCS messaging
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple added RCS support to iPhone with iOS 18.1, enabling richer cross-platform messaging between iPhone and Android users. This included things like typing indicators, read receipts, and high-resolution photo and video attachments. Last March, Apple announced its plans to add support for end-to-end...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:43</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/apple-releases-beta-1-for-watchos-26-4-tvos-26-4-visionos-26-4/" target="_blank" rel="noopener noreferrer">
+        Apple releases beta 1 for watchOS 26.4, tvOS 26.4, visionOS 26.4
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A new wave of Apple beta releases has just kicked off. Developer beta 1 is rolling out for tvOS 26.4, watchOS 26.4, visionOS 26.4, and more. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:42</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/apple-releases-macos-26-4-beta-1-heres-what-to-expect/" target="_blank" rel="noopener noreferrer">
+        Apple releases macOS 26.4 beta 1, here’s what to expect
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Just days after releasing macOS 26.3, Apple is now rolling out the first beta version of macOS 26.4 for developers. Here’s what to expect. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:41</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/ipados-26-4-beta-1-is-available-now-heres-what-to-expect/" target="_blank" rel="noopener noreferrer">
+        iPadOS 26.4 beta 1 is available now, here’s what to expect
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has released iPadOS 26.4 beta 1 for developers, here’s what we’re expecting from the new beta software. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://9to5mac.com/2026/02/16/apple-releases-ios-26-4-beta-1-for-iphone/" target="_blank" rel="noopener noreferrer">
+        Apple releases iOS 26.4 beta 1 for iPhone, here’s what’s new
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple has released the first iOS 26.4 beta for iPhone. While we originally expected iOS 26.4 to include upgraded Siri, it sounds like we won’t see those changes just yet. more…</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 9to5Mac</span>
+      
+      
+      
+      <span class="time">🕒 21:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/if-youre-an-engineering-student-this-laptop-deal-is-the-best-around-my-favorite-mobile-workstation-gets-a-usd1600-price-cut-in-lenovo-presidents-day-sales" target="_blank" rel="noopener noreferrer">
+        If you&#39;re an engineering student, this laptop deal is the best around - my favorite mobile workstation gets a $1600 price-cut in Lenovo Presidents&#39; Day sales
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This fully loaded mobile workstation gets a major price-cut for Lenovo Presidents&#39; Day sales.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:37</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://thehackernews.com/2026/02/study-uncovers-25-password-recovery.html" target="_blank" rel="noopener noreferrer">
+        Study Uncovers 25 Password Recovery Attacks in Major Cloud Password Managers
+      </a>
+    </h3>
+    
+    
+    <p class="summary">A new study has found that multiple cloud-based password managers, including Bitwarden, Dashlane, and LastPass, are susceptible to password recovery attacks under certain conditions. &#34;The attacks range in severity from integrity violations to the complete compromise of all vaults in an organization,...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 The Hacker News</span>
+      
+      
+      
+      <span class="time">🕒 21:36</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/earbuds-airpods/six-weeks-in-and-im-still-sticking-to-my-new-year-fitness-regime-and-its-all-thanks-to-these-shokz-earbuds-keeping-me-motivated" target="_blank" rel="noopener noreferrer">
+        Six weeks in and I’m still sticking to my New Year fitness regime — and it’s all thanks to these Shokz earbuds keeping me motivated
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Bone conduction and open earbuds from Shokz are the audio tech I use to stay motivated.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:34</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/microsd-cards/save-up-to-usd40-on-samsungs-800mb-s-p9-express-microsd-card-this-presidents-day-super-speedy-storage-for-your-nintendo-switch-2" target="_blank" rel="noopener noreferrer">
+        Save up to $40 on Samsung’s 800MB/s P9 Express microSD card this Presidents&#39; Day — super-speedy storage for your Nintendo Switch 2
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Samsung’s P9 Express microSD card delivers up to 800MB/s speeds using PCIe and NVMe, and it’s now significantly cheaper on Amazon.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 21:32</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/xbox-playstation-and-switch-games-have-had-their-prices-slashed-these-are-the-best-value-right-now" target="_blank" rel="noopener noreferrer">
+        Xbox, PlayStation, and Switch games have had their prices slashed — these are the best value right now
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Some of the best Xbox, PlayStation, Switch, and Switch 2 games have been discounted for Presidents&#39; Day.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:30</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/software/windows/rufus-developers-blame-microsoft-for-blocking-access-to-the-latest-windows-11-isos-windows-insiders-met-with-an-ip-ban-after-attempting-to-download-latest-builds" target="_blank" rel="noopener noreferrer">
+        Rufus devs blame Microsoft for blocking latest Windows 11 ISOs, resulting in IP bans — Windows Insiders can&#39;t download latest Insider ISOs and are met with IP bans
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Multiple Windows Insider users and one of Rufus&#39; developers reveal that they can&#39;t download any of Microsoft&#39;s latest Insider Preview ISOs. Users who try to are met with an IP block.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 21:26</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/pc-components/save-usd100-asus-rog-azoth-x-gaming-keyboard-now-down-to-usd199-at-best-buy-featuring-a-75-percent-hot-swap-pcb-tri-mode-connectivity-and-oled-screen" target="_blank" rel="noopener noreferrer">
+        Save $100 Asus ROG Azoth X gaming keyboard, now down to $199 at Best Buy — Featuring a 75% hot swap PCB, tri-mode connectivity &amp;amp; OLED screen
+      </a>
+    </h3>
+    
+    
+    <p class="summary">If you&#39;ve been looking for a high-end gaming keyboard but didn&#39;t want to overspend, Best Buy has discounted the ROG Azoth X by $100. You can grab this 75% mechanical keyboard with a hot swap PCB, five-layer sound dampening, tri-mode connectivity, multi-function knob, and customizable OLED display fo...</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 21:18</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/gaming-accessories/ive-been-running-dungeons-and-dragons-for-12-years-here-are-12-gadgets-and-essentials-i-use-all-the-time-as-a-dm-and-2-that-i-wish-i-had" target="_blank" rel="noopener noreferrer">
+        I&#39;ve been running Dungeons &amp;amp; Dragons for 12 years: here are 12 gadgets and essentials I use all the time as a DM — and 2 that I wish I had
+      </a>
+    </h3>
+    
+    
+    <p class="summary">I&#39;m an expert DM, and these are the 12 actually useful items I can&#39;t live without — and 2 more I really want.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:14</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/tech-policy/2026/02/bytedance-backpedals-after-seedance-2-0-turned-hollywood-icons-into-ai-clip-art/" target="_blank" rel="noopener noreferrer">
+        ByteDance backpedals after Seedance 2.0 turned Hollywood icons into AI “clip art”
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Hollywood backlash puts spotlight on ByteDance&#39;s sketchy launch of Seedance 2.0.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 21:12</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/home/small-appliances/looking-for-a-great-deal-on-a-kitchenaid-mixer-this-presidents-day-skip-the-sales-and-get-an-officially-refurbished-one-half-price-instead" target="_blank" rel="noopener noreferrer">
+        Looking for a great deal on a KitchenAid mixer this Presidents&#39; Day? Skip the sales and get an officially refurbished one half price instead
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Find huge savings on KitchenAid&#39;s officially refurbished mixers, which come complete with warranties and full customer service.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:07</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/way-better-than-a-chromebook-this-usd330-dell-15-windows-11-laptop-is-the-ultimate-work-from-anywhere-deal-in-the-presidents-day-sale" target="_blank" rel="noopener noreferrer">
+        I can&#39;t recommend this Dell laptop deal enough - this Windows 11 machine is the ultimate &#39;work-from-anywhere&#39; machine in the Presidents&#39; Day sale
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The $330 Dell 15 Laptop ticks all my boxes for business or home use, with a Core 3 processor, 8GB RAM, and a fast 512GB SSD.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:05</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.bleepingcomputer.com/news/security/infostealer-malware-found-stealing-openclaw-secrets-for-first-time/" target="_blank" rel="noopener noreferrer">
+        Infostealer malware found stealing OpenClaw secrets for first time
+      </a>
+    </h3>
+    
+    
+    <p class="summary">With the massive adoption of the OpenClaw agentic AI assistant, information-stealing malware has been spotted stealing files associated with the framework that contain API keys, authentication tokens, and other secrets. [...]</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 BleepingComputer</span>
+      
+      
+      
+      <span class="time">🕒 21:02</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/audio/wireless-bluetooth-speakers/edifiers-portable-wireless-speaker-has-won-me-over-with-its-bargain-price-compelling-sound-and-stunning-looks-and-this-usd100-presidents-day-discount-makes-it-a-must-buy" target="_blank" rel="noopener noreferrer">
+        Edifier’s portable wireless speaker has won me over with its bargain price, compelling sound and stunning looks — and this $100 President’s Day discount makes it a must-buy
+      </a>
+    </h3>
+    
+    
+    <p class="summary">This Edifier speaker has an enormous $100 off for President’s Day — making it a bargain I don’t think you can afford to sleep on.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 21:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://arstechnica.com/science/2026/02/dna-inspired-molecule-breaks-records-for-storing-solar-heat/" target="_blank" rel="noopener noreferrer">
+        A fluid can store solar energy and then release it as heat months later
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Sunlight can cause a molecule to change structure, and then release heat later.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Ars Technica - All content</span>
+      
+      
+      
+      <span class="time">🕒 21:00</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.tomshardware.com/tech-industry/softbank-4-2-bn-openai-gain-lifts-quarterly-profit-as-ai-exposure-deepens" target="_blank" rel="noopener noreferrer">
+        SoftBank’s $4.2bn OpenAI gain lifts quarterly profits as AI exposure deepens — company swings back to profitability in Q3 results
+      </a>
+    </h3>
+    
+    
+    <p class="summary">SoftBank swung back to profitability in its fiscal third quarter, reporting net income of 248.6 billion yuan — roughly $1.6 billion — for the three months ending December.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from Tom&#39;s Hardware</span>
+      
+      
+      
+      <span class="time">🕒 20:59</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/gaming/mobile-gaming/tomb-raider-just-launched-on-ios-and-android-complete-with-all-of-its-biggest-dlc-and-a-seriously-tempting-price-tag" target="_blank" rel="noopener noreferrer">
+        Tomb Raider just launched on iOS and Android complete with all of its biggest DLC and a seriously tempting price tag
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Tomb Raider has launched for iOS and Android phones with all of its original DLC.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/farewell-apple-iwork-iconic-brand-appears-to-be-disappearing-in-favor-of-creator-studio" target="_blank" rel="noopener noreferrer">
+        Farewell Apple iWork? Iconic brand appears to be disappearing in favor of Creator Studio
+      </a>
+    </h3>
+    
+    
+    <p class="summary">Apple&#39;s iWork brand looks to have been retired after two decades, with the launch of new Creator Studio, which includes paid subscriptions.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:55</span>
+      
+    </div>
+  </article>
+  
+  <article class="item">
+    <h3>
+      <a href="https://www.techradar.com/pro/my-favorite-windows-11-mini-pc-is-perfect-for-work-and-its-got-a-big-price-cut-in-the-presidents-day-sale-but-youll-need-to-act-fast" target="_blank" rel="noopener noreferrer">
+        My favorite Windows 11 mini PC is perfect for work and it&#39;s got a big price-cut in the Presidents&#39; Day sale — but you&#39;ll need to act fast
+      </a>
+    </h3>
+    
+    
+    <p class="summary">The Geekom A5 Pro mini PC delivers fast everyday performance in a tiny, space saving design, and it&#39;s now down to $699 for Presidents&#39; Day.</p>
+    
+    
+    <div class="meta">
+      
+      <span class="source">📡 Latest from TechRadar</span>
+      
+      
+      
+      <span class="time">🕒 20:54</span>
+      
+    </div>
+  </article>
+  
+</div>
+
+
+<div class="footer-stats">
+  <p>Last updated: 2026-02-17 06:30 +0330</p>
+</div>
+
+
+      </main>
+
+      <footer>
+        🤖 Built with GitHub Actions · 🔗 Each item links to the original source · 
+        ⚡ Updated daily at 06:10 Asia/Tehran · 
+        <a href="https://github.com/alibahrami2001" target="_blank" rel="noopener noreferrer">👨‍💻 GitHub</a>
+      </footer>
+    </div>
+  </body>
+</html>
